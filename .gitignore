@@ -97,3 +97,7 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# 에셋 포함 X
+Assets/Resources/StoreAssets*
+!Assets/Resources/StoreAssets*.meta
