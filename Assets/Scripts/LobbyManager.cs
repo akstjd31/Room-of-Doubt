@@ -2,9 +2,16 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
+    IEnumerator Start()
+    {
+        yield return new WaitUntil(() => PhotonNetwork.IsConnected);
+        PhotonNetwork.JoinLobby();
+    }
+
     public override void OnJoinedLobby()
     {
         Debug.Log("로비에 입장하셨습니다.");
@@ -13,7 +20,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     // 버튼 이벤트 (빠참)
     public void RandomOrCreateRoom()
     {
-        PhotonNetwork.JoinRandomOrCreateRoom();
+        if (!PhotonNetwork.InLobby)
+            return;
+            
         SceneManager.LoadScene("RoomScene");
     }
 }
