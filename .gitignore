@@ -101,3 +101,6 @@ InitTestScene*.unity*
 # 에셋 포함 X
 Assets/Resources/StoreAssets*
 !Assets/Resources/StoreAssets*.meta
+
+# 포톤 서버 세팅 (App ID 공유 X)
+PhotonServerSettings.asset
