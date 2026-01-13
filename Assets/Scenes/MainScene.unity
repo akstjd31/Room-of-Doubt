@@ -579,10 +579,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71fe27e6a334fb4ea90b346d42e44dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirebaseAuthManager
-  startButton: {fileID: 0}
+  startButton: {fileID: 1353206898}
   emailField: {fileID: 221638643}
   pwField: {fileID: 1195311438}
-  nickField: {fileID: 0}
+  nickField: {fileID: 647840326}
 --- !u!4 &586732569
 Transform:
   m_ObjectHideFlags: 0
