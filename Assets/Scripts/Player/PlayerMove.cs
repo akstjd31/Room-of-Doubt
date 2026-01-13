@@ -31,14 +31,15 @@ public class PlayerMove : MonoBehaviourPun
 
     private void OnEnable()
     {
+        if (!photonView.IsMine) return;
+        
         moveAction.performed += OnMovePerformed;
         moveAction.canceled += OnMoveCanceled;
     }
 
     private void FixedUpdate()
     {
-        if (!photonView.IsMine)
-            return;
+        if (!photonView.IsMine) return;
 
         // 카메라 기준 방향 벡터
         Vector3 camForward = cameraTransform.forward;
@@ -63,8 +64,11 @@ public class PlayerMove : MonoBehaviourPun
 
     private void OnDisable()
     {
-        moveAction.performed -= OnMovePerformed;
-        moveAction.canceled -= OnMoveCanceled;
+        if (moveAction != null)
+        {
+            moveAction.performed -= OnMovePerformed;
+            moveAction.canceled -= OnMoveCanceled;
+        }
     }
 
     public void OnMovePerformed(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
