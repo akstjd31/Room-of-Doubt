@@ -85,6 +85,7 @@ public class PlayerInteractor : MonoBehaviourPun
         if (!photonView.IsMine)
             return;
 
+        // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         if (Physics.Raycast(ray, out var hit, range, interactMask))
         {
@@ -100,9 +101,11 @@ public class PlayerInteractor : MonoBehaviourPun
         Vector3 origin = cam.transform.position;
         Vector3 dir = cam.transform.forward;
 
+        // 닿으면 초록, 아님 빨강
         bool hitSomething = Physics.Raycast(origin, dir, out RaycastHit hit, range, interactMask);
         Gizmos.color = hitSomething ? Color.green : Color.red;
 
+        // 물체가 가까이 있으면 물체까지 선 긋기 or 최대 길이까지
         Vector3 end = hitSomething ? hit.point : origin + dir * range;
         Gizmos.DrawLine(origin, end);
     }
