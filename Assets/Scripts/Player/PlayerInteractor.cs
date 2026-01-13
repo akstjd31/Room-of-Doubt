@@ -37,19 +37,20 @@ public class PlayerInteractor : MonoBehaviourPun
         if (!photonView.IsMine) return;
         if (current == null) return;
 
+        Debug.Log("E키 누름");
+        
         // 상호작용 RPC 수행
-        photonView.RPC(nameof(RPC_RequestInteract), 
-                    RpcTarget.MasterClient,
+        photonView.RPC(nameof(RPC_TryInteract), 
+                    RpcTarget.All,
                     current.ViewId,
                     PhotonNetwork.LocalPlayer.ActorNumber);
 
     }
 
+    // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
     [PunRPC]
-    private void RPC_RequestInteract(int targetViewId, int actorNumber, PhotonMessageInfo info)
+    private void RPC_TryInteract(int targetViewId, int actorNumber, PhotonMessageInfo info)
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-
         PhotonView targetPv = PhotonView.Find(targetViewId);
         if (targetPv == null) return;
 
@@ -64,7 +65,7 @@ public class PlayerInteractor : MonoBehaviourPun
 
         if (!interactable.CanInteract(actorNumber)) return;
 
-        interactable.ServerInteract(actorNumber);
+        interactable.Interact(actorNumber);
     }
 
     // RPC를 전송한 유저의 pv를 반환
@@ -79,6 +80,7 @@ public class PlayerInteractor : MonoBehaviourPun
         return null;
     }
 
+    // 카메라 중심 레이 발사
     private void Update()
     {
         if (!photonView.IsMine)
@@ -86,9 +88,12 @@ public class PlayerInteractor : MonoBehaviourPun
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         if (Physics.Raycast(ray, out var hit, range, interactMask))
-            current = hit.collider.GetComponentInParent<IInteractable>();
+        {
+            current = hit.collider.GetComponent<IInteractable>();
+        }
     }
 
+    // 레이 시각화
     private void OnDrawGizmos()
     {
         if (cam == null) return;

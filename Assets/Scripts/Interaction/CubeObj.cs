@@ -14,9 +14,11 @@ public class CubeObj : MonoBehaviourPun, IInteractable
         return true;
     }
     
-    public void ServerInteract(int actorId)
-    {
-        // 나 이거 수행했어! 를 모든 클라이언트에게 알려주기
+    // 나 상호작용 할거야! 하고 모든 클라이언트로부터 수행할 메서드
+    public void Interact(int actorId)
+    {   
+        Debug.Log("상호작용 수행!");
+        this.gameObject.SetActive(false);
     }
 
     public void ClientApplyState()
