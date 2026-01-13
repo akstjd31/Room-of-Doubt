@@ -4,7 +4,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    public static GameManager Instance;
+    public static GameManager Instance; 
     [SerializeField] private Transform playerPrefab;
     [SerializeField] private Vector3 spawnPos;
     
