@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   playerPrefab: {fileID: 1714889846320777485, guid: 97c79ebbcdd92794db0f03a161d3f740, type: 3}
-  spawnPos: {x: 0, y: 5, z: 0}
 --- !u!4 &262117242
 Transform:
   m_ObjectHideFlags: 0
