@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
@@ -6,6 +8,7 @@ using System.Collections;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private Button startButton;
     private const int MAX_PLAYER = 4;
 
     private void Awake()
@@ -25,8 +28,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRandomOrCreateRoom(expectedMaxPlayers: MAX_PLAYER);
     }
 
-    private void Start()
+    public void StartButton()
     {
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.LoadLevel("InGameScene");
     }
 
     public override void OnJoinedRoom()
@@ -35,6 +40,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
         foreach (var p in PhotonNetwork.PlayerList)
             Debug.Log("방 사람들 목록: " + p.NickName);
+
+        // 방 시작 버튼은 마스터 클라이언트(방장)에게만 권한이 있음.
+        startButton.interactable = PhotonNetwork.IsMasterClient;
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -70,6 +78,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         Debug.Log(newMasterClient.NickName + " 님이 새로운 방장이 되었습니다.");
 
-        // 방장 바뀌었을 때 해줘야 하는 부분들 추가
+        // 방장 바뀜 == 시작버튼 권한 양도
+        startButton.interactable = PhotonNetwork.IsMasterClient;
     }
 }
