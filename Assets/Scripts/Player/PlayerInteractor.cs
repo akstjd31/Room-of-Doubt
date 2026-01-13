@@ -87,7 +87,19 @@ public class PlayerInteractor : MonoBehaviourPun
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         if (Physics.Raycast(ray, out var hit, range, interactMask))
             current = hit.collider.GetComponentInParent<IInteractable>();
+    }
 
-        Debug.Log(current?.Prompt);
+    private void OnDrawGizmos()
+    {
+        if (cam == null) return;
+
+        Vector3 origin = cam.transform.position;
+        Vector3 dir = cam.transform.forward;
+
+        bool hitSomething = Physics.Raycast(origin, dir, out RaycastHit hit, range, interactMask);
+        Gizmos.color = hitSomething ? Color.green : Color.red;
+
+        Vector3 end = hitSomething ? hit.point : origin + dir * range;
+        Gizmos.DrawLine(origin, end);
     }
 }
