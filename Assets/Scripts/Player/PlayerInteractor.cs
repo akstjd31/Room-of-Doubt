@@ -40,7 +40,7 @@ public class PlayerInteractor : MonoBehaviourPun
         Debug.Log("E키 누름");
         
         // 상호작용 RPC 수행
-        photonView.RPC(nameof(RPC_TryInteract), 
+        photonView.RPC(nameof(TryInteractRPC), 
                     RpcTarget.All,
                     current.ViewId,
                     PhotonNetwork.LocalPlayer.ActorNumber);
@@ -48,7 +48,7 @@ public class PlayerInteractor : MonoBehaviourPun
 
     // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
     [PunRPC]
-    private void RPC_TryInteract(int targetViewId, int actorNumber, PhotonMessageInfo info)
+    private void TryInteractRPC(int targetViewId, int actorNumber, PhotonMessageInfo info)
     {
         PhotonView targetPv = PhotonView.Find(targetViewId);
         if (targetPv == null) return;
@@ -91,6 +91,13 @@ public class PlayerInteractor : MonoBehaviourPun
         {
             current = hit.collider.GetComponent<IInteractable>();
         }
+        else
+        {
+            if (current != null)
+                current = null;
+        }
+
+        UIManager.Instance.UpdateObjectNameText(current?.Prompt);
     }
 
     // 레이 시각화
