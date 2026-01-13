@@ -44,7 +44,6 @@ public class PlayerInteractor : MonoBehaviourPun
                     RpcTarget.All,
                     current.ViewId,
                     PhotonNetwork.LocalPlayer.ActorNumber);
-
     }
 
     // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
