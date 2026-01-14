@@ -8,7 +8,7 @@ public class QuickSlotManager : MonoBehaviourPun
     const int MAX_SLOT_COUNT = 4;
 
     [Header("Slot")]
-    [SerializeField] private GameObject slot;
+    [SerializeField] private Transform slotPrefab;   // 슬롯 프리팹
     public Slot[] slots;
     public int selectedSlotIndex;
 
@@ -25,13 +25,13 @@ public class QuickSlotManager : MonoBehaviourPun
 
         slots = new Slot[MAX_SLOT_COUNT];
 
-        if (slot != null)
+        if (slotPrefab != null)
         {
             GameObject quickSlotObj = GameObject.FindGameObjectWithTag("QuickSlot");
 
             for (int i = 0; i < MAX_SLOT_COUNT; i++)
             {
-                GameObject newSlotObj = Instantiate(slot, quickSlotObj.transform.GetChild(0));
+                GameObject newSlotObj = Instantiate(slotPrefab.gameObject, quickSlotObj.transform.GetChild(0));
                 slots[i] = newSlotObj.GetComponent<Slot>();
             }
         }

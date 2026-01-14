@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 761d2fd6e90af034fbaaccf2fdd8b250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
-  slot: {fileID: 8458029007182020070, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
+  slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
   slots: []
   selectedSlotIndex: 0
 --- !u!1 &722831112647567941
