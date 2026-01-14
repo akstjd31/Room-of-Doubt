@@ -10,7 +10,7 @@ public class QuickSlotManager : MonoBehaviourPun
     [Header("Slot")]
     [SerializeField] private Transform slotPrefab;   // 슬롯 프리팹
     public Slot[] slots;
-    public int selectedSlotIndex;
+    private int selectedSlotIndex;
 
     private PlayerInput playerInput;
     private InputAction selectAction, scrollAction;
@@ -56,6 +56,7 @@ public class QuickSlotManager : MonoBehaviourPun
             scrollAction.performed -= OnScrollSlotPerformed;
     }
 
+    // 아이템 추가 (아이템)
     public void AddItem(Item item)
     {
         foreach (Slot slot in slots)
@@ -65,6 +66,29 @@ public class QuickSlotManager : MonoBehaviourPun
                 slot.AddItem(item);
                 break;
             }
+        }
+    }
+
+    // 아이템 제거 (인덱스)
+    public void RemoveItem()
+    {
+        if (selectedSlotIndex < 0 || selectedSlotIndex >= MAX_SLOT_COUNT) return;
+        if (slots[selectedSlotIndex].IsEmptySlot()) return;
+
+        slots[selectedSlotIndex].ClearSlot();
+    }
+
+    public bool CompareItem(Item item)
+    {
+        if (selectedSlotIndex < 0 || selectedSlotIndex >= MAX_SLOT_COUNT) return false;
+        if (slots[selectedSlotIndex].IsEmptySlot() || item == null) return false;
+
+        if (slots[selectedSlotIndex].currentItem.Equals(item))
+            return true;
+        else
+        {
+            Debug.Log("다른 아이템입니다!");
+            return false;
         }
     }
 

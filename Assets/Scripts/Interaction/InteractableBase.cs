@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(PhotonView))]
 public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 {
     [Header("Base Settings")]

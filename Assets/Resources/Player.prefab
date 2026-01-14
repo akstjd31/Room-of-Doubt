@@ -239,7 +239,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
   slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
   slots: []
-  selectedSlotIndex: 0
 --- !u!1 &722831112647567941
 GameObject:
   m_ObjectHideFlags: 0
