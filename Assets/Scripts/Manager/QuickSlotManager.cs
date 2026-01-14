@@ -56,7 +56,8 @@ public class QuickSlotManager : MonoBehaviourPun
             scrollAction.performed -= OnScrollSlotPerformed;
     }
 
-    private void UpdateSlotFocusing(int index)
+    // 포커싱된 슬롯 색 변경
+    private void UpdateSlotFocusedColor(int index)
     {
         for (int i = 0; i < MAX_SLOT_COUNT; i++)
         {
@@ -67,6 +68,7 @@ public class QuickSlotManager : MonoBehaviourPun
         }
     }
 
+    // 숫자 버튼으로 슬롯 변경 방식
     private void OnSelectSlotPerformed(InputAction.CallbackContext ctx)
     {
         int nextIndex = int.Parse(ctx.control.name) - 1;
@@ -74,9 +76,10 @@ public class QuickSlotManager : MonoBehaviourPun
         if (nextIndex < 0 || nextIndex >= MAX_SLOT_COUNT) return;
         selectedSlotIndex = nextIndex;
 
-        UpdateSlotFocusing(selectedSlotIndex);
+        UpdateSlotFocusedColor(selectedSlotIndex);
     }
 
+    // 스크롤로 슬롯 변경 방식
     private void OnScrollSlotPerformed(InputAction.CallbackContext ctx)
     {
         float value = ctx.ReadValue<Vector2>().y;
@@ -88,6 +91,6 @@ public class QuickSlotManager : MonoBehaviourPun
         else if (nextIndex >= MAX_SLOT_COUNT) nextIndex = 0;
         
         selectedSlotIndex = nextIndex;
-        UpdateSlotFocusing(selectedSlotIndex);
+        UpdateSlotFocusedColor(selectedSlotIndex);
     }
 }
