@@ -10,7 +10,7 @@ public class PlayerInteractor : MonoBehaviourPun
     [SerializeField] private Camera cam;
     [SerializeField] private float range = 3f;
     [SerializeField] private LayerMask interactMask;
-    private IInteractable current;
+    private InteractableBase current;
 
     private void Awake()
     {
@@ -42,18 +42,18 @@ public class PlayerInteractor : MonoBehaviourPun
         // 상호작용 RPC 수행
         photonView.RPC(nameof(TryInteractRPC), 
                     RpcTarget.All,
-                    current.ViewId,
-                    PhotonNetwork.LocalPlayer.ActorNumber);
+                    current.ViewId);
     }
 
     // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
     [PunRPC]
-    private void TryInteractRPC(int targetViewId, int actorNumber, PhotonMessageInfo info)
+    private void TryInteractRPC(int targetViewId, PhotonMessageInfo info)
     {
+        // 해당 오브젝트의 ViewID
         PhotonView targetPv = PhotonView.Find(targetViewId);
         if (targetPv == null) return;
 
-        var interactable = targetPv.GetComponent<IInteractable>();
+        var interactable = targetPv.GetComponent<InteractableBase>();
         if (interactable == null) return;
 
         var actorPv = FindActorPhotonView(info.Sender);
@@ -62,9 +62,7 @@ public class PlayerInteractor : MonoBehaviourPun
         float dist = Vector3.Distance(actorPv.transform.position, targetPv.transform.position);
         if (dist > 4.0f) return;
 
-        if (!interactable.CanInteract(actorNumber)) return;
-
-        interactable.Interact(actorNumber);
+        interactable.RequestInteract(actorPv.Owner.ActorNumber);
     }
 
     // RPC를 전송한 유저의 pv를 반환
@@ -89,7 +87,7 @@ public class PlayerInteractor : MonoBehaviourPun
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         if (Physics.Raycast(ray, out var hit, range, interactMask))
         {
-            current = hit.collider.GetComponent<IInteractable>();
+            current = hit.collider.GetComponent<InteractableBase>();
         }
         else
         {
