@@ -1,10 +1,9 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class CubeObj : InteractableBase
+public class LockedObj : InteractableBase
 {
     public override void Interact(int actorNumber)
     {
-        this.gameObject.SetActive(false);
     }
 }

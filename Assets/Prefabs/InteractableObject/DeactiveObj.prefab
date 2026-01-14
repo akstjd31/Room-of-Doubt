@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1253543421587421543}
   - component: {fileID: -2459177699074840682}
   m_Layer: 11
-  m_Name: Cube
+  m_Name: DeactiveObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,4 +148,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CubeObj
   prompt: Cube
-  item: {fileID: 11400000, guid: 4645b8270ebd5a9448baff00b2c2737a, type: 2}

@@ -1,22 +1,10 @@
 using Photon.Pun;
 using UnityEngine;
 
-public class Key : MonoBehaviourPun, IInteractable
+public class Key : InteractableBase
 {
-    [SerializeField] private string prompt;
-    public int ViewId => photonView.ViewID;
-
-    public string Prompt => prompt;
-
-    [SerializeField] private Item item;
-    public Item RewardItem => item;
-
-    public bool CanInteract(int actorNumber, Item equippedItem = null)
-    {
-        return true;   
-    }
-
-    public void Interact(int actorNumber, Item usedItem = null)
+    // 상호 작용 시 열쇠 획득
+    public override void Interact(int actorNumber)
     {
         if (GameManager.Instance.playerData.TryGetValue(actorNumber, out GameObject playerObj))
         {
@@ -24,11 +12,7 @@ public class Key : MonoBehaviourPun, IInteractable
             quickMgr.AddItem(RewardItem);
         }
 
+        // 나중에 오브젝트 풀로 처리를 하든 해야됨.
         this.gameObject.SetActive(false);
-    }
-
-    public void ClientApplyState()
-    {
-        
     }
 }
