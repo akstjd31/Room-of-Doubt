@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         Instance = this;
-        playerQuickSlotData = new Dictionary<int, QuickSlotManager>();
+        playerQuickSlotMgrData = new Dictionary<int, QuickSlotManager>();
     }
 
     void Start()
@@ -45,20 +45,20 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         int actorNum = otherPlayer.ActorNumber;
-        if (playerQuickSlotData.ContainsKey(actorNum))
+        if (playerQuickSlotMgrData.ContainsKey(actorNum))
         {
-            PhotonNetwork.Destroy(playerQuickSlotData[actorNum].gameObject);
+            PhotonNetwork.Destroy(playerQuickSlotMgrData[actorNum].gameObject);
             RemoveData(actorNum);
         }
     }
 
     private void AddData(int actorNumber, QuickSlotManager quickSlot)
     {
-        playerQuickSlotData[actorNumber] = quickSlot;
+        playerQuickSlotMgrData[actorNumber] = quickSlot;
     }
 
     private void RemoveData(int actorNumber)
     {
-        playerQuickSlotData.Remove(actorNumber);
+        playerQuickSlotMgrData.Remove(actorNumber);
     }
 }
