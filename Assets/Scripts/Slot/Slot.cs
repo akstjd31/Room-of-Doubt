@@ -19,4 +19,6 @@ public class Slot : MonoBehaviour
         currentItem = null;
         iconImage.sprite = null;
     }
+
+    public bool IsEmptySlot() => currentItem == null;
 }

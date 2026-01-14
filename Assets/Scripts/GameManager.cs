@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -9,11 +10,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public const float MAX_Y = 5f;
     public const float MIN_Y = 2f;
     public static GameManager Instance; 
+    // public Dictionary<int, GameObject> playerDict;
     [SerializeField] private Transform playerPrefab;
     
     void Awake()
     {
         Instance = this;
+        // playerDict = new Dictionary<int, GameObject>();
     }
 
     void Start()

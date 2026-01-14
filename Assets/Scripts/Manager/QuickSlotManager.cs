@@ -56,6 +56,18 @@ public class QuickSlotManager : MonoBehaviourPun
             scrollAction.performed -= OnScrollSlotPerformed;
     }
 
+    public void AddItem(Item item)
+    {
+        foreach (Slot slot in slots)
+        {
+            if (slot.IsEmptySlot())
+            {
+                slot.AddItem(item);
+                break;
+            }
+        }
+    }
+
     // 포커싱된 슬롯 색 변경
     private void UpdateSlotFocusedColor(int index)
     {
