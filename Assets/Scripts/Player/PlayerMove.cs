@@ -16,6 +16,13 @@ public class PlayerMove : MonoBehaviourPun
     [SerializeField] private float moveSpeed = 4f;
     private Vector2 moveInput;
 
+    private void OnEnable()
+    {
+        if (!photonView.IsMine) return;
+        
+        moveAction.performed += OnMovePerformed;
+        moveAction.canceled += OnMoveCanceled;
+    }
 
     private void Awake()
     {
@@ -29,12 +36,15 @@ public class PlayerMove : MonoBehaviourPun
         moveAction = playerInput.actions["Move"];
     }
 
-    private void OnEnable()
+    private void Start()
     {
         if (!photonView.IsMine) return;
         
-        moveAction.performed += OnMovePerformed;
-        moveAction.canceled += OnMoveCanceled;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGamePaused += DisableMoveAction;
+            GameManager.Instance.OnGameResumed += EnableMoveAction;
+        }
     }
 
     private void FixedUpdate()
@@ -69,6 +79,24 @@ public class PlayerMove : MonoBehaviourPun
             moveAction.performed -= OnMovePerformed;
             moveAction.canceled -= OnMoveCanceled;
         }
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGamePaused -= DisableMoveAction;
+        GameManager.Instance.OnGameResumed -= EnableMoveAction;
+    }
+
+    private void DisableMoveAction()
+    {
+        if (!photonView.IsMine) return;
+        moveAction.Disable();
+    }
+
+    private void EnableMoveAction()
+    {
+        if (!photonView.IsMine) return;
+        moveAction.Enable();
     }
 
     public void OnMovePerformed(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();

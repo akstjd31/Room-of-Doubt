@@ -28,14 +28,6 @@ public class PlayerCameraController : MonoBehaviourPun
     private Vector2 lookInput;
     private float pitch;
 
-    private void Awake()
-    {
-        playerInput = this.GetComponent<PlayerInput>();
-        rigid = this.GetComponent<Rigidbody>();
-
-        lookAction = playerInput.actions["Look"];
-    }
-
     private void OnEnable()
     {
         if (!photonView.IsMine)
@@ -49,8 +41,26 @@ public class PlayerCameraController : MonoBehaviourPun
         lookAction.performed += OnLook;
         lookAction.canceled += OnLook;
         
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        SetCursor(CursorLockMode.Locked, false);
+    }
+
+    private void Awake()
+    {
+        playerInput = this.GetComponent<PlayerInput>();
+        rigid = this.GetComponent<Rigidbody>();
+
+        lookAction = playerInput.actions["Look"];
+    }
+
+    private void Start()
+    {
+        if (!photonView.IsMine) return;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGamePaused += HandlePause;
+            GameManager.Instance.OnGameResumed += HandleResumed;
+        }
     }
 
     private void OnDisable()
@@ -62,6 +72,21 @@ public class PlayerCameraController : MonoBehaviourPun
         }
     }
 
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGamePaused -= HandlePause;
+        GameManager.Instance.OnGameResumed -= HandleResumed;
+    }
+
+    private void HandlePause() => SetCursor(CursorLockMode.Confined, true);
+    private void HandleResumed() => SetCursor(CursorLockMode.Locked, false);
+
+    private void SetCursor(CursorLockMode mode, bool v)
+    {
+        Cursor.lockState = mode;
+        Cursor.visible = v;
+    }
+
     public void OnLook(InputAction.CallbackContext ctx)
     {
         lookInput = ctx.ReadValue<Vector2>();
@@ -70,6 +95,9 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void LateUpdate()
     {
+        if (GameManager.Instance.isPaused)
+            return;
+
         // 위 OnEnable에서 걸러지지만 확실한 셒코딩
         if (!photonView.IsMine) 
             return;
