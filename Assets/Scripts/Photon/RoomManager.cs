@@ -31,7 +31,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void StartButton()
     {
         if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            
+            // S == Started, 즉 시작됨을 알림.
+            ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "S", true } };
+            PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
             PhotonNetwork.LoadLevel("InGameScene");
+        }
     }
 
     public override void OnJoinedRoom()
