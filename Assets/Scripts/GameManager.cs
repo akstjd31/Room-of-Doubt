@@ -11,13 +11,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public const float MAX_Y = 5f;
     public const float MIN_Y = 2f;
     public static GameManager Instance; 
-    public Dictionary<int, GameObject> playerData;  // <ActorNumber, 플레이어 옵젝>
+    public Dictionary<int, QuickSlotManager> playerQuickSlotMgrData;  // <ActorNumber, 플레이어 옵젝>
     [SerializeField] private Transform playerPrefab;
     
     void Awake()
     {
         Instance = this;
-        playerData = new Dictionary<int, GameObject>();
+        playerQuickSlotData = new Dictionary<int, QuickSlotManager>();
     }
 
     void Start()
@@ -35,30 +35,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         );
 
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-        GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, randPos, Quaternion.identity);
-        PhotonView playerPv = newPlayer.GetComponent<PhotonView>();
+        var newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, randPos, Quaternion.identity);
+        var playerPv = newPlayer.GetComponent<PhotonView>();
 
         // 플레이어 데이터 저장
-        AddPlayer(playerPv.Owner.ActorNumber, newPlayer);
+        AddData(playerPv.Owner.ActorNumber, newPlayer.GetComponent<QuickSlotManager>());
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
         int actorNum = otherPlayer.ActorNumber;
-        if (playerData.ContainsKey(actorNum))
+        if (playerQuickSlotData.ContainsKey(actorNum))
         {
-            PhotonNetwork.Destroy(playerData[actorNum]);
-            RemovePlayer(actorNum);
+            PhotonNetwork.Destroy(playerQuickSlotData[actorNum].gameObject);
+            RemoveData(actorNum);
         }
     }
 
-    private void AddPlayer(int actorNumber, GameObject playerObj)
+    private void AddData(int actorNumber, QuickSlotManager quickSlot)
     {
-        playerData[actorNumber] = playerObj;
+        playerQuickSlotData[actorNumber] = quickSlot;
     }
 
-    private void RemovePlayer(int actorNumber)
+    private void RemoveData(int actorNumber)
     {
-        playerData.Remove(actorNumber);
+        playerQuickSlotData.Remove(actorNumber);
     }
 }

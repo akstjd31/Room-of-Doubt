@@ -6,10 +6,9 @@ public class Key : InteractableBase
     // 상호 작용 시 열쇠 획득
     public override void Interact(int actorNumber)
     {
-        if (GameManager.Instance.playerData.TryGetValue(actorNumber, out GameObject playerObj))
+        if (GameManager.Instance.playerQuickSlotMgrData.TryGetValue(actorNumber, out QuickSlotManager quickSlotMgr))
         {
-            var quickMgr = playerObj.GetComponent<QuickSlotManager>();
-            quickMgr.AddItem(RewardItem);
+            quickSlotMgr.AddItem(RewardItem);
         }
 
         // 나중에 오브젝트 풀로 처리를 하든 해야됨.
