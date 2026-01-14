@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 1993237869564940611}
   - component: {fileID: 7629103702865496340}
   - component: {fileID: 106123090159029425}
+  - component: {fileID: 4224976856973143483}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -224,6 +225,20 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 2048
+--- !u!114 &4224976856973143483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392177126937147979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 761d2fd6e90af034fbaaccf2fdd8b250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
+  slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
+  slots: []
 --- !u!1 &722831112647567941
 GameObject:
   m_ObjectHideFlags: 0

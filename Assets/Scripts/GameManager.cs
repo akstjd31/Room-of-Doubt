@@ -1,6 +1,8 @@
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
@@ -9,11 +11,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public const float MAX_Y = 5f;
     public const float MIN_Y = 2f;
     public static GameManager Instance; 
+    public Dictionary<int, QuickSlotManager> playerQuickSlotMgrData;  // <ActorNumber, 플레이어 옵젝>
     [SerializeField] private Transform playerPrefab;
     
     void Awake()
     {
         Instance = this;
+        playerQuickSlotMgrData = new Dictionary<int, QuickSlotManager>();
     }
 
     void Start()
@@ -31,6 +35,30 @@ public class GameManager : MonoBehaviourPunCallbacks
         );
 
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-        PhotonNetwork.Instantiate(playerPrefab.name, randPos, Quaternion.identity);
+        var newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, randPos, Quaternion.identity);
+        var playerPv = newPlayer.GetComponent<PhotonView>();
+
+        // 플레이어 데이터 저장
+        AddData(playerPv.Owner.ActorNumber, newPlayer.GetComponent<QuickSlotManager>());
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        int actorNum = otherPlayer.ActorNumber;
+        if (playerQuickSlotMgrData.ContainsKey(actorNum))
+        {
+            PhotonNetwork.Destroy(playerQuickSlotMgrData[actorNum].gameObject);
+            RemoveData(actorNum);
+        }
+    }
+
+    private void AddData(int actorNumber, QuickSlotManager quickSlot)
+    {
+        playerQuickSlotMgrData[actorNumber] = quickSlot;
+    }
+
+    private void RemoveData(int actorNumber)
+    {
+        playerQuickSlotMgrData.Remove(actorNumber);
     }
 }
