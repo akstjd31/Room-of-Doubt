@@ -11,18 +11,16 @@ public class Key : MonoBehaviourPun, IInteractable
     [SerializeField] private Item item;
     public Item RewardItem => item;
 
-    public bool CanInteract(int actorViewId, Item equippedItem = null)
+    public bool CanInteract(int actorNumber, Item equippedItem = null)
     {
         return true;   
     }
 
-    public void Interact(int actorViewId, Item usedItem = null)
+    public void Interact(int actorNumber, Item usedItem = null)
     {
-        PhotonView actorPv = PhotonView.Find(actorViewId);
-
-        if (actorPv != null)
+        if (GameManager.Instance.playerData.TryGetValue(actorNumber, out GameObject playerObj))
         {
-            var quickMgr = actorPv.GetComponent<QuickSlotManager>();
+            var quickMgr = playerObj.GetComponent<QuickSlotManager>();
             quickMgr.AddItem(RewardItem);
         }
 

@@ -43,12 +43,12 @@ public class PlayerInteractor : MonoBehaviourPun
         photonView.RPC(nameof(TryInteractRPC), 
                     RpcTarget.All,
                     current.ViewId,
-                    photonView.ViewID);
+                    PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
     [PunRPC]
-    private void TryInteractRPC(int targetViewId, int actorViewId, PhotonMessageInfo info)
+    private void TryInteractRPC(int targetViewId, int actorNumber, PhotonMessageInfo info)
     {
         PhotonView targetPv = PhotonView.Find(targetViewId);
         if (targetPv == null) return;
@@ -62,9 +62,9 @@ public class PlayerInteractor : MonoBehaviourPun
         float dist = Vector3.Distance(actorPv.transform.position, targetPv.transform.position);
         if (dist > 4.0f) return;
 
-        if (!interactable.CanInteract(actorViewId)) return;
+        if (!interactable.CanInteract(actorNumber)) return;
 
-        interactable.Interact(actorViewId);
+        interactable.Interact(actorNumber);
     }
 
     // RPC를 전송한 유저의 pv를 반환

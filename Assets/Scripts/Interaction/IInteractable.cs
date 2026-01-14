@@ -6,11 +6,11 @@ public interface IInteractable
     Item RewardItem { get; }            // 해당 상호작용을 통해 얻을 수 있는 아이템 (없다면 null)
 
     // 현 상호작용이 가능한지? (안되는 경우 ex. 다른 플레이어가 이용중일떄), 상호작용 할때 필요한 아이템도 인자로 넘겨받기
-    bool CanInteract(int actorViewId, Item equippedItem = null);      
+    bool CanInteract(int actorNumber, Item equippedItem = null);      
 
     // 상호작용 수행, 만약 특정 조건으로 아이템이 필요하여 사용된다면 추가로 프로퍼티로 받음
-    void Interact(int actorViewId, Item usedItem = null);     
-     
+    void Interact(int actorNumber, Item usedItem = null);     
+
     // 변경된 상태를 클라이언트에게 전달       
     void ClientApplyState();            
 }
