@@ -12,13 +12,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     public const float MIN_X = -1f;
     public const float MAX_Y = 5f;
     public const float MIN_Y = 2f;
-    public static GameManager Instance; 
+    public static GameManager Instance;
     public Dictionary<int, QuickSlotManager> playerQuickSlotMgrData;  // <ActorNumber, 플레이어 옵젝>
     [SerializeField] private Transform playerPrefab;
     public event Action OnGamePaused; // 일시정지 이벤트
     public event Action OnGameResumed; // 재개 이벤트
     public bool isPaused = false;
-    
+
     void Awake()
     {
         Instance = this;
@@ -43,6 +43,17 @@ public class GameManager : MonoBehaviourPunCallbacks
         isPaused = !isPaused;
         if (isPaused) OnGamePaused?.Invoke(); // 구독자들에게 신호 발송
         else OnGameResumed?.Invoke();
+    }
+
+    public void OnClickResumeButton() => TogglePause();
+    public void OnClickOptionsButton() => Debug.Log("제작 예정");
+    public void OnClickQuitButton()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     IEnumerator SpawnPlayerWhenConnected()
