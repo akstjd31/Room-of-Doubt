@@ -64,8 +64,8 @@ public class PlayerCameraController : MonoBehaviourPun
 
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.OnUIOpened += HandlePause;
-            UIManager.Instance.OnUIClosed += HandleResumed;
+            UIManager.Instance.OnInvenOpened += HandlePause;
+            UIManager.Instance.OnInvenClosed += HandleResumed;
         }
     }
 
@@ -83,8 +83,8 @@ public class PlayerCameraController : MonoBehaviourPun
         GameManager.Instance.OnGamePaused -= HandlePause;
         GameManager.Instance.OnGameResumed -= HandleResumed;
 
-        UIManager.Instance.OnUIOpened -= HandlePause;
-        UIManager.Instance.OnUIClosed -= HandleResumed;
+        UIManager.Instance.OnInvenOpened -= HandlePause;
+        UIManager.Instance.OnInvenClosed -= HandleResumed;
     }
 
     private void HandlePause() => SetCursor(CursorLockMode.Confined, true);

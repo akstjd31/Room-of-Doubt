@@ -1,4 +1,3 @@
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -44,27 +43,42 @@ public class SlotUI : MonoBehaviour,
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("fdsfds");
         var from = eventData.pointerDrag?.GetComponent<SlotUI>();
+
         if (from == null || from == this) return;
-        if (from.CurrnetSlot == null || from.CurrnetSlot.IsEmptySlot()) return;
+        if (from.CurrnetSlot.slotType.Equals(this.CurrnetSlot.slotType)) return;
+        if (from.CurrnetSlot.IsEmptySlot()) return;
+
+        int fromIndex = from.CurrnetSlot.slotIndex;
+        int toIndex = this.CurrnetSlot.slotIndex;
+
+        InventoryManager.Instance.RequestMoveItem
+        (
+            from.CurrnetSlot.slotType, from.CurrnetSlot.slotIndex,
+            this.CurrnetSlot.slotType, this.CurrnetSlot.slotIndex
+        );
 
         // this(드롭 받은 슬롯)가 비어있을 때만 이동
-        if (CurrnetSlot.IsEmptySlot())
-        {
-            CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
-            from.CurrnetSlot.ClearSlot();
-        }
-        else
-        {
-            // 비어있지 않으면 스왑(원하면)
-            var temp = CurrnetSlot.currentItem;
-            CurrnetSlot.ClearSlot();
-            CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
+        // if (CurrnetSlot.IsEmptySlot())
+        // {
+        //     CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
+        //     from.CurrnetSlot.ClearSlot();
 
-            from.CurrnetSlot.ClearSlot();
-            from.CurrnetSlot.AddItem(temp);
-        }
+        //     // 현재 슬롯이 인벤토리쪽 슬롯이라면 인벤토리 리스트 추가
+        //     // if (CurrnetSlot.slotType.Equals(SlotType.Inventory))
+        //     //     InventoryManager.Instance.AddItem(CurrnetSlot.currentItem);
+        //     // else
+        //     //     InventoryManager.Instance.RemoveItem(CurrnetSlot.currentItem);
+        // }
+        // else
+        // {
+        //     // 비어있지 않으면 스왑(원하면)
+        //     var temp = CurrnetSlot.currentItem;
+        //     CurrnetSlot.ClearSlot();
+        //     CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
+
+        //     from.CurrnetSlot.ClearSlot();
+        //     from.CurrnetSlot.AddItem(temp);
+        // }
     }
-
 }

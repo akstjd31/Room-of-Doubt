@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMove : MonoBehaviourPun
+public class PlayerMoveController : MonoBehaviourPun
 {
     private PlayerInput playerInput;
     private InputAction moveAction;

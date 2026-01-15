@@ -24,14 +24,8 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         // 일반적인 조사: 필요 아이템 없음.
         if (requiredItem == null) return true;
 
-        // 상호작용을 시도하려는 플레이어의 개인 퀵슬롯 관련 스크립트를 가져옴
-        if (GameManager.Instance.playerQuickSlotMgrData.TryGetValue(actorNumber, out QuickSlotManager quickSlotMgr))
-        {
-            // 같은 아이템인지 비교 결과 반환
-            return quickSlotMgr.CompareItem(RequiredItem);
-        }
-
-        return false; 
+        // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
+        return QuickSlotManager.Instance.CompareItem(requiredItem); 
     }
 
     // 상호작용 응답
@@ -40,14 +34,12 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         // 로컬에서 상호작용이 가능한지 검증 후
         if (CanInteract(actorNumber))
         {
-            if (GameManager.Instance.playerQuickSlotMgrData.TryGetValue(actorNumber, out QuickSlotManager quickSlotMgr))
-            {
-                if (requiredItem != null)
-                    quickSlotMgr.RemoveItem();
-                
-                if (RewardItem != null)
-                    quickSlotMgr.AddItem(RewardItem);
-            }
+            if (requiredItem != null)
+                QuickSlotManager.Instance.RemoveItem();
+
+            if (RewardItem != null)
+                QuickSlotManager.Instance.AddItem(RewardItem);
+
 
             // 실제 상호작용은 RPC로 전달
             photonView.RPC(nameof(InteractRPC), RpcTarget.AllBuffered, actorNumber);

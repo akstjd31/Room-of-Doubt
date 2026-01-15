@@ -1,40 +1,92 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Collections.Generic;
+using Photon.Pun;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 // 현재 보관하고 있는 아이템 관리
 // 아이템이 추가, 제거, 탐색 가능한 기능
-public class InventoryManager : Singleton<InventoryManager>
+public class InventoryManager : MonoBehaviourPunCallbacks
 {
-    public List<Item> inventoryItems;
+    public static InventoryManager Instance;
+    [Header("References")]
     [SerializeField] private GameObject panelObj;
+    [SerializeField] private GameObject bagObj;
+    [SerializeField] private Transform slotPrefab;
 
+    [Header("Slot")]
+    public List<int> itemDatabase;
+    [SerializeField] private int slotCount = 20;
+    private List<Slot> slots;
     private void Awake()
     {
-        inventoryItems = new List<Item>();
+        Instance = this;
+        itemDatabase = new List<int>();
+        slots = new List<Slot>();
+
+        if (bagObj != null)
+        {
+            for (int i = 0; i < slotCount; i++)
+            {
+                GameObject newSlot = Instantiate(slotPrefab.gameObject, bagObj.transform);
+                Slot slot = newSlot.GetComponent<Slot>();
+                slot.slotType = SlotType.Inventory;
+                slot.slotIndex = i;
+
+                slots.Add(slot);
+            }
+        }
+    }
+
+    private void Start()
+    {
+        // UIManager.Instance.OnInvenOpened += UpdateInventory;
+    }
+
+    private void OnDestroy()
+    {
+        // UIManager.Instance.OnInvenOpened -= UpdateInventory;
     }
 
     public void SetPanelActive(bool active) => panelObj.SetActive(active);
 
-    public void AddItem(Item item)
+    public void RequestMoveItem(SlotType fromType, int fromIdx, SlotType toType, int toIdx)
     {
-        inventoryItems.Add(item);
+        photonView.RPC(nameof(RequestMoveRPC), RpcTarget.MasterClient,
+                        fromType, fromIdx,
+                        toType, toIdx);
     }
 
-    public void RemoveItem(Item item)
+    [PunRPC]
+    private void RequestMoveRPC(SlotType fromType, int fromIdx, SlotType toType, int toIdx)
     {
-        inventoryItems.Remove(item);
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        // 스왑
+        int temp = itemDatabase[toIdx];
+        itemDatabase[toIdx] = itemDatabase[fromIdx];
+        itemDatabase[fromIdx] = temp;
+
+        photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, itemDatabase.ToArray());
     }
 
-    // 특정 아이템을 받아 현재 있는 리스트에 존재하는지 여부 판단
-    public Item FindItem(Item item)
+    [PunRPC]
+    private void SyncInventoryRPC(int[] updatedItems)
     {
-        foreach (Item invenItem in inventoryItems)
+        for (int i = 0; i < updatedItems.Length; i++)
         {
-            if (invenItem.Equals(item))
-                return invenItem;
+            itemDatabase[i] = updatedItems[i];
+            UpdateSlotUI(i, updatedItems[i]);
         }
+    }
 
-        return null;
+    private void UpdateSlotUI(int index, int itemId)
+    {
+        if (itemId == 0) slots[index].ClearSlot();
+        else
+        {
+            
+        }
     }
 }
