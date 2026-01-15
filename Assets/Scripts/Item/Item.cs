@@ -7,7 +7,8 @@ public class Item : ScriptableObject
 {
     [SerializeField, ReadOnly] private string id;    // 고유 ID
     public string ID => id;
-    public string itemName;
+    [SerializeField] private string itemName;
+    public string ItemName => itemName;
     public Sprite itemIcon;
     public GameObject itemPrefab;
 
@@ -19,6 +20,8 @@ public class Item : ScriptableObject
             id = Guid.NewGuid().ToString();
             UnityEditor.EditorUtility.SetDirty(this);
         }
+
+        itemName = this.name;
     }
 #endif
 }

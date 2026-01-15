@@ -53,12 +53,12 @@ public class QuickSlotManager : MonoBehaviour
         slots[forcusedIndex].ClearSlot();
     }
 
-    public bool CompareItem(Item item)
+    public bool CompareItem(string itemID)
     {
         if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return false;
-        if (slots[forcusedIndex].IsEmptySlot() || item == null) return false;
+        if (slots[forcusedIndex].IsEmptySlot()) return false;
 
-        if (slots[forcusedIndex].currentItem.Equals(item))
+        if (slots[forcusedIndex].currentItem.ID.Equals(itemID))
             return true;
         else
         {

@@ -1,6 +1,3 @@
-using Photon.Pun;
-using UnityEngine;
-
 public class Key : InteractableBase
 {
     // 상호 작용 시 열쇠 획득

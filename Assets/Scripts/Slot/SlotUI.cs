@@ -56,7 +56,8 @@ public class SlotUI : MonoBehaviour,
             from.CurrnetSlot.slotType, fromIndex,
             this.CurrnetSlot.slotType, toIndex
         );
-
+        
+        // 만약 인벤토리 자체를 로컬에서 관리하고 싶다면 아래 코드를 사용 ▼
         // this(드롭 받은 슬롯)가 비어있을 때만 이동
         // if (CurrnetSlot.IsEmptySlot())
         // {

@@ -25,7 +25,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (requiredItem == null) return true;
 
         // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        return QuickSlotManager.Instance.CompareItem(requiredItem); 
+        return QuickSlotManager.Instance.CompareItem(requiredItem.ID); 
     }
 
     // 상호작용 응답
