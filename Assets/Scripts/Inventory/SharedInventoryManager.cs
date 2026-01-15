@@ -99,7 +99,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             
             // 기존 데이터 제거 및 결과를 전송할 데이터(sendingItem) 임시 저장
             string sendingItem = sharedItems[fromIdx];
-            sharedItems[fromIdx] = "";
+            sharedItems[fromIdx] = QuickSlotManager.Instance.GetItemIdByIndex(toIdx);
 
             // 인벤토리의 변화가 생길때마다 노티해줌 (원격)
             photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems);

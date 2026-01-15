@@ -77,6 +77,8 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         // 숫자 버튼으로 슬롯 변경 방식
     private void OnSelectSlotPerformed(InputAction.CallbackContext ctx)
     {
+        if (UIManager.Instance.IsOpen) return;
+
         int nextIndex = int.Parse(ctx.control.name) - 1;
         
         if (nextIndex < 0 || nextIndex >= maxSlotCount) return;
@@ -88,6 +90,8 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     // 스크롤로 슬롯 변경 방식
     private void OnScrollSlotPerformed(InputAction.CallbackContext ctx)
     {
+        if (UIManager.Instance.IsOpen) return;
+        
         float value = ctx.ReadValue<Vector2>().y;
         
         int delta = value > 0 ? 1 : -1;

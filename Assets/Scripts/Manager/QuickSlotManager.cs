@@ -94,7 +94,7 @@ public class QuickSlotManager : MonoBehaviour
     // 매개변수로 받은 인덱스에 존재하는 아이템 ID를 반환
     public string GetItemIdByIndex(int index)
     {
-        if (slots[index].IsEmptySlot()) return null;
+        if (slots[index].IsEmptySlot()) return "";
         return slots[index].currentItem.ID;
     }
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
