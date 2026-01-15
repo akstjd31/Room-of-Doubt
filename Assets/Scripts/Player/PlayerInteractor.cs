@@ -80,8 +80,8 @@ public class PlayerInteractor : MonoBehaviourPun
     // 카메라 중심 레이 발사
     private void Update()
     {
-        if (!photonView.IsMine)
-            return;
+        if (UIManager.Instance.IsOpen) return;
+        if (!photonView.IsMine) return;
 
         // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);

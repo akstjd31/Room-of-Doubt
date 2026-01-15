@@ -49,6 +49,7 @@ public class PlayerMove : MonoBehaviourPun
 
     private void FixedUpdate()
     {
+        if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
 
         // 카메라 기준 방향 벡터

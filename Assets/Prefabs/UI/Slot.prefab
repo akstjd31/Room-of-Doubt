@@ -161,6 +161,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3265297297897320782}
   - component: {fileID: 1264017134026910777}
+  - component: {fileID: 6625329562207595996}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -203,3 +204,15 @@ MonoBehaviour:
   currentItem: {fileID: 0}
   iconImage: {fileID: 3787487834052408136}
   backgroundImage: {fileID: 5683413164856139048}
+--- !u!114 &6625329562207595996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8458029007182020070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2a6ac4f4f9c2c140a07547de8b5d2ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotUI

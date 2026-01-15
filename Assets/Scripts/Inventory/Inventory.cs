@@ -1,15 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 현재 보관하고 있는 아이템 관리
 // 아이템이 추가, 제거, 탐색 가능한 기능
 public class Inventory : MonoBehaviour
 {
     public List<Item> inventoryItems;
+    [SerializeField] private GameObject panelObj;
+
     private void Awake()
     {
         inventoryItems = new List<Item>();
     }
+
+    public void SetPanelActive(bool active) => panelObj.SetActive(active);
 
     public void AddItem(Item item)
     {

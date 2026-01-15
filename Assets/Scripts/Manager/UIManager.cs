@@ -1,12 +1,22 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 // 일단 텍스트 출력용 관리자인데 나중에 바뀔 수 있음.
 public class UIManager : Singleton<UIManager>
 {
     [SerializeField] private TextMeshProUGUI objNameText;
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private Inventory inven;
+    public bool IsOpen { get; private set; }
+    public event Action OnUIOpened;
+    public event Action OnUIClosed;
+
+    private void Awake()
+    {
+        inven = FindAnyObjectByType<Inventory>();
+    }
 
     private void Start()
     {
@@ -15,6 +25,20 @@ public class UIManager : Singleton<UIManager>
             GameManager.Instance.OnGamePaused += PauseMenuActivate;
             GameManager.Instance.OnGameResumed += PauseMenuDeactivate;
         }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+            ToggleUI();
+    }
+
+    void ToggleUI()
+    {
+        IsOpen = !IsOpen;
+        inven.SetPanelActive(IsOpen);
+        if (IsOpen) OnUIOpened?.Invoke();
+        else OnUIClosed?.Invoke();
     }
 
     private void OnDestroy()
