@@ -14,7 +14,7 @@ public class SlotUI : MonoBehaviour,
     private void Awake()
     {
         CurrnetSlot = this.GetComponent<Slot>();
-        canvasGroup = FindAnyObjectByType<UIManager>().GetComponent<CanvasGroup>();
+        canvasGroup = this.GetComponent<CanvasGroup>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -44,16 +44,27 @@ public class SlotUI : MonoBehaviour,
 
     public void OnDrop(PointerEventData eventData)
     {
+        Debug.Log("fdsfds");
         var from = eventData.pointerDrag?.GetComponent<SlotUI>();
         if (from == null || from == this) return;
-        
-        TrySwap(from, this);
+        if (from.CurrnetSlot == null || from.CurrnetSlot.IsEmptySlot()) return;
+
+        // this(드롭 받은 슬롯)가 비어있을 때만 이동
+        if (CurrnetSlot.IsEmptySlot())
+        {
+            CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
+            from.CurrnetSlot.ClearSlot();
+        }
+        else
+        {
+            // 비어있지 않으면 스왑(원하면)
+            var temp = CurrnetSlot.currentItem;
+            CurrnetSlot.ClearSlot();
+            CurrnetSlot.AddItem(from.CurrnetSlot.currentItem);
+
+            from.CurrnetSlot.ClearSlot();
+            from.CurrnetSlot.AddItem(temp);
+        }
     }
 
-    private void TrySwap(SlotUI from, SlotUI to)
-    {
-        var temp = to.CurrnetSlot;
-        to.CurrnetSlot = from.CurrnetSlot;
-        from.CurrnetSlot = temp;
-    }
 }
