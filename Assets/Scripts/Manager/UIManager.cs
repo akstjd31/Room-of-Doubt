@@ -8,15 +8,9 @@ public class UIManager : Singleton<UIManager>
 {
     [SerializeField] private TextMeshProUGUI objNameText;
     [SerializeField] private GameObject pauseMenu;
-    [SerializeField] private Inventory inven;
     public bool IsOpen { get; private set; }
     public event Action OnUIOpened;
     public event Action OnUIClosed;
-
-    private void Awake()
-    {
-        inven = FindAnyObjectByType<Inventory>();
-    }
 
     private void Start()
     {
@@ -36,7 +30,7 @@ public class UIManager : Singleton<UIManager>
     void ToggleUI()
     {
         IsOpen = !IsOpen;
-        inven.SetPanelActive(IsOpen);
+        InventoryManager.Instance.SetPanelActive(IsOpen);
         if (IsOpen) OnUIOpened?.Invoke();
         else OnUIClosed?.Invoke();
     }
