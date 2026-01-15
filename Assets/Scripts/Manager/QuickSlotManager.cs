@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Photon.Pun;
 
-public class QuickSlotManager : Singleton<QuickSlotManager>
+public class QuickSlotManager : MonoBehaviour
 {
+    public static QuickSlotManager Instance;
     const int MAX_SLOT_COUNT = 4;
 
     [Header("Slot")]
@@ -13,6 +13,7 @@ public class QuickSlotManager : Singleton<QuickSlotManager>
 
     private void Awake()
     {
+        Instance = this;
         slots = new Slot[MAX_SLOT_COUNT];
 
         if (slotPrefab != null)
@@ -80,6 +81,21 @@ public class QuickSlotManager : Singleton<QuickSlotManager>
         }
     }
 
-    // public int GetItemByIndex(int index) => slots[index];
+    public void UpdateSlotData(int index, string itemID)
+    {
+        Item newItem = ItemManager.Instance.GetItemById(itemID);
+
+        slots[index].ClearSlot();
+
+        if (newItem != null) 
+            slots[index].AddItem(newItem);
+    }
+
+    // 매개변수로 받은 인덱스에 존재하는 아이템 ID를 반환
+    public string GetItemIdByIndex(int index)
+    {
+        if (slots[index].IsEmptySlot()) return null;
+        return slots[index].currentItem.ID;
+    }
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
 }

@@ -1521,6 +1521,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1295288411}
     m_Modifications:
+    - target: {fileID: 5263644632623791259, guid: a525473154d1b0545a7d80ed210ab1ba, type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5679619698898179717, guid: a525473154d1b0545a7d80ed210ab1ba, type: 3}
       propertyPath: m_Name
       value: Inventory

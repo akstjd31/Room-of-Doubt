@@ -46,7 +46,6 @@ public class SlotUI : MonoBehaviour,
         var from = eventData.pointerDrag?.GetComponent<SlotUI>();
 
         if (from == null || from == this) return;
-        if (from.CurrnetSlot.slotType.Equals(this.CurrnetSlot.slotType)) return;
         if (from.CurrnetSlot.IsEmptySlot()) return;
 
         int fromIndex = from.CurrnetSlot.slotIndex;
@@ -54,8 +53,8 @@ public class SlotUI : MonoBehaviour,
 
         InventoryManager.Instance.RequestMoveItem
         (
-            from.CurrnetSlot.slotType, from.CurrnetSlot.slotIndex,
-            this.CurrnetSlot.slotType, this.CurrnetSlot.slotIndex
+            from.CurrnetSlot.slotType, fromIndex,
+            this.CurrnetSlot.slotType, toIndex
         );
 
         // this(드롭 받은 슬롯)가 비어있을 때만 이동

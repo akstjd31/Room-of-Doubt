@@ -33,8 +33,16 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        if (!photonView.IsMine) return;
+
         if (QuickSlotManager.Instance != null)
             maxSlotCount = QuickSlotManager.Instance.GetMaxSlotCount();
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGamePaused += DisableActions;
+            GameManager.Instance.OnGameResumed += EnableActions;
+        }
     }
 
     public override void OnDisable()
@@ -46,6 +54,24 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         
         if (scrollAction != null)
             scrollAction.performed -= OnScrollSlotPerformed;
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.OnGamePaused -= DisableActions;
+        GameManager.Instance.OnGameResumed -= EnableActions;
+    }
+
+    private void DisableActions()
+    {
+        selectAction.Disable();
+        scrollAction.Disable();
+    }
+
+    private void EnableActions()
+    {
+        selectAction.Enable();
+        scrollAction.Enable();
     }
 
         // 숫자 버튼으로 슬롯 변경 방식

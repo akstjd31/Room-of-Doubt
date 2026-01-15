@@ -258,6 +258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5764088538297128110}
+  - component: {fileID: 5263644632623791259}
   - component: {fileID: 3248688433516643570}
   m_Layer: 5
   m_Name: Inventory
@@ -286,6 +287,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 75}
   m_SizeDelta: {x: 1366, y: 618}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5263644632623791259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5679619698898179717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &3248688433516643570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,8 +324,8 @@ MonoBehaviour:
   panelObj: {fileID: 4598459975924190476}
   bagObj: {fileID: 7368777787437189284}
   slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
-  slots: []
-  slotCount: 20
+  sharedItems: 
+  inventorySize: 20
 --- !u!1 &7368777787437189284
 GameObject:
   m_ObjectHideFlags: 0
