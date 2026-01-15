@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerInteractor : MonoBehaviourPun
+public class PlayerInteractionController : MonoBehaviourPun
 {
     private PlayerInput playerInput;
     private InputAction interactInput;
@@ -36,8 +36,6 @@ public class PlayerInteractor : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
         if (current == null) return;
-
-        Debug.Log("E키 누름");
         
         // 상호작용 RPC 수행
         photonView.RPC(nameof(TryInteractRPC), 
@@ -61,8 +59,9 @@ public class PlayerInteractor : MonoBehaviourPun
 
         float dist = Vector3.Distance(actorPv.transform.position, targetPv.transform.position);
         if (dist > 4.0f) return;
-
-        interactable.RequestInteract(actorPv.Owner.ActorNumber);
+        
+        if (info.Sender.IsLocal)
+            interactable.RequestInteract(actorPv.Owner.ActorNumber);
     }
 
     // RPC를 전송한 유저의 pv를 반환
@@ -80,8 +79,8 @@ public class PlayerInteractor : MonoBehaviourPun
     // 카메라 중심 레이 발사
     private void Update()
     {
-        if (!photonView.IsMine)
-            return;
+        if (UIManager.Instance.IsOpen) return;
+        if (!photonView.IsMine) return;
 
         // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);

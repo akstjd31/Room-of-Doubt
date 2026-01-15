@@ -52,9 +52,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Pause",
+                    "name": "Inventory",
                     "type": "Button",
-                    "id": "391df615-728d-4a36-a64f-23d2272b79a2",
+                    "id": "ca43ee93-c82f-4a83-a590-9e6750842be2",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -196,12 +196,12 @@
                 },
                 {
                     "name": "",
-                    "id": "073075df-146d-491d-b93e-baaf82c32b84",
-                    "path": "<Keyboard>/escape",
+                    "id": "e5cc47ff-f4c8-4846-b745-5fe54f0e5514",
+                    "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pause",
+                    "action": "Inventory",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

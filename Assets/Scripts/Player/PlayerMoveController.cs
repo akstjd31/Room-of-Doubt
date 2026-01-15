@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMove : MonoBehaviourPun
+public class PlayerMoveController : MonoBehaviourPun
 {
     private PlayerInput playerInput;
     private InputAction moveAction;
@@ -49,6 +49,7 @@ public class PlayerMove : MonoBehaviourPun
 
     private void FixedUpdate()
     {
+        if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
 
         // 카메라 기준 방향 벡터

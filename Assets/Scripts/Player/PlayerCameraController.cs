@@ -61,6 +61,12 @@ public class PlayerCameraController : MonoBehaviourPun
             GameManager.Instance.OnGamePaused += HandlePause;
             GameManager.Instance.OnGameResumed += HandleResumed;
         }
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.OnInvenOpened += HandlePause;
+            UIManager.Instance.OnInvenClosed += HandleResumed;
+        }
     }
 
     private void OnDisable()
@@ -76,6 +82,9 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         GameManager.Instance.OnGamePaused -= HandlePause;
         GameManager.Instance.OnGameResumed -= HandleResumed;
+
+        UIManager.Instance.OnInvenOpened -= HandlePause;
+        UIManager.Instance.OnInvenClosed -= HandleResumed;
     }
 
     private void HandlePause() => SetCursor(CursorLockMode.Confined, true);
@@ -95,12 +104,9 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void LateUpdate()
     {
-        if (GameManager.Instance.isPaused)
-            return;
-
-        // 위 OnEnable에서 걸러지지만 확실한 셒코딩
-        if (!photonView.IsMine) 
-            return;
+        if (GameManager.Instance.isPaused) return;
+        if (UIManager.Instance.IsOpen) return;
+        if (!photonView.IsMine) return;
 
         float mouseX = lookInput.x * sensitivity;
         float mouseY = lookInput.y * sensitivity;
