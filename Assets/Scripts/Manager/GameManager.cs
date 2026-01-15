@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
+        // ESC == 일시정지
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
