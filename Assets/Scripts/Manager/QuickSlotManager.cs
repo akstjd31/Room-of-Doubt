@@ -25,6 +25,7 @@ public class QuickSlotManager : Singleton<QuickSlotManager>
                 slots[i] = newSlotObj.GetComponent<Slot>();
 
                 slots[i].slotType = SlotType.Quick;
+                slots[i].slotIndex = i;
             }
         }
     }
@@ -79,5 +80,6 @@ public class QuickSlotManager : Singleton<QuickSlotManager>
         }
     }
 
+    // public int GetItemByIndex(int index) => slots[index];
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
 }

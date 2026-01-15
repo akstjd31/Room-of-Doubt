@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d134a95c2ef77924ab1eeba4fbf7bcb4, type: 3}
   m_Name: Key
   m_EditorClassIdentifier: Assembly-CSharp::Item
+  id: 95c9b031-fe5e-46c9-9394-c255d7d5246f
   itemName: Key
   itemIcon: {fileID: 21300000, guid: bd293dc32f4aaf94e8274f2fac2cdf89, type: 3}
-  itemPrefab: {fileID: 0}
+  itemPrefab: {fileID: 8433952402616849495, guid: 212f240784d682d4ba8a002ea1ab63c8, type: 3}
