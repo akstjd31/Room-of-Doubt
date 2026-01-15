@@ -30,7 +30,7 @@ public class UIManager : Singleton<UIManager>
     void ToggleUI()
     {
         IsOpen = !IsOpen;
-        InventoryManager.Instance.SetPanelActive(IsOpen);
+        SharedInventoryManager.Instance.SetPanelActive(IsOpen);
         if (IsOpen) OnInvenOpened?.Invoke();
         else OnInvenClosed?.Invoke();
     }

@@ -51,7 +51,7 @@ public class SlotUI : MonoBehaviour,
         int fromIndex = from.CurrnetSlot.slotIndex;
         int toIndex = this.CurrnetSlot.slotIndex;
 
-        InventoryManager.Instance.RequestMoveItem
+        SharedInventoryManager.Instance.RequestMoveItem
         (
             from.CurrnetSlot.slotType, fromIndex,
             this.CurrnetSlot.slotType, toIndex

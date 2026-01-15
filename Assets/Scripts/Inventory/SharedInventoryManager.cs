@@ -8,22 +8,22 @@ using WebSocketSharp;
 
 // 현재 보관하고 있는 아이템 관리
 // 아이템이 추가, 제거, 탐색 가능한 기능
-public class InventoryManager : MonoBehaviourPunCallbacks
+public class SharedInventoryManager : MonoBehaviourPunCallbacks
 {
-    public static InventoryManager Instance;
+    public static SharedInventoryManager Instance;
     [Header("References")]
     [SerializeField] private GameObject panelObj;
     [SerializeField] private GameObject bagObj;
     [SerializeField] private Transform slotPrefab;
 
     [Header("Slot")]
-    public List<string> sharedItems;
+    public string[] sharedItems;
     [SerializeField] private int inventorySize = 20;
     private List<Slot> slots;
     private void Awake()
     {
         Instance = this;
-        sharedItems = new List<string>();
+        sharedItems = new string[inventorySize];
         slots = new List<Slot>();
 
         if (bagObj != null)
@@ -36,7 +36,7 @@ public class InventoryManager : MonoBehaviourPunCallbacks
                 slot.slotIndex = i;
 
                 slots.Add(slot);
-                sharedItems.Add("");
+                sharedItems[i] = "";
             }
         }
     }
@@ -53,6 +53,7 @@ public class InventoryManager : MonoBehaviourPunCallbacks
 
     public void SetPanelActive(bool active) => panelObj.SetActive(active);
 
+    // 아이템 이동 요청 (로컬에서 호출)
     public void RequestMoveItem(SlotType fromType, int fromIdx, SlotType toType, int toIdx)
     {
         string fromItemId = "";
@@ -63,6 +64,7 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         else
             fromItemId = sharedItems[fromIdx];
 
+        // 마스터 클라이언트에서 해당 데이터 처리
         photonView.RPC(nameof(RequestMoveRPC), RpcTarget.MasterClient,
                         fromType, fromIdx,
                         toType, toIdx, fromItemId);
@@ -77,15 +79,15 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         // 1. 퀵 슬롯 -> 인벤토리인 경우
         if (fromType.Equals(SlotType.Quick) && toType.Equals(SlotType.Inventory))
         {
-            if (toIdx < 0 || toIdx >= sharedItems.Count) return;
+            if (toIdx < 0 || toIdx >= sharedItems.Length) return;
 
             string targetOldItem = sharedItems[toIdx];
             sharedItems[toIdx] = itemID;
 
-            // 공용 인벤토리 동기화
-            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems.ToArray());
+            // 공용 인벤토리 동기화 (원격)
+            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems);
 
-            // 퀵 슬롯 결과 전송 (로컬만)
+            // 퀵 슬롯 결과 전송 (로컬)
             photonView.RPC(nameof(ResponseQuickSlotUpdate), info.Sender, fromIdx, targetOldItem);
             Debug.Log($"아이템 이동: 퀵 슬롯 -> 인벤토리");
         }
@@ -93,12 +95,16 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         // 2. 인벤토리 -> 퀵 슬롯인 경우
         else if (fromType.Equals(SlotType.Inventory) && toType.Equals(SlotType.Quick))
         {
-            if (fromIdx < 0 || fromIdx >= sharedItems.Count) return;
+            if (fromIdx < 0 || fromIdx >= sharedItems.Length) return;
             
+            // 기존 데이터 제거 및 결과를 전송할 데이터(sendingItem) 임시 저장
             string sendingItem = sharedItems[fromIdx];
             sharedItems[fromIdx] = "";
 
-            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems.ToArray());
+            // 인벤토리의 변화가 생길때마다 노티해줌 (원격)
+            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems);
+
+            // 개인 퀵 슬롯으로 가져오는 작업 (로컬)
             photonView.RPC(nameof(ResponseQuickSlotUpdate), info.Sender, toIdx, sendingItem);
             Debug.Log($"아이템 이동: 인벤토리 -> 퀵 슬롯");
         }
@@ -106,12 +112,13 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         // 3. 인벤토리 -> 인벤토리인 경우
         else
         {
-            if (fromIdx < 0 || fromIdx >= sharedItems.Count || toIdx < 0 || toIdx >= sharedItems.Count) return;
+            if (fromIdx < 0 || fromIdx >= sharedItems.Length || toIdx < 0 || toIdx >= sharedItems.Length) return;
 
-
+            // 스왑
             (sharedItems[toIdx], sharedItems[fromIdx]) = (sharedItems[fromIdx], sharedItems[toIdx]);
-
-            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems.ToArray());
+            
+            // 변경 결과 전송 (원격)
+            photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, sharedItems);
 
             if (fromType.Equals(SlotType.Inventory) && toType.Equals(SlotType.Inventory))
                 Debug.Log($"아이템 이동: 인벤토리 -> 인벤토리");
@@ -120,6 +127,7 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         }
     }
 
+    // 결과를 매개변수로 받아 저장 및 갱신
     [PunRPC]
     private void SyncInventoryRPC(string[] updatedItems)
     {
@@ -131,15 +139,17 @@ public class InventoryManager : MonoBehaviourPunCallbacks
         UpdateInventoryUI();
     }
 
+    // 퀵 슬롯 갱신 작업 (여기서 PRC를 호출한 이유는 퀵 슬롯에서 하면 퀵 슬롯 포톤 뷰 RPC로 동작해야한다는 점 떄문에)
     [PunRPC]
     public void ResponseQuickSlotUpdate(int slotIndex, string newItemID)
     {
         QuickSlotManager.Instance.UpdateSlotData(slotIndex, newItemID);
     }
 
+    // 인벤토리 갱신
     private void UpdateInventoryUI()
     {
-        for (int i = 0; i < sharedItems.Count; i++)
+        for (int i = 0; i < sharedItems.Length; i++)
         {
             if (sharedItems[i].IsNullOrEmpty())
             {
