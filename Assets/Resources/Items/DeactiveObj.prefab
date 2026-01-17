@@ -148,3 +148,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CubeObj
   prompt: Cube
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
