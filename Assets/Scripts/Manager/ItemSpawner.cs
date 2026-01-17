@@ -13,9 +13,32 @@ public class ItemSpawner : MonoBehaviourPunCallbacks
 
     [SerializeField] private SpawnPointGroup spawnPoints;
 
-    [SerializeField] private List<GameObject> itemPrefabs;
+    [SerializeField] private string resourcesFolder = "Items";
+    [SerializeField] private List<string> itemPrefabPaths;
 
     private bool spawnedLocally;
+
+    private void Awake()
+    {
+         LoadItemPrefabsFromResources();
+    }
+
+    // 해당 경로에 존재하는 아이템 경로 따오기
+    private void LoadItemPrefabsFromResources()
+    {
+        itemPrefabPaths.Clear();
+
+        GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(resourcesFolder);
+
+        foreach (var prefab in loadedPrefabs)
+        {
+            string path = $"{resourcesFolder}/{prefab.name}";
+            itemPrefabPaths.Add(path);
+        }
+
+        Debug.Log("아이템 경로 매핑 성공!");
+    }
+
     private void Start()
     {
         StartCoroutine(WaitAndInit());
@@ -44,6 +67,7 @@ public class ItemSpawner : MonoBehaviourPunCallbacks
         };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+        Debug.Log("시드 생성 완료!");
     }
 
     // 커스텀 프로퍼티 콜백
@@ -78,7 +102,7 @@ public class ItemSpawner : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsMasterClient) return;
 
         if (spawnPoints == null || spawnPoints.Count < 1) return;
-        if (itemPrefabs == null || itemPrefabs.Count < 1) return;
+        if (itemPrefabPaths == null || itemPrefabPaths.Count < 1) return;
 
         var rng = new System.Random(seed);
 
@@ -94,16 +118,19 @@ public class ItemSpawner : MonoBehaviourPunCallbacks
         }
         
         // 난수 리스트와 인덱스 매핑 후 생성
-        for (int i = 0; i < itemPrefabs.Count; i++)
+        for (int i = 0; i < itemPrefabPaths.Count; i++)
         {
-            var prefab = itemPrefabs[i];
+            string path = itemPrefabPaths[i];
             int spawnIndex = indices[i];
             var t = spawnPoints.Get(spawnIndex);
 
-            PhotonNetwork.InstantiateRoomObject(prefab.name, t.position, t.rotation);
+            GameObject itemObj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
+            Debug.Log($"{itemObj.name} 생성!");
         }
 
         room.SetCustomProperties(new PhotonHashtable { { KEY_DONE, true }});
         spawnedLocally = true;
+
+        Debug.Log("모든 아이템 생성 완료!");
     }
 }
