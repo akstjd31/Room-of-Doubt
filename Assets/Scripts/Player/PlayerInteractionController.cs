@@ -37,8 +37,6 @@ public class PlayerInteractionController : MonoBehaviourPun
         if (!photonView.IsMine) return;
         if (current == null) return;
 
-        Debug.Log("1");
-
         // 상호작용 RPC 수행
         photonView.RPC(nameof(TryInteractRPC),
                     RpcTarget.All,

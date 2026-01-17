@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5016325854180620680}
   - component: {fileID: 7119909557302683393}
   - component: {fileID: 5968873061886400199}
+  - component: {fileID: 71972799928813577}
+  - component: {fileID: 1287661161503131917}
   m_Layer: 11
   m_Name: KC-F600_Drawer_Front_SizeXS_V3_D1C2
   m_TagString: Untagged
@@ -113,6 +115,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5999999, y: 0.120000005, z: 0.030000009}
   m_Center: {x: -0.29999983, y: -0.059999995, z: 0.015000004}
+--- !u!114 &71972799928813577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569385389326877561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1287661161503131917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569385389326877561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36beb078acde58740bbb1b6836e70b7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Drawer
+  prompt: 
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
 --- !u!1 &867307494597512604
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,6 +829,8 @@ GameObject:
   - component: {fileID: 5648517222678418636}
   - component: {fileID: 1262095572246264733}
   - component: {fileID: 2478780363009920815}
+  - component: {fileID: 8638988308320599021}
+  - component: {fileID: 4359870724459272111}
   m_Layer: 11
   m_Name: KC-F600_Drawer_Front_SizeS_V3_D2C2
   m_TagString: Untagged
@@ -891,6 +932,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5999999, y: 0.24, z: 0.030000009}
   m_Center: {x: -0.29999983, y: -0.12, z: 0.015000004}
+--- !u!114 &8638988308320599021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876431142301372869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &4359870724459272111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5876431142301372869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36beb078acde58740bbb1b6836e70b7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Drawer
+  prompt: 
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
 --- !u!1 &6330978902284259625
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1208,8 @@ GameObject:
   - component: {fileID: 1952521348209000453}
   - component: {fileID: 9215216126434918649}
   - component: {fileID: 9088841393993234366}
+  - component: {fileID: 8061230496609606824}
+  - component: {fileID: 2034401500010996005}
   m_Layer: 11
   m_Name: KC-F600_Drawer_Front_SizeS_V3_D3C2
   m_TagString: Untagged
@@ -1231,6 +1311,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5999999, y: 0.24, z: 0.030000009}
   m_Center: {x: -0.29999983, y: -0.12, z: 0.015000004}
+--- !u!114 &8061230496609606824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8704267551708299974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &2034401500010996005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8704267551708299974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36beb078acde58740bbb1b6836e70b7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Drawer
+  prompt: 
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
 --- !u!1 &8788464092884058839
 GameObject:
   m_ObjectHideFlags: 0

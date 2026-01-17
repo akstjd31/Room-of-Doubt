@@ -538,7 +538,8 @@ GameObject:
   - component: {fileID: 5984472060228330085}
   - component: {fileID: 394613872221952176}
   - component: {fileID: 7377167372117478336}
-  - component: {fileID: 6701569790646665151}
+  - component: {fileID: 115700952741393152}
+  - component: {fileID: 3710332301828482981}
   m_Layer: 11
   m_Name: KC-F600_Drawer_Front_SizeL_V3_D1C5
   m_TagString: Untagged
@@ -640,28 +641,43 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5999999, y: 0.6, z: 0.030000009}
   m_Center: {x: -0.29999983, y: -0.3, z: 0.015000004}
---- !u!95 &6701569790646665151
-Animator:
-  serializedVersion: 7
+--- !u!114 &115700952741393152
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7514457820799476992}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 00426f1c2b058a94f8b30a5ce8f6eca1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &3710332301828482981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7514457820799476992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36beb078acde58740bbb1b6836e70b7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Drawer
+  prompt: 
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
 --- !u!1 &7891269414141831223
 GameObject:
   m_ObjectHideFlags: 0
