@@ -52,19 +52,15 @@ public class PlayerInteractionController : MonoBehaviourPun
         // 해당 오브젝트의 ViewID
         PhotonView targetPv = PhotonView.Find(targetViewId);
         if (targetPv == null) return;
-        Debug.Log("2");
 
         var interactable = targetPv.GetComponent<InteractableBase>();
         if (interactable == null) return;
-        Debug.Log("3");
 
         var actorPv = FindActorPhotonView(info.Sender);
         if (actorPv == null) return;
-        Debug.Log("4");
 
         float dist = Vector3.Distance(actorPv.transform.position, targetPv.transform.position);
         if (dist > 4.0f) return;
-        Debug.Log("5");
 
         if (info.Sender.IsLocal)
             interactable.RequestInteract(actorPv.Owner.ActorNumber);
