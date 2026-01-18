@@ -1,16 +1,20 @@
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class WirePort : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [Header("ID (정답 매칭용)")]
+    public int portId;
 
-    // Update is called once per frame
-    void Update()
+    [Header("시각용(선택)")]
+    public Transform wireAnchor;
+
+    public Vector3 AnchorPos => (wireAnchor != null) ? wireAnchor.position : this.transform.position;
+
+    private void OnDrawGizmos()
     {
-        
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(AnchorPos, 0.03f);
     }
+    
 }
