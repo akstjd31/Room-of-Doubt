@@ -1,5 +1,6 @@
 using System;
 using Photon.Pun;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerCameraController : MonoBehaviourPun
 {
+    public static PlayerCameraController Instance;
     private PlayerInput playerInput;
     private InputAction lookAction;
     private Rigidbody rigid;
@@ -17,6 +19,7 @@ public class PlayerCameraController : MonoBehaviourPun
 
     [Header("Local Camera")]
     [SerializeField] private GameObject cameraRoot;
+    public CinemachineCamera playerCam;
 
     [Header("Value")]
     [SerializeField] private float sensitivity = 0.07f;
@@ -46,6 +49,9 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void Awake()
     {
+        if (photonView.IsMine)
+            Instance = this;
+
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();
 
