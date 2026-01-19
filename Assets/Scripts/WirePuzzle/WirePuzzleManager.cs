@@ -37,6 +37,17 @@ public class WirePuzzleManager : MonoBehaviour
     [SerializeField] private int pairCount = 3;
     [SerializeField] private int seed = -1;         // -1: 랜덤, 아니면 고정
 
+    private int topCount => columns;
+    
+    private bool IsTop(int id) => id >= 1 && id <= topCount;
+    private bool IsBottom(int id) => id > topCount && id <= topCount * 2;
+
+    // 탑 - 바텀 쌍이어야 함.
+    private bool IsValidPair(int aId, int bId)
+    {
+        return (IsTop(aId) && IsBottom(bId)) || (IsBottom(aId) && IsTop(bId));
+    }
+
     private readonly List<WirePort> spawnedPorts = new();
 
     private void Awake()
@@ -69,7 +80,6 @@ public class WirePuzzleManager : MonoBehaviour
         answerPairs.Clear();
 
         int n = columns;
-        int poartCount = n * 2;
 
         var topSlots = GetChildSlots(topSlotsParent);
         var bottomSlots = GetChildSlots(bottomSlotsParent);
@@ -266,6 +276,9 @@ public class WirePuzzleManager : MonoBehaviour
     {
         int aId = a.portId;
         int bId = b.portId;
+
+        // 올바른 연결이 아닌 경우 패스 (기본적으로 탑 - 바텀 쌍)
+        if (!IsValidPair(aId, bId)) return;
 
         // 이미 연결되어 있다? 연결 끊기
         if (IsDirectLinked(aId, bId))
