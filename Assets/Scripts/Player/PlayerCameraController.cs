@@ -55,6 +55,7 @@ public class PlayerCameraController : MonoBehaviourPun
         rigid = this.GetComponent<Rigidbody>();
 
         lookAction = playerInput.actions["Look"];
+        playerCam.Priority = 20;
     }
 
     private void Start()
