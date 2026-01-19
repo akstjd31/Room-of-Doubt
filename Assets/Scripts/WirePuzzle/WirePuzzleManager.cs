@@ -21,6 +21,9 @@ public class WirePuzzleManager : MonoBehaviour
     [Header("Port Colors")]
     [SerializeField] private Material[] colorMaterials;
 
+    [Header("Color Names (colorMaterials와 같은 순서)")]
+    [SerializeField] private string[] colorNames;
+
     private readonly Dictionary<int, WirePort> portById = new();
 
     private Dictionary<int, int> answerMap;
@@ -60,6 +63,7 @@ public class WirePuzzleManager : MonoBehaviour
         if (cam == null) cam = Camera.main;
 
         answerMap = new Dictionary<int, int>();
+        colorNames = new string[columns * 2];
         // foreach (var p in answerPairs)
         // {
         //     if (p.a == p.b) continue;
@@ -75,6 +79,7 @@ public class WirePuzzleManager : MonoBehaviour
     private void Start()
     {
         SetupRandomPuzzle();
+        Debug.Log(BuildColorHintText());
     }
 
     private void SetupRandomPuzzle()
@@ -87,6 +92,7 @@ public class WirePuzzleManager : MonoBehaviour
 
         int n = columns;
 
+        // 각 슬롯 자식 리스트 가져오기
         var topSlots = GetChildSlots(topSlotsParent);
         var bottomSlots = GetChildSlots(bottomSlotsParent);
 
@@ -95,11 +101,13 @@ public class WirePuzzleManager : MonoBehaviour
             Debug.LogError("슬롯 부족!");
         }
 
+        // -1이면 랜덤, 아니면 고정
         System.Random rand = (seed < 0) ? new System.Random() : new System.Random(seed);
 
         Shuffle(topSlots, rand);
         Shuffle(bottomSlots, rand);
 
+        // 셔플된 리스트에 생성 및 각 ID 부여
         for (int i = 0; i < n; i++)
         {
             var p = Instantiate(portPrefab, topSlots[i].position, topSlots[i].rotation);
@@ -135,6 +143,7 @@ public class WirePuzzleManager : MonoBehaviour
             int portId = i + 1;
             int cIdx = topColorIdx[i];
             SetPortMaterial(portId, colorMaterials[cIdx]);
+            colorNames[i] = colorMaterials[cIdx].name;
             topColorToPortId[cIdx] = portId;
         }
 
@@ -145,6 +154,7 @@ public class WirePuzzleManager : MonoBehaviour
             int portId = n + i + 1;
             int cIdx = bottomColorIdx[i];
             SetPortMaterial(portId, colorMaterials[cIdx]);
+            colorNames[n + i] = colorMaterials[cIdx].name;
             bottomColorToPortId[cIdx] = portId;
         }
 
@@ -236,45 +246,26 @@ public class WirePuzzleManager : MonoBehaviour
         }
     }
 
-    // 색 랜덤
-    private void ApplyUniqueTopBottomColors(System.Random rand)
+    public string BuildColorHintText()
     {
-        int n = columns; // Top n개, Bottom n개
+        if (colorNames == null || colorNames.Length == 0)
+            return "색 이름이 설정되지 않았습니다.";
 
-        if (colorMaterials == null || colorMaterials.Length < n)
+        if (answerPairs == null || answerPairs.Count == 0)
+            return null;
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine("회로 색상 매핑표");
+        foreach (var p in answerPairs)
         {
-            Debug.LogError($"색상이 부족합니다. 최소 {n}개 필요");
-            return;
+            string topColor = colorNames[p.a - 1];
+            string bottomColor = colorNames[p.b - 1];
+            sb.AppendLine($"{topColor} -> {bottomColor}");
         }
 
-        // 색 인덱스 리스트 만들기 (0~n-1)
-        List<int> colorIndices = new List<int>();
-        for (int i = 0; i < n; i++)
-            colorIndices.Add(i);
-
-        // Top용 색 셔플
-        Shuffle(colorIndices, rand);
-
-        // Top: 1 ~ n
-        for (int i = 0; i < n; i++)
-        {
-            int portId = i + 1;
-            int colorIdx = colorIndices[i];
-            SetPortMaterial(portId, colorMaterials[colorIdx]);
-        }
-
-        // Bottom: 정답 페어 기준으로 같은 색 부여
-        foreach (var pair in answerPairs)
-        {
-            int topId = pair.a <= n ? pair.a : pair.b;
-            int bottomId = pair.a <= n ? pair.b : pair.a;
-
-            var topRenderer = portById[topId].GetComponentInChildren<Renderer>();
-            var mat = topRenderer.material;
-
-            SetPortMaterial(bottomId, mat);
-        }
+        return sb.ToString();
     }
+
 
     private void SetPortMaterial(int portId, Material mat)
     {
