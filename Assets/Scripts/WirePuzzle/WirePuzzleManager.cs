@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ public class WirePuzzleManager : MonoBehaviour
     [SerializeField] private Material lineMaterial;
     [SerializeField] private float lineWidth = 0.02f;
 
-    [Header("Answer (정답 테이블)")]
+    [Header("Answer (정답지)")]
     [SerializeField] private List<Pair> answerPairs = new();
 
     [System.Serializable]
@@ -21,7 +22,7 @@ public class WirePuzzleManager : MonoBehaviour
     [Header("Port Colors")]
     [SerializeField] private Material[] colorMaterials;
 
-    [Header("Color Names (colorMaterials와 같은 순서)")]
+    [Header("Color Names (배치된 포트 기준)")]
     [SerializeField] private string[] colorNames;
 
     private readonly Dictionary<int, WirePort> portById = new();
@@ -76,10 +77,22 @@ public class WirePuzzleManager : MonoBehaviour
         previewLine.enabled = false;
     }
 
-    private void Start()
+    IEnumerator Start()
     {
-        SetupRandomPuzzle();
-        Debug.Log(BuildColorHintText());
+        if (SpawnManager.Instance != null)
+        {
+            yield return new WaitUntil(() => SpawnManager.Instance.SpawnedLocally);
+
+            var wirePuzzle = FindAnyObjectByType<WirePuzzle>();
+
+            if (wirePuzzle == null) yield break;
+            
+            topSlotsParent = wirePuzzle.GetTopSlotParent();
+            bottomSlotsParent = wirePuzzle.GetBottomSlotParent();
+
+            SetupRandomPuzzle();
+            Debug.Log(BuildColorHintText());
+        }
     }
 
     private void SetupRandomPuzzle()
