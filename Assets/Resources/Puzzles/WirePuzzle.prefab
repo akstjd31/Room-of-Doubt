@@ -762,9 +762,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WirePuzzle
   type: 1
   prompt: 
+  isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  playerCamCtrl: {fileID: 0}
   myCam: {fileID: 6101551751618836386}
+  brain: {fileID: 0}
   portsTrf: {fileID: 5426987205864724527}
   puzzleManager: {fileID: 5237596218665408430}
 --- !u!1 &8363457568860053236

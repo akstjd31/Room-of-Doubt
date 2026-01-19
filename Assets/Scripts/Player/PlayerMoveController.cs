@@ -19,7 +19,7 @@ public class PlayerMoveController : MonoBehaviourPun
     private void OnEnable()
     {
         if (!photonView.IsMine) return;
-        
+
         moveAction.performed += OnMovePerformed;
         moveAction.canceled += OnMoveCanceled;
     }
@@ -29,17 +29,22 @@ public class PlayerMoveController : MonoBehaviourPun
         rigid = this.GetComponent<Rigidbody>();
         playerInput = this.GetComponent<PlayerInput>();
 
-        // 리지드 세팅은 이러한데, 계산량이 많기떄문에 이 부분은 최적화때 고려해야할 사항
         rigid.interpolation = RigidbodyInterpolation.Interpolate;
         rigid.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
         moveAction = playerInput.actions["Move"];
-    }
 
+        if (!photonView.IsMine)
+        {
+            playerInput.enabled = false;
+            enabled = false;
+            return;
+        }
+    }
     private void Start()
     {
         if (!photonView.IsMine) return;
-        
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnGamePaused += DisableMoveAction;

@@ -343,6 +343,7 @@ GameObject:
   m_Component:
   - component: {fileID: 262117242}
   - component: {fileID: 262117241}
+  - component: {fileID: 262117243}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -379,6 +380,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &262117243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 262117240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 15
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &269273146
 GameObject:
   m_ObjectHideFlags: 0
@@ -2465,9 +2488,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door
   type: 0
   prompt: Need key!
+  isInteracting: 0
   requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
   rewardItem: {fileID: 0}
+  playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
+  brain: {fileID: 0}
 --- !u!114 &6412260312217487358
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,9 +35,7 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         if (!photonView.IsMine)
         {
-            playerInput.enabled = false;
             cameraRoot.SetActive(false);
-            enabled = false;
             return;
         }
 
@@ -49,8 +47,9 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void Awake()
     {
-        if (photonView.IsMine)
-            Instance = this;
+        if (!photonView.IsMine) return;
+        
+        Instance = this;
 
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();

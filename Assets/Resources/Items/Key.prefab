@@ -181,6 +181,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Key
   type: 0
   prompt: Key
+  isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
+  playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
+  brain: {fileID: 0}
