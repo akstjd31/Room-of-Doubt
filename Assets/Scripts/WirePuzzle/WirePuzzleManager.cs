@@ -29,22 +29,109 @@ public class WirePuzzleManager : MonoBehaviour
     private LineRenderer previewLine;
     private bool solved;
 
+    [Header("Random Setup")]
+    [SerializeField] private Transform topSlotsParent;
+    [SerializeField] private Transform bottomSlotsParent;
+    [SerializeField] private WirePort portPrefab;
+    [SerializeField] private int columns = 6;
+    [SerializeField] private int pairCount = 3;
+    [SerializeField] private int seed = -1;         // -1: 랜덤, 아니면 고정
+
+    private readonly List<WirePort> spawnedPorts = new();
+
     private void Awake()
     {
         if (cam == null) cam = Camera.main;
 
         answerMap = new Dictionary<int, int>();
-        foreach (var p in answerPairs)
-        {
-            if (p.a == p.b) continue;
-            answerMap[p.a] = p.b;
-            answerMap[p.b] = p.a;
-        }
+        // foreach (var p in answerPairs)
+        // {
+        //     if (p.a == p.b) continue;
+        //     answerMap[p.a] = p.b;
+        //     answerMap[p.b] = p.a;
+        // }
 
         // 프리뷰 라인 생성
         previewLine = CreateLineRenderer("PreviewLine");
         previewLine.enabled = false;
     }
+
+    private void Start()
+    {
+        SetupRandomPuzzle();
+    }
+
+    private void SetupRandomPuzzle()
+    {
+        ClearAllWires();
+        ClearSpawnedPorts();
+
+        answerPairs.Clear();
+
+        int n = columns;
+        int poartCount = n * 2;
+
+        var topSlots = GetChildSlots(topSlotsParent);
+        var bottomSlots = GetChildSlots(bottomSlotsParent);
+
+        if (topSlots.Count < n || bottomSlots.Count < n)
+        {
+            Debug.LogError("슬롯 부족!");
+        }
+
+        System.Random rand = (seed < 0) ? new System.Random() : new System.Random(seed);
+
+        Shuffle(topSlots, rand);
+        Shuffle(bottomSlots, rand);
+
+        for (int i = 0; i < n; i++)
+        {
+            var p = Instantiate(portPrefab, topSlots[i].position, topSlots[i].rotation);
+            p.portId = i + 1;
+            spawnedPorts.Add(p);
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            var p = Instantiate(portPrefab, bottomSlots[i].position, bottomSlots[i].rotation);
+            p.portId = n + i + 1;
+            spawnedPorts.Add(p);
+        }
+
+        answerPairs.Clear();
+        var bottomIds = new List<int>();
+        for (int i = 0; i < n; i++) bottomIds.Add(n + i + 1);
+        Shuffle(bottomIds, rand);
+
+        for (int topId = 1; topId <= n; topId++)
+        {
+            int bottomId = bottomIds[topId - 1];
+            answerPairs.Add(new Pair { a = topId, b = bottomId });
+        }
+
+        // 4) answerMap 갱신
+        answerMap.Clear();
+        foreach (var p in answerPairs)
+        {
+            answerMap[p.a] = p.b;
+            answerMap[p.b] = p.a;
+        }
+
+        solved = false;
+
+        Debug.Log("랜덤 퍼즐 생성 완료!");
+    }
+
+    private List<Transform> GetChildSlots(Transform parent)
+    {
+        var result = new List<Transform>();
+        if (parent == null) return result;
+
+        foreach (Transform t in parent)
+            result.Add(t); // 직계 자식만 슬롯으로 사용
+        return result;
+    }
+
 
     private void Update()
     {
@@ -95,6 +182,42 @@ public class WirePuzzleManager : MonoBehaviour
 
             CheckSolved();
         }
+    }
+
+    // 셔플
+    private void Shuffle<T>(List<T> list, System.Random rand)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = rand.Next(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }
+
+    private void ClearSpawnedPorts()
+    {
+        for (int i = 0; i < spawnedPorts.Count; i++)
+        {
+            if (spawnedPorts[i] != null)
+                Destroy(spawnedPorts[i].gameObject);
+        }
+
+        spawnedPorts.Clear();
+    }
+
+    private void ClearAllWires()
+    {
+        var keys = new List<string>(lines.Keys);
+        foreach (var k in keys)
+        {
+            if (lines[k] != null)
+                Destroy(lines[k].gameObject);
+        }
+
+        lines.Clear();
+        links.Clear();
+        if (previewLine != null)
+            previewLine.enabled = false;
     }
 
     private WirePort RaycastPort()
@@ -242,7 +365,7 @@ public class WirePuzzleManager : MonoBehaviour
 
         solved = true;
         Debug.Log("해결!");
-        
+
         // 이후 작업 
     }
 }
