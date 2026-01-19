@@ -697,7 +697,6 @@ MonoBehaviour:
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
   portsTrf: {fileID: 5426987205864724527}
-  playerCam: {fileID: 0}
   puzzleCam: {fileID: 6101551751618836386}
 --- !u!1 &8363457568860053236
 GameObject:

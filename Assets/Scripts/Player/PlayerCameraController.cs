@@ -93,7 +93,7 @@ public class PlayerCameraController : MonoBehaviourPun
         UIManager.Instance.OnInvenClosed -= HandleResumed;
     }
 
-    private void HandlePause() => SetCursor(CursorLockMode.Confined, true);
+    private void HandlePause() => SetCursor(CursorLockMode.None, true);
     private void HandleResumed() => SetCursor(CursorLockMode.Locked, false);
 
     private void SetCursor(CursorLockMode mode, bool v)
@@ -111,6 +111,7 @@ public class PlayerCameraController : MonoBehaviourPun
     private void LateUpdate()
     {
         if (GameManager.Instance.isPaused) return;
+        if (GameManager.Instance.IsInPuzzle) return;
         if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
 

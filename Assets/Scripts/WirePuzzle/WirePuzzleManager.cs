@@ -7,7 +7,7 @@ public class WirePuzzleManager : MonoBehaviour
     [Header("Raycast")]
     [SerializeField] private Camera cam;
     [SerializeField] private LayerMask portMask;
-    [SerializeField] private float maxDistance = 10f;
+    [SerializeField] private float maxDistance = 30f;
 
     [Header("Line Settings")]
     [SerializeField] private Material lineMaterial;

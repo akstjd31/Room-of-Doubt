@@ -78,6 +78,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     private void OnSelectSlotPerformed(InputAction.CallbackContext ctx)
     {
         if (UIManager.Instance.IsOpen) return;
+        if (GameManager.Instance.IsInPuzzle) return;
 
         int nextIndex = int.Parse(ctx.control.name) - 1;
         
@@ -91,6 +92,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     private void OnScrollSlotPerformed(InputAction.CallbackContext ctx)
     {
         if (UIManager.Instance.IsOpen) return;
+        if (GameManager.Instance.IsInPuzzle) return;
         
         float value = ctx.ReadValue<Vector2>().y;
         
