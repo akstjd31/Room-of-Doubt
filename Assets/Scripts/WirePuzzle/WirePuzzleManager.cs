@@ -61,8 +61,6 @@ public class WirePuzzleManager : MonoBehaviour
 
     private void Awake()
     {
-        if (cam == null) cam = Camera.main;
-
         answerMap = new Dictionary<int, int>();
         colorNames = new string[columns * 2];
         // foreach (var p in answerPairs)
@@ -92,6 +90,8 @@ public class WirePuzzleManager : MonoBehaviour
 
             SetupRandomPuzzle();
             Debug.Log(BuildColorHintText());
+
+            cam = Camera.main;
         }
     }
 
