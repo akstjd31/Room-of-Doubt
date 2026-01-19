@@ -1,82 +1,45 @@
 using System.Collections;
-using Unity.Cinemachine;
+using Photon.Pun;
 using UnityEngine;
 
 public class WirePuzzle : InteractableBase
 {
     [SerializeField] private Transform portsTrf;
+    [SerializeField] private WirePuzzleManager puzzleManager;
 
-    [Header("Cinemachine")]
-    private PlayerCameraController playerCamCtrl;
-    [SerializeField] private CinemachineCamera puzzleCam;
-    private CinemachineBrain brain;
-
-    private bool isUsingPuzzle;
+    private int usingActorNumber = -1;  // 현재 사용중인 플레이어
 
     private void Awake()
     {
         if (portsTrf == null) portsTrf = this.transform.GetChild(0);
-    }
+        if (puzzleManager == null) puzzleManager = GetComponentInChildren<WirePuzzleManager>(true);
 
-    private void Start()
-    {
-        if (PlayerCameraController.Instance != null)
-        {
-            playerCamCtrl = PlayerCameraController.Instance;
-            brain = Camera.main.GetComponent<CinemachineBrain>();
-        }
-            
+        type = InteractableType.Puzzle;
     }
 
     public override void Interact(int actorNumber)
     {
-        if (isUsingPuzzle)
-            StartCoroutine(ExitPuzzle());
+        if (puzzleManager != null && puzzleManager.cam == null)
+            puzzleManager.cam = Camera.main;
+
+        // 사용중인 사람 액터넘버 연결
+        if (isInteracting)
+        {
+            usingActorNumber = actorNumber;
+        }
         else
-            EnterPuzzleCamera();
-    }
-    private void EnterPuzzleCamera()
-    {
-        isUsingPuzzle = true;
+        {
+            if (usingActorNumber == actorNumber)
+                usingActorNumber = -1;
+        }
 
-        puzzleCam.Priority = 20;
-        playerCamCtrl.playerCam.Priority = 0;
+        bool isLocalActor = PhotonNetwork.LocalPlayer != null &&
+                        PhotonNetwork.LocalPlayer.ActorNumber == actorNumber;
 
-        GameManager.Instance.EnterPuzzle();
-        
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        Debug.Log("퍼즐 카메라 시작");
+    if (puzzleManager != null)
+        puzzleManager.enabled = isInteracting && isLocalActor;
     }
 
-    private IEnumerator ExitPuzzle()
-    {
-        if (!isUsingPuzzle) yield break;
-
-        puzzleCam.Priority = 0;
-        playerCamCtrl.playerCam.Priority = 20;
-
-        yield return WaitForBlendComplete();
-        GameManager.Instance.ExitPuzzle();
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        isUsingPuzzle = false;
-
-        Debug.Log("퍼즐 카메라 종료");
-    }
-
-    private IEnumerator WaitForBlendComplete()
-    {
-        if (brain == null) yield break;
-
-        yield return null;
-
-        while (brain.ActiveBlend != null)
-            yield return null;
-    }
 
     public Transform GetTopSlotParent() => portsTrf.GetChild(0);
     public Transform GetBottomSlotParent() => portsTrf.GetChild(1);

@@ -1113,6 +1113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 761d2fd6e90af034fbaaccf2fdd8b250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
+  quickSlotParent: {fileID: 1568105910}
   slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
   slots: []
 --- !u!4 &710292033
@@ -1302,6 +1303,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   objNameText: {fileID: 1944665501}
   pauseMenu: {fileID: 643517674}
+  playerAim: {fileID: 1456368935}
 --- !u!1001 &1355672731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1441,6 +1443,7 @@ GameObject:
   - component: {fileID: 1456368936}
   - component: {fileID: 1456368938}
   - component: {fileID: 1456368937}
+  - component: {fileID: 1456368939}
   m_Layer: 5
   m_Name: Aim
   m_TagString: Untagged
@@ -1505,6 +1508,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1456368935}
   m_CullTransparentMesh: 1
+--- !u!114 &1456368939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456368935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c7a2343cde8be4d89cd59a1ce7abf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AimController
+  aimObj: {fileID: 0}
 --- !u!1 &1460331516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1868,7 +1884,7 @@ GameObject:
   - component: {fileID: 1898323416}
   m_Layer: 5
   m_Name: QuickSlot
-  m_TagString: QuickSlot
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2039,72 +2055,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944665499}
   m_CullTransparentMesh: 1
---- !u!1 &1951239385
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1951239387}
-  - component: {fileID: 1951239388}
-  m_Layer: 0
-  m_Name: WirePuzzleManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1951239387
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951239385}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1951239388
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1951239385}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75d4c753edb7a7543bed2fc65be51603, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WirePuzzleManager
-  cam: {fileID: 0}
-  portMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  maxDistance: 30
-  lineMaterial: {fileID: 2100000, guid: acac26efcf41b7540a1f9c1a8e71c785, type: 2}
-  lineWidth: 0.02
-  answerPairs: []
-  colorMaterials:
-  - {fileID: 2100000, guid: 4419c7692350d574db1f602ff2d6ce3f, type: 2}
-  - {fileID: 2100000, guid: 17621257dde589741b9a6228bef2b2e7, type: 2}
-  - {fileID: 2100000, guid: d753c79aa9aa83a4b8eeb762692d0e8b, type: 2}
-  - {fileID: 2100000, guid: 9d99f9f4a1422134d9cfc5ae8f511d9f, type: 2}
-  - {fileID: 2100000, guid: b280c22ec6aaf96429807f5a8a23db89, type: 2}
-  - {fileID: 2100000, guid: aec99b18f9762a54a92d2c723d04e659, type: 2}
-  colorNames: []
-  topSlotsParent: {fileID: 0}
-  bottomSlotsParent: {fileID: 0}
-  portPrefab: {fileID: 7230169412001969612, guid: 3a57ddbd388195841a76e12cf90404fb, type: 3}
-  columns: 6
-  pairCount: 3
-  seed: -1
 --- !u!1 &1981953489
 GameObject:
   m_ObjectHideFlags: 0
@@ -2513,9 +2463,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdcffd3889fa27f49ae64a5673d1b7e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
+  type: 0
   prompt: Need key!
   requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
   rewardItem: {fileID: 0}
+  myCam: {fileID: 0}
 --- !u!114 &6412260312217487358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2712,7 +2664,6 @@ SceneRoots:
   - {fileID: 7749901899548476833}
   - {fileID: 1036424379}
   - {fileID: 443785779}
-  - {fileID: 1951239387}
   - {fileID: 51599751}
   - {fileID: 1460331518}
   - {fileID: 262117242}

@@ -5,7 +5,7 @@ using UnityEngine;
 public class WirePuzzleManager : MonoBehaviour
 {
     [Header("Raycast")]
-    [SerializeField] private Camera cam;
+    [SerializeField] public Camera cam;
     [SerializeField] private LayerMask portMask;
     [SerializeField] private float maxDistance = 30f;
 
@@ -75,24 +75,9 @@ public class WirePuzzleManager : MonoBehaviour
         previewLine.enabled = false;
     }
 
-    IEnumerator Start()
+    private void Start()
     {
-        if (SpawnManager.Instance != null)
-        {
-            yield return new WaitUntil(() => SpawnManager.Instance.SpawnedLocally);
-
-            var wirePuzzle = FindAnyObjectByType<WirePuzzle>();
-
-            if (wirePuzzle == null) yield break;
-            
-            topSlotsParent = wirePuzzle.GetTopSlotParent();
-            bottomSlotsParent = wirePuzzle.GetBottomSlotParent();
-
-            SetupRandomPuzzle();
-            Debug.Log(BuildColorHintText());
-
-            cam = Camera.main;
-        }
+        SetupRandomPuzzle();
     }
 
     private void SetupRandomPuzzle()
@@ -193,6 +178,7 @@ public class WirePuzzleManager : MonoBehaviour
         }
 
         solved = false;
+        this.enabled = false;
 
         Debug.Log("랜덤 퍼즐 생성 완료!");
     }
@@ -211,6 +197,11 @@ public class WirePuzzleManager : MonoBehaviour
     private void Update()
     {
         if (cam == null) return;
+        if (!GameManager.Instance.IsInPuzzle)
+        {
+            if (previewLine.enabled) EndPreview();
+            return;
+        }
 
         // 마우스 누르기 시작
         if (Input.GetMouseButtonDown(0))
@@ -371,6 +362,8 @@ public class WirePuzzleManager : MonoBehaviour
     // 연결 시도
     private void TryConnect(WirePort a, WirePort b)
     {
+        if (!GameManager.Instance.IsInPuzzle) return;
+
         int aId = a.portId;
         int bId = b.portId;
 

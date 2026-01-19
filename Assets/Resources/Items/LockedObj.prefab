@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffb4c6a356e0ae645a2cff26017e27e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LockedObj
+  type: 0
   prompt: LockedObj
   requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
   rewardItem: {fileID: 0}
+  myCam: {fileID: 0}

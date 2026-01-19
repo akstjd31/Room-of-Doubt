@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0483f610865aa814fb5ebea40fb32e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Battery
+  type: 0
   prompt: Battery
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
+  myCam: {fileID: 0}
