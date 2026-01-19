@@ -18,6 +18,11 @@ public class WirePuzzleManager : MonoBehaviour
     [System.Serializable]
     public struct Pair { public int a; public int b; }
 
+    [Header("Port Colors")]
+    [SerializeField] private Material[] colorMaterials;
+
+    private readonly Dictionary<int, WirePort> portById = new();
+
     private Dictionary<int, int> answerMap;
 
     // 연결 상태
@@ -38,7 +43,7 @@ public class WirePuzzleManager : MonoBehaviour
     [SerializeField] private int seed = -1;         // -1: 랜덤, 아니면 고정
 
     private int topCount => columns;
-    
+
     private bool IsTop(int id) => id >= 1 && id <= topCount;
     private bool IsBottom(int id) => id > topCount && id <= topCount * 2;
 
@@ -78,6 +83,7 @@ public class WirePuzzleManager : MonoBehaviour
         ClearSpawnedPorts();
 
         answerPairs.Clear();
+        portById.Clear();
 
         int n = columns;
 
@@ -99,6 +105,7 @@ public class WirePuzzleManager : MonoBehaviour
             var p = Instantiate(portPrefab, topSlots[i].position, topSlots[i].rotation);
             p.portId = i + 1;
             spawnedPorts.Add(p);
+            portById[p.portId] = p;
         }
 
         for (int i = 0; i < n; i++)
@@ -106,20 +113,55 @@ public class WirePuzzleManager : MonoBehaviour
             var p = Instantiate(portPrefab, bottomSlots[i].position, bottomSlots[i].rotation);
             p.portId = n + i + 1;
             spawnedPorts.Add(p);
+            portById[p.portId] = p;
         }
 
-        answerPairs.Clear();
-        var bottomIds = new List<int>();
-        for (int i = 0; i < n; i++) bottomIds.Add(n + i + 1);
-        Shuffle(bottomIds, rand);
+        // 색 배정 (턉)
+        var topColorIdx = new List<int>();
+        for (int i = 0; i < n; i++)
+            topColorIdx.Add(i);
+        Shuffle(topColorIdx, rand);
 
-        for (int topId = 1; topId <= n; topId++)
+        // 색 배정 (바텀)
+        var bottomColorIdx = new List<int>();
+        for (int i = 0; i < n; i++)
+            bottomColorIdx.Add(i);
+        Shuffle(bottomColorIdx, rand);
+
+        // 색 적용 (탑)
+        var topColorToPortId = new Dictionary<int, int>();
+        for (int i = 0; i < n; i++)
         {
-            int bottomId = bottomIds[topId - 1];
-            answerPairs.Add(new Pair { a = topId, b = bottomId });
+            int portId = i + 1;
+            int cIdx = topColorIdx[i];
+            SetPortMaterial(portId, colorMaterials[cIdx]);
+            topColorToPortId[cIdx] = portId;
         }
 
-        // 4) answerMap 갱신
+        // 색 적용 (바텀)
+        var bottomColorToPortId = new Dictionary<int, int>();
+        for (int i = 0; i < n; i++)
+        {
+            int portId = n + i + 1;
+            int cIdx = bottomColorIdx[i];
+            SetPortMaterial(portId, colorMaterials[cIdx]);
+            bottomColorToPortId[cIdx] = portId;
+        }
+
+        var bottomColorIdxPerm = new List<int>();
+        for (int i = 0; i < n; i++) bottomColorIdxPerm.Add(i);
+        Shuffle(bottomColorIdxPerm, rand);
+
+        for (int c = 0; c < n; c++)
+        {
+            int topPortId = topColorToPortId[c];
+            int mappedBottomColor = bottomColorIdxPerm[c];
+            int bottomPortId = bottomColorToPortId[mappedBottomColor];
+
+            answerPairs.Add(new Pair { a = topPortId, b = bottomPortId });
+        }
+
+        // --- 6) answerMap 갱신 ---
         answerMap.Clear();
         foreach (var p in answerPairs)
         {
@@ -193,6 +235,57 @@ public class WirePuzzleManager : MonoBehaviour
             CheckSolved();
         }
     }
+
+    // 색 랜덤
+    private void ApplyUniqueTopBottomColors(System.Random rand)
+    {
+        int n = columns; // Top n개, Bottom n개
+
+        if (colorMaterials == null || colorMaterials.Length < n)
+        {
+            Debug.LogError($"색상이 부족합니다. 최소 {n}개 필요");
+            return;
+        }
+
+        // 색 인덱스 리스트 만들기 (0~n-1)
+        List<int> colorIndices = new List<int>();
+        for (int i = 0; i < n; i++)
+            colorIndices.Add(i);
+
+        // Top용 색 셔플
+        Shuffle(colorIndices, rand);
+
+        // Top: 1 ~ n
+        for (int i = 0; i < n; i++)
+        {
+            int portId = i + 1;
+            int colorIdx = colorIndices[i];
+            SetPortMaterial(portId, colorMaterials[colorIdx]);
+        }
+
+        // Bottom: 정답 페어 기준으로 같은 색 부여
+        foreach (var pair in answerPairs)
+        {
+            int topId = pair.a <= n ? pair.a : pair.b;
+            int bottomId = pair.a <= n ? pair.b : pair.a;
+
+            var topRenderer = portById[topId].GetComponentInChildren<Renderer>();
+            var mat = topRenderer.material;
+
+            SetPortMaterial(bottomId, mat);
+        }
+    }
+
+    private void SetPortMaterial(int portId, Material mat)
+    {
+        if (!portById.TryGetValue(portId, out var port) || port == null) return;
+
+        var r = port.GetComponentInChildren<Renderer>();
+        if (r == null) return;
+
+        r.material = mat;
+    }
+
 
     // 셔플
     private void Shuffle<T>(List<T> list, System.Random rand)

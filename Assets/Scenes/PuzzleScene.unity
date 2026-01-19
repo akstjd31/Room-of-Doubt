@@ -249,8 +249,17 @@ MonoBehaviour:
   lineMaterial: {fileID: 2100000, guid: b280c22ec6aaf96429807f5a8a23db89, type: 2}
   lineWidth: 0.1
   answerPairs: []
-  slotsParent: {fileID: 2109517942}
+  colorMaterials:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  topSlotsParent: {fileID: 549925910}
+  bottomSlotsParent: {fileID: 1174487393}
   portPrefab: {fileID: 7230169412001969612, guid: 3a57ddbd388195841a76e12cf90404fb, type: 3}
+  columns: 6
   pairCount: 6
   seed: -1
 --- !u!4 &321876244
