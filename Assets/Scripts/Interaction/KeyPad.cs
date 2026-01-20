@@ -12,6 +12,7 @@ public class KeyPad : InteractableBase
             keyPadMgr = this.GetComponent<KeyPadManager>();    
             keyPadMgr.enabled = false;
         }
+        
         type = InteractableType.Puzzle;
     }
 

@@ -80,9 +80,8 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 포커싱 (입력 불가, UI 비활성화 등)
     public IEnumerator EnterCamera()
     {
-        if (myCam == null || playerCamCtrl == null) yield break;
-
         isInteracting = true;
+        if (myCam == null || playerCamCtrl == null) yield break;
 
         myCam.Priority = 20;
         playerCamCtrl.playerCam.Priority = 0;
@@ -102,6 +101,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 포커싱 해제
     public IEnumerator ExitCamera()
     {
+        isInteracting = false;
         if (myCam == null || playerCamCtrl == null) yield break;
 
         myCam.Priority = 0;
@@ -115,8 +115,6 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
-        isInteracting = false;
 
         Debug.Log("상호작용 종료 (카메라 원위치)");
     }
