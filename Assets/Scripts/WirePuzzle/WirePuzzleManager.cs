@@ -205,7 +205,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     private void Update()
     {
         if (cam == null) return;
-        if (!GameManager.Instance.IsInPuzzle)
+        if (!GameManager.Instance.IsInteractingFocused)
         {
             if (previewLine.enabled) EndPreview();
             return;
@@ -370,7 +370,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     // 연결 시도
     private void TryConnect(WirePort a, WirePort b)
     {
-        if (!GameManager.Instance.IsInPuzzle) return;
+        if (!GameManager.Instance.IsInteractingFocused) return;
 
         int aId = a.portId;
         int bId = b.portId;

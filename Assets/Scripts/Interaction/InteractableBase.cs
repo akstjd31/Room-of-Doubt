@@ -115,7 +115,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         UIManager.Instance.SetPlayerAimActive(false);
         QuickSlotManager.Instance.SetActiveSlotParent(false);
-        if (type.Equals(InteractableType.Puzzle)) GameManager.Instance.EnterPuzzle();
+        GameManager.Instance.EnterInteracting();
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -135,7 +135,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         UIManager.Instance.SetPlayerAimActive(true);
         QuickSlotManager.Instance.SetActiveSlotParent(true);
-        if (type.Equals(InteractableType.Puzzle)) GameManager.Instance.ExitPuzzle();
+        GameManager.Instance.ExitInteracting();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

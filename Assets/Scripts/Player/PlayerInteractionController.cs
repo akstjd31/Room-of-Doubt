@@ -82,7 +82,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     private void Update()
     {
         if (UIManager.Instance.IsOpen) return;
-        if (GameManager.Instance.IsInPuzzle) return;
+        if (GameManager.Instance.IsInteractingFocused) return;
         if (!photonView.IsMine) return;
 
         // 카메라 중심으로 레이 발사

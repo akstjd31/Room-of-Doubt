@@ -111,7 +111,7 @@ public class PlayerCameraController : MonoBehaviourPun
     private void LateUpdate()
     {
         if (GameManager.Instance.isPaused) return;
-        if (GameManager.Instance.IsInPuzzle) return;
+        if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
 

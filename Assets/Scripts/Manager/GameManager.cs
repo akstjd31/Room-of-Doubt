@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public event Action OnGamePaused; // 일시정지 이벤트
     public event Action OnGameResumed; // 재개 이벤트
     public bool isPaused = false;
-    public bool IsInPuzzle { get; private set; }
+    public bool IsInteractingFocused { get; private set; }
     public bool isLocalPlayerCreated;
 
     void Awake()
@@ -59,8 +59,8 @@ public class GameManager : MonoBehaviourPunCallbacks
 #endif
     }
 
-    public void EnterPuzzle() => IsInPuzzle = true;
-    public void ExitPuzzle() => IsInPuzzle = false;
+    public void EnterInteracting() => IsInteractingFocused = true;
+    public void ExitInteracting() => IsInteractingFocused = false;
 
     IEnumerator SpawnPlayerWhenConnected()
     {
