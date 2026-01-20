@@ -248,7 +248,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
             var port = RaycastPort();
             if (port != null)
             {
-                DisconnectPort(port.portId);
+                RequestDisconnect(port.portId);
             }
 
             dragFrom = null;
@@ -381,22 +381,64 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
         // 이미 연결되어 있다? 연결 끊기
         if (IsDirectLinked(aId, bId))
         {
-            Disconnect(aId, bId);
+            RequestDisconnect(aId);
             CheckSolved();
             return;
         }
 
         // 기존 연결이 있다면 끊어버리기
         if (links.TryGetValue(aId, out int aLinked))
-            Disconnect(aId, aLinked);
+            RequestDisconnect(aId);
         if (links.TryGetValue(bId, out int bLinked))
-            Disconnect(bId, bLinked);
+            RequestDisconnect(bId);
 
+        RequestConnect(aId, bId);
+    }
+
+    public void RequestConnect(int aId, int bId)
+    {
+        photonView.RPC(nameof(RequestConnectRPC), RpcTarget.MasterClient, aId, bId, PhotonNetwork.LocalPlayer.ActorNumber);
+    }
+
+    [PunRPC]
+    private void RequestConnectRPC(int aId, int bId, int actorNumber, PhotonMessageInfo info)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if(info.Sender == null || info.Sender.ActorNumber != actorNumber) return;
+        if (!IsValidPair(aId, bId)) return;
+
+        photonView.RPC(nameof(ApplyConnectRPC), RpcTarget.AllBuffered, aId, bId, actorNumber);
+    }
+
+    [PunRPC]
+    private void ApplyConnectRPC(int aId, int bId, int actorNumber)
+    {
         links[aId] = bId;
         links[bId] = aId;
 
-        CreateOrUpdateLine(a, b);
+        CreateOrUpdateLine(portById[aId], portById[bId]);
         CheckSolved();
+    }
+
+    public void RequestDisconnect(int aId)
+    {
+        photonView.RPC(nameof(RequestDisconnectRPC), RpcTarget.MasterClient, aId, PhotonNetwork.LocalPlayer.ActorNumber);
+    }
+
+    [PunRPC]
+    private void RequestDisconnectRPC(int aId, int actorNumber, PhotonMessageInfo info)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (info.Sender == null || info.Sender.ActorNumber != actorNumber) return;
+
+        if (!links.TryGetValue(aId, out var bId) || bId == -1) return;
+        photonView.RPC(nameof(ApplyDisconnectRPC), RpcTarget.AllBuffered, aId, bId, actorNumber);
+    }
+
+    [PunRPC]
+    private void ApplyDisconnectRPC(int aId, int bId, int actorNumber)
+    {
+        Disconnect(aId, bId);
     }
 
     // a, b가 연결되어 있는지?
@@ -414,14 +456,14 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
         lines.Remove(key);
     }
 
-    // 포트 연결 끊기
-    private void DisconnectPort(int portId)
-    {
-        if (!links.TryGetValue(portId, out int linkedId))
-            return; // 연결 없음
+    // // 포트 연결 끊기
+    // private void DisconnectPort(int portId)
+    // {
+    //     if (!links.TryGetValue(portId, out int linkedId))
+    //         return; // 연결 없음
 
-        Disconnect(portId, linkedId);
-    }
+    //     Disconnect(portId, linkedId);
+    // }
 
     // a, b를 연결짓는 새로운 라인 생성
     private void CreateOrUpdateLine(WirePort a, WirePort b)
