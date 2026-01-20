@@ -81,7 +81,6 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         // 실제 상호작용은 RPC로 전달
         photonView.RPC(nameof(InteractRPC), RpcTarget.AllBuffered, actorNumber);
-
     }
 
     [PunRPC]
@@ -103,19 +102,20 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         transitionCor = null;
     }
 
-    // 포커싱 (입력 불가, UI 비활성화 등)
+    // 포커싱
     public IEnumerator EnterCamera()
     {
         if (myCam == null || playerCamCtrl == null) yield break;
 
         myCam.Priority = 20;
         playerCamCtrl.playerCam.Priority = 0;
-
-        yield return WaitForBlendComplete();
-
+        
+        // 순간 이동이 가능해서 이 위치에 둠
         UIManager.Instance.SetPlayerAimActive(false);
         QuickSlotManager.Instance.SetActiveSlotParent(false);
         GameManager.Instance.EnterInteracting();
+
+        yield return WaitForBlendComplete();
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
