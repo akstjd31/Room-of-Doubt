@@ -1,5 +1,6 @@
 using System;
 using Photon.Pun;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerCameraController : MonoBehaviourPun
 {
+    public static PlayerCameraController Instance;
     private PlayerInput playerInput;
     private InputAction lookAction;
     private Rigidbody rigid;
@@ -17,6 +19,7 @@ public class PlayerCameraController : MonoBehaviourPun
 
     [Header("Local Camera")]
     [SerializeField] private GameObject cameraRoot;
+    public CinemachineCamera playerCam;
 
     [Header("Value")]
     [SerializeField] private float sensitivity = 0.07f;
@@ -32,9 +35,7 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         if (!photonView.IsMine)
         {
-            playerInput.enabled = false;
             cameraRoot.SetActive(false);
-            enabled = false;
             return;
         }
 
@@ -46,10 +47,15 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void Awake()
     {
+        if (!photonView.IsMine) return;
+        
+        Instance = this;
+
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();
 
         lookAction = playerInput.actions["Look"];
+        playerCam.Priority = 20;
     }
 
     private void Start()
@@ -87,7 +93,7 @@ public class PlayerCameraController : MonoBehaviourPun
         UIManager.Instance.OnInvenClosed -= HandleResumed;
     }
 
-    private void HandlePause() => SetCursor(CursorLockMode.Confined, true);
+    private void HandlePause() => SetCursor(CursorLockMode.None, true);
     private void HandleResumed() => SetCursor(CursorLockMode.Locked, false);
 
     private void SetCursor(CursorLockMode mode, bool v)
@@ -105,6 +111,7 @@ public class PlayerCameraController : MonoBehaviourPun
     private void LateUpdate()
     {
         if (GameManager.Instance.isPaused) return;
+        if (GameManager.Instance.IsInPuzzle) return;
         if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
 

@@ -7,7 +7,8 @@ public class QuickSlotManager : MonoBehaviour
     const int MAX_SLOT_COUNT = 4;
 
     [Header("Slot")]
-    [SerializeField] private Transform slotPrefab;   // 슬롯 프리팹
+    [SerializeField] private GameObject quickSlotParent;        // 판넬
+    [SerializeField] private Transform slotPrefab;              // 슬롯 프리팹
     public Slot[] slots;
     private int forcusedIndex;
 
@@ -18,11 +19,9 @@ public class QuickSlotManager : MonoBehaviour
 
         if (slotPrefab != null)
         {
-            GameObject quickSlotObj = GameObject.FindGameObjectWithTag("QuickSlot");
-
             for (int i = 0; i < MAX_SLOT_COUNT; i++)
             {
-                GameObject newSlotObj = Instantiate(slotPrefab.gameObject, quickSlotObj.transform.GetChild(0));
+                GameObject newSlotObj = Instantiate(slotPrefab.gameObject, quickSlotParent.transform);
                 slots[i] = newSlotObj.GetComponent<Slot>();
 
                 slots[i].slotType = SlotType.Quick;
@@ -80,6 +79,8 @@ public class QuickSlotManager : MonoBehaviour
                 slots[i].backgroundImage.color = Color.black;
         }
     }
+
+    public void SetActiveSlotParent(bool active) => quickSlotParent.SetActive(active);
 
     public void UpdateSlotData(int index, string itemID)
     {

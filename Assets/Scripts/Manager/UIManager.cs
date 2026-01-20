@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager>
 {
     [SerializeField] private TextMeshProUGUI objNameText;
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject playerAim;
     public bool IsOpen { get; private set; }
     public event Action OnInvenOpened;
     public event Action OnInvenClosed;
@@ -46,6 +47,17 @@ public class UIManager : Singleton<UIManager>
         objNameText.text = $"[{name}]";
     }
 
-    public void PauseMenuActivate() => pauseMenu.SetActive(true);
-    public void PauseMenuDeactivate() => pauseMenu.SetActive(false);
+    public void PauseMenuActivate()
+    {
+        SetPlayerAimActive(false);
+        pauseMenu.SetActive(true);
+    }
+
+    public void PauseMenuDeactivate()
+    {
+        SetPlayerAimActive(true);
+        pauseMenu.SetActive(false);
+    }
+
+    public void SetPlayerAimActive(bool active) => playerAim.SetActive(active);
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Door : InteractableBase
@@ -18,5 +19,10 @@ public class Door : InteractableBase
             
         isOpen = !isOpen;
         anim.SetBool("IsOpen", isOpen);
+    }
+
+    protected override IEnumerator InitRoutine()
+    {
+        yield break;
     }
 }

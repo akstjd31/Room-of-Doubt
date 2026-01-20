@@ -147,6 +147,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b856075bca98345a56e1e10eb68ae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CubeObj
+  type: 0
   prompt: Cube
+  isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  playerCamCtrl: {fileID: 0}
+  myCam: {fileID: 0}
+  brain: {fileID: 0}

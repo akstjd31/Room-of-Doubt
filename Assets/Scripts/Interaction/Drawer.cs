@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Drawer : InteractableBase
@@ -15,5 +16,10 @@ public class Drawer : InteractableBase
     {
         isOpen = !isOpen;
         anim.SetBool("IsOpen", isOpen);
+    }
+
+    protected override IEnumerator InitRoutine()
+    {
+        yield break;
     }
 }
