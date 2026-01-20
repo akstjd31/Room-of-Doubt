@@ -744,7 +744,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPadManager
   codes: 
-  currentNum: 0
+  currentNumLength: 0
+  collect: 2345
+  screenText: {fileID: 1811086941}
 --- !u!1 &471416367
 GameObject:
   m_ObjectHideFlags: 0
@@ -4763,8 +4765,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1992757998}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.50008, y: -0.016626038, z: 0.009600834, w: 0.8657664}
-  m_LocalPosition: {x: 0.4587208, y: 6.4277067, z: -4.6101103}
+  m_LocalRotation: {x: 0.67502815, y: 0.000031542037, z: 0.00003726059, w: 0.73779196}
+  m_LocalPosition: {x: -0.3122841, y: 7.3651505, z: -0.0820627}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
