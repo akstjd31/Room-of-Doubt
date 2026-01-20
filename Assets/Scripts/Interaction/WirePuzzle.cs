@@ -5,19 +5,19 @@ using UnityEngine;
 public class WirePuzzle : InteractableBase
 {
     [SerializeField] private Transform portsTrf;
-    [SerializeField] private WirePuzzleManager puzzleManager;
+    [SerializeField] private WirePuzzleManager puzzleMgr;
 
     private void Awake()
     {
         if (portsTrf == null) portsTrf = this.transform.GetChild(0);
-        if (puzzleManager == null) puzzleManager = GetComponentInChildren<WirePuzzleManager>(true);
+        if (puzzleMgr == null) puzzleMgr = this.GetComponentInChildren<WirePuzzleManager>(true);
 
         type = InteractableType.Puzzle;
     }
 
     protected override IEnumerator InitRoutine()
     {
-        if (puzzleManager == null) yield break;
+        if (puzzleMgr == null) yield break;
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -29,17 +29,17 @@ public class WirePuzzle : InteractableBase
 
     public override void Interact(int actorNumber)
     {
-        if (puzzleManager != null && puzzleManager.cam == null)
-            puzzleManager.cam = Camera.main;
+        if (puzzleMgr != null && puzzleMgr.cam == null)
+            puzzleMgr.cam = Camera.main;
 
-        puzzleManager.enabled = isInteracting;
+        puzzleMgr.enabled = isInteracting;
     }
 
     [PunRPC]
     private void SetupRandomPuzzleRPC(int seed)
     {
-        puzzleManager.SetupRandomPuzzle(seed);
-        puzzleManager.enabled = false;
+        puzzleMgr.SetupRandomPuzzle(seed);
+        puzzleMgr.enabled = false;
     }
 
 

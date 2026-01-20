@@ -791,7 +791,7 @@ MonoBehaviour:
   myCam: {fileID: 6101551751618836386}
   brain: {fileID: 0}
   portsTrf: {fileID: 5426987205864724527}
-  puzzleManager: {fileID: 5237596218665408430}
+  puzzleMgr: {fileID: 0}
 --- !u!1 &8363457568860053236
 GameObject:
   m_ObjectHideFlags: 0
