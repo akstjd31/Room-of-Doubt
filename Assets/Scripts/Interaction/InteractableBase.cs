@@ -28,13 +28,18 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public Item RequiredItem => requiredItem;           // 상호작용을 위해 필요한 아이템
     public Item RewardItem => rewardItem;               // 상호작용 후 얻는 보상 아이템
 
+    private bool isTransitioning;
+    private Coroutine transitionCor;
+
     private IEnumerator Start()
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
         yield return new WaitUntil(() => PlayerCameraController.Instance != null);
 
         playerCamCtrl = PlayerCameraController.Instance;
-        brain = Camera.main.GetComponent<CinemachineBrain>();
+
+        if (Camera.main != null)
+            brain = Camera.main.GetComponent<CinemachineBrain>();
 
         yield return InitRoutine();
     }
@@ -48,27 +53,35 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (requiredItem == null) return true;
 
         // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        return QuickSlotManager.Instance.CompareItem(requiredItem.ID); 
+        return QuickSlotManager.Instance.CompareItem(requiredItem.ID);
     }
 
     // 상호작용 응답
     public void RequestInteract(int actorNumber)
     {
+        // 연타 방지용
+        if (isTransitioning) return;
+
         // 로컬에서 상호작용이 가능한지 검증 후
-        if (CanInteract(actorNumber))
-        {
-            if (requiredItem != null)
-                QuickSlotManager.Instance.RemoveItem();
+        if (!CanInteract(actorNumber)) return;
 
-            if (RewardItem != null)
-                QuickSlotManager.Instance.AddItem(RewardItem);
+        if (requiredItem != null)
+            QuickSlotManager.Instance.RemoveItem();
 
-            if (!isInteracting) StartCoroutine(EnterCamera());
-            else StartCoroutine(ExitCamera());
+        if (RewardItem != null)
+            QuickSlotManager.Instance.AddItem(RewardItem);
 
-            // 실제 상호작용은 RPC로 전달
-            photonView.RPC(nameof(InteractRPC), RpcTarget.AllBuffered, actorNumber);
-        }
+        isInteracting = !isInteracting;
+        
+        if (transitionCor != null)
+            StopCoroutine(transitionCor);
+
+        if (myCam != null || playerCamCtrl != null)
+            transitionCor = StartCoroutine(TransitionRoutine(isInteracting));
+
+        // 실제 상호작용은 RPC로 전달
+        photonView.RPC(nameof(InteractRPC), RpcTarget.AllBuffered, actorNumber);
+
     }
 
     [PunRPC]
@@ -77,20 +90,32 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 실제 상호작용 (문구 띄우기, 애니메이션, 아이템 획득 등..)
     public abstract void Interact(int actorNumber);
 
+    private IEnumerator TransitionRoutine(bool enter)
+    {
+        isTransitioning = true;
+
+        if (enter)
+            yield return EnterCamera();
+        else
+            yield return ExitCamera();
+
+        isTransitioning = false;
+        transitionCor = null;
+    }
+
     // 포커싱 (입력 불가, UI 비활성화 등)
     public IEnumerator EnterCamera()
     {
-        isInteracting = true;
         if (myCam == null || playerCamCtrl == null) yield break;
 
         myCam.Priority = 20;
         playerCamCtrl.playerCam.Priority = 0;
 
-        UIManager.Instance.SetPlayerAimActive(!isInteracting);
-        QuickSlotManager.Instance.SetActiveSlotParent(!isInteracting);
-        if (type.Equals(InteractableType.Puzzle))  GameManager.Instance.EnterPuzzle();
-
         yield return WaitForBlendComplete();
+
+        UIManager.Instance.SetPlayerAimActive(false);
+        QuickSlotManager.Instance.SetActiveSlotParent(false);
+        if (type.Equals(InteractableType.Puzzle)) GameManager.Instance.EnterPuzzle();
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -101,7 +126,6 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 포커싱 해제
     public IEnumerator ExitCamera()
     {
-        isInteracting = false;
         if (myCam == null || playerCamCtrl == null) yield break;
 
         myCam.Priority = 0;
@@ -109,9 +133,9 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         yield return WaitForBlendComplete();
 
-        UIManager.Instance.SetPlayerAimActive(isInteracting);
-        QuickSlotManager.Instance.SetActiveSlotParent(isInteracting);
-        if (type.Equals(InteractableType.Puzzle))  GameManager.Instance.ExitPuzzle();
+        UIManager.Instance.SetPlayerAimActive(true);
+        QuickSlotManager.Instance.SetActiveSlotParent(true);
+        if (type.Equals(InteractableType.Puzzle)) GameManager.Instance.ExitPuzzle();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -122,7 +146,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 시네머신 카메라 블렌딩 끝나는 시점
     private IEnumerator WaitForBlendComplete()
     {
-        if (brain == null) yield break;
+        if (brain == null) { yield return null; yield break; }
 
         yield return null;
 
