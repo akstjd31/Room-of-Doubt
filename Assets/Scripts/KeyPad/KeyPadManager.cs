@@ -11,6 +11,8 @@ public class KeyPadManager : MonoBehaviour
     [SerializeField] private int currentNumLength;
     [SerializeField] private string collect;
     [SerializeField] private TMP_Text screenText;
+    [SerializeField] private LayerMask numPadMask;
+    public bool IsSolved { get; private set; }
     private string input;
     private string result;
 
@@ -23,49 +25,53 @@ public class KeyPadManager : MonoBehaviour
 
     private void Update()
     {
-
-        if (Input.GetMouseButtonDown(0))
+        if (!IsSolved)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 10))
+            if (Input.GetMouseButtonDown(0))
             {
-                if (currentNumLength < Convert.ToInt32(MAX_CODE_LENGTH))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 10, numPadMask))
                 {
-                    string nStr = hit.transform.gameObject.GetComponent<Number>().NumStr;
-
-                    if (nStr.IsNullOrEmpty()) return;
-
-                    int n;
-                    if (int.TryParse(nStr, out n))
+                    if (currentNumLength < Convert.ToInt32(MAX_CODE_LENGTH))
                     {
-                        codes[currentNumLength] = n;
-                        input += nStr;
-                        currentNumLength++;
-                    }
-                }
-                
-                screenText.text = input;
-                if (currentNumLength >= Convert.ToInt32(MAX_CODE_LENGTH))
-                {
-                    result = String.Join("", new List<int>(codes).ConvertAll(i => i.ToString()).ToArray());
-                    Debug.Log(result);
+                        string nStr = hit.transform.gameObject.GetComponent<Number>().NumStr;
 
-                    if (collect.Equals(result))
-                    {
-                        Debug.Log("정답!");
-                        // 맞췄을 때 해야할 부분
-                    }
-                    else
-                    {
-                        currentNumLength = 0;
-                        
-                        for (int i = 0; i < codes.Length; i++)
-                            codes[i] = 0;
+                        if (nStr.IsNullOrEmpty()) return;
+
+                        int n;
+                        if (int.TryParse(nStr, out n))
+                        {
+                            codes[currentNumLength] = n;
+                            input += nStr;
+                            currentNumLength++;
+                        }
                     }
 
-                    input = "";
+                    screenText.text = input;
+                    if (currentNumLength >= Convert.ToInt32(MAX_CODE_LENGTH))
+                    {
+                        result = String.Join("", new List<int>(codes).ConvertAll(i => i.ToString()).ToArray());
+                        Debug.Log(result);
+
+                        if (collect.Equals(result))
+                        {
+                            IsSolved = true;
+                            Debug.Log("정답!");
+
+                            // 맞췄을 때 해야할 부분
+                        }
+                        else
+                        {
+                            currentNumLength = 0;
+
+                            for (int i = 0; i < codes.Length; i++)
+                                codes[i] = 0;
+                        }
+
+                        input = "";
+                    }
                 }
             }
         }
