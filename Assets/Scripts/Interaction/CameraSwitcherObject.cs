@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class VendingMachine : InteractableBase
+public class CameraSwitcherObject : InteractableBase
 {
     public override void Interact(int actorNumber)
     {
