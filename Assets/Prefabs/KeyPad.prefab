@@ -490,7 +490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ____
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -753,9 +753,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b666ce5fa16b047a5e136a105dd9da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KeyPadManager
+  collect: 2345
   codes: 
   currentNumLength: 0
-  collect: 2345
   screenText: {fileID: 6694245241808517310}
   numPadMask:
     serializedVersion: 2
