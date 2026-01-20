@@ -16,8 +16,9 @@ public enum WireEvt : byte
     Solved = 7    
 }
 
-public class WirePuzzleManager : MonoBehaviourPunCallbacks, IOnEventCallback
+public class WirePuzzleManager : MonoBehaviourPunCallbacks
 {
+
     [Header("Raycast")]
     [SerializeField] public Camera cam;
     [SerializeField] private LayerMask portMask;
@@ -59,7 +60,6 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private WirePort portPrefab;
     [SerializeField] private int columns = 6;
     [SerializeField] private int pairCount = 3;
-    [SerializeField] private int seed = -1;         // -1: 랜덤, 아니면 고정
 
     private readonly List<WirePort> spawnedPorts = new();
 
@@ -74,204 +74,6 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return (IsTop(aId) && IsBottom(bId)) || (IsBottom(aId) && IsTop(bId));
     }
 
-    public override void OnEnable()
-    {
-        base.OnEnable();
-        PhotonNetwork.AddCallbackTarget(this);
-    }
-
-    public override void OnDisable()
-    {
-        base.OnDisable();
-        PhotonNetwork.RemoveCallbackTarget(this);
-    }
-
-    public void RequestReserve(int portId)
-    {
-        RaiseEvent(WireEvt.ConnectReq, new object[] { portId });
-    }
-
-    public void RequestConnect(int aId, int bId)
-    {
-        RaiseEvent(WireEvt.ConnectReq, new object[] { aId, bId, PhotonNetwork.LocalPlayer.ActorNumber });
-    }
-
-    public void RequestDisconnect(int portId)
-    {
-        RaiseEvent(WireEvt.ConnectReq, new object[] { portId, 0, PhotonNetwork.LocalPlayer.ActorNumber });
-    }
-
-    private void RaiseEvent(WireEvt code, object[] data)
-    {
-        PhotonNetwork.RaiseEvent
-        (
-            (byte)code,
-            data,
-            new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
-            SendOptions.SendReliable
-        );
-    }
-
-    public void OnEvent(EventData photonEvent)
-    {
-        WireEvt code = (WireEvt)photonEvent.Code;
-        object[] data = photonEvent.CustomData as object[];
-
-        switch (code)
-        {
-            case WireEvt.ReserveSet:
-                {
-                    int portId = (int)data[0];
-                    int actor = (int)data[1];
-                    reservations[portId] = actor;
-                }
-                break;
-
-            case WireEvt.ReserveClear:
-                {
-                    int portId = (int)data[0];
-                    reservations.Remove(portId);
-                }
-                break;
-
-            case WireEvt.LinkSet:
-                {
-                    int a = (int)data[0];
-                    int b = (int)data[1];
-
-                    ApplyLinkLocal(a, b);
-                }
-                break;
-
-            case WireEvt.Solved:
-                {
-                    Debug.Log("퍼즐 해결됨!");
-                    // 문 열기, 전원 ON 등
-                }
-                break;
-        }
-    }
-
-    // ====== 마스터 전용 처리 ======
-    public override void OnMasterClientSwitched(Player newMasterClient)
-    {
-        Debug.Log("새 마스터가 퍼즐을 이어서 관리해야 함");
-    }
-
-    private bool IsReservedBy(int portId, int actor)
-    {
-        return reservations.TryGetValue(portId, out int a) && a == actor;
-    }
-
-    private bool IsFree(int portId)
-    {
-        return !reservations.ContainsKey(portId);
-    }
-
-
-    // 마스터: 이벤트 처리
-    public void HandleMasterEvent(WireEvt code, object[] data, int senderActor)
-    {
-        switch (code)
-        {
-            case WireEvt.ReserveReq:
-                {
-                    int portId = (int)data[0];
-
-                    if (IsFree(portId))
-                    {
-                        reservations[portId] = senderActor;
-                        Broadcast(WireEvt.ReserveSet, new object[] { portId, senderActor });
-                    }
-                }
-                break;
-
-            case WireEvt.ConnectReq:
-                {
-                    int aId = (int)data[0];
-                    int bId = (int)data[1];
-                    int actor = (int)data[2];
-
-                    // 예약 검증
-                    if (!IsReservedBy(aId, actor))
-                        return;
-
-                    // 기존 연결 제거
-                    if (links.TryGetValue(aId, out int old))
-                    {
-                        links.Remove(old);
-                        links.Remove(aId);
-                        Broadcast(WireEvt.LinkSet, new object[] { aId, 0 });
-                    }
-
-                    if (bId != 0)
-                    {
-                        links[aId] = bId;
-                        links[bId] = aId;
-                        Broadcast(WireEvt.LinkSet, new object[] { aId, bId });
-                    }
-
-                    // 예약 해제
-                    reservations.Remove(aId);
-                    Broadcast(WireEvt.ReserveClear, new object[] { aId });
-
-                    // 정답 판정은 마스터만
-                    if (CheckSolvedMaster())
-                        Broadcast(WireEvt.Solved, null);
-                }
-                break;
-        }
-    }
-
-    private void Broadcast(WireEvt code, object[] data)
-    {
-        PhotonNetwork.RaiseEvent(
-            (byte)code,
-            data,
-            new RaiseEventOptions { Receivers = ReceiverGroup.All },
-            SendOptions.SendReliable
-        );
-    }
-
-    private void ApplyLinkLocal(int a, int b)
-    {
-        if (b == 0)
-        {
-            if (links.TryGetValue(a, out int other))
-            {
-                links.Remove(other);
-                links.Remove(a);
-                RemoveLine(a, other);
-            }
-        }
-        else
-        {
-            links[a] = b;
-            links[b] = a;
-            DrawLine(a, b);
-        }
-    }
-
-    // ====== 퍼즐 로직 ======
-    private bool CheckSolvedMaster()
-    {
-        // 마스터만 호출
-        // answerMap과 links 비교
-        return false; // 네 기존 CheckSolved 코드 넣으면 됨
-    }
-
-    private void DrawLine(int a, int b)
-    {
-        // 기존 LineRenderer 생성 코드
-    }
-
-    private void RemoveLine(int a, int b)
-    {
-        // 기존 LineRenderer 제거 코드
-    }
-
-
-
     private void Awake()
     {
         answerMap = new Dictionary<int, int>();
@@ -285,15 +87,9 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         // 프리뷰 라인 생성
         previewLine = CreateLineRenderer("PreviewLine");
-        previewLine.enabled = false;
     }
 
-    private void Start()
-    {
-        SetupRandomPuzzle();
-    }
-
-    private void SetupRandomPuzzle()
+    public void SetupRandomPuzzle(int seed)
     {
         ClearAllWires();
         ClearSpawnedPorts();
@@ -313,7 +109,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
 
         // -1이면 랜덤, 아니면 고정
-        System.Random rand = (seed < 0) ? new System.Random() : new System.Random(seed);
+        var rand = new System.Random(seed);
 
         Shuffle(topSlots, rand);
         Shuffle(bottomSlots, rand);

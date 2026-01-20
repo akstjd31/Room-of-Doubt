@@ -28,16 +28,18 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public Item RequiredItem => requiredItem;           // 상호작용을 위해 필요한 아이템
     public Item RewardItem => rewardItem;               // 상호작용 후 얻는 보상 아이템
 
-    IEnumerator Start()
+    private IEnumerator Start()
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
         yield return new WaitUntil(() => PlayerCameraController.Instance != null);
 
-        if (!photonView.IsMine) yield break;
-
         playerCamCtrl = PlayerCameraController.Instance;
         brain = Camera.main.GetComponent<CinemachineBrain>();
+
+        yield return InitRoutine();
     }
+
+    protected abstract IEnumerator InitRoutine();
 
     // 상호작용 가능 여부 판단
     public virtual bool CanInteract(int actorNumber)

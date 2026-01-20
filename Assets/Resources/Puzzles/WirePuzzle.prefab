@@ -96,7 +96,6 @@ MonoBehaviour:
   portPrefab: {fileID: 7230169412001969612, guid: 3a57ddbd388195841a76e12cf90404fb, type: 3}
   columns: 6
   pairCount: 3
-  seed: -1
 --- !u!1 &1974656643933007161
 GameObject:
   m_ObjectHideFlags: 0

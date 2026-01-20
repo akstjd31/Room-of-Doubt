@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public event Action OnGameResumed; // 재개 이벤트
     public bool isPaused = false;
     public bool IsInPuzzle { get; private set; }
+    public bool isLocalPlayerCreated;
 
     void Awake()
     {
@@ -76,6 +77,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         // 플레이어 데이터 저장
         AddData(playerPv.Owner.ActorNumber, newPlayer.GetComponent<QuickSlotManager>());
+        isLocalPlayerCreated = true;
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
