@@ -17,8 +17,10 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private string itemResourcesFolder = "Items";
     [SerializeField] private string puzzleResourcesFolder = "Puzzles";
+    [SerializeField] private string hintResourcesFolder = "Hints";
     [SerializeField] private List<string> itemPrefabPaths;
     [SerializeField] private List<string> puzzlePrefabPaths;
+    [SerializeField] private List<string> hintPrefabPaths;
 
     public bool SpawnedLocally { get; private set; }
 
@@ -26,12 +28,13 @@ public class SpawnManager : MonoBehaviourPunCallbacks
     {
         Instance = this;
 
-        LoadItemPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
-        LoadItemPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
+        LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
+        LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
+        LoadPrefabsFromResources(hintPrefabPaths, hintResourcesFolder);
     }
 
     // 해당 경로에 존재하는 아이템 경로 따오기
-    private void LoadItemPrefabsFromResources(List<string> prefabPaths, string resourceFolder)
+    private void LoadPrefabsFromResources(List<string> prefabPaths, string resourceFolder)
     {
         GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(resourceFolder);
 
@@ -41,7 +44,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             prefabPaths.Add(path);
         }
 
-        Debug.Log("경로 매핑 성공!");
+        Debug.Log($"{resourceFolder} 경로 매핑 성공!");
     }
 
     private void Start()

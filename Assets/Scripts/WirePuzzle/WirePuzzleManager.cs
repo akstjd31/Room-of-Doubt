@@ -61,6 +61,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     [SerializeField] private int columns = 6;
     [SerializeField] private int pairCount = 3;
 
+    [SerializeField] private Transform portParent;
     private readonly List<WirePort> spawnedPorts = new();
 
     private int topCount => columns;
@@ -117,7 +118,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
         // 셔플된 리스트에 생성 및 각 ID 부여
         for (int i = 0; i < n; i++)
         {
-            var p = Instantiate(portPrefab, topSlots[i].position, topSlots[i].rotation);
+            var p = Instantiate(portPrefab, topSlots[i].position, topSlots[i].rotation, portParent);
             p.portId = i + 1;
             spawnedPorts.Add(p);
             portById[p.portId] = p;
@@ -125,7 +126,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < n; i++)
         {
-            var p = Instantiate(portPrefab, bottomSlots[i].position, bottomSlots[i].rotation);
+            var p = Instantiate(portPrefab, bottomSlots[i].position, bottomSlots[i].rotation, portParent);
             p.portId = n + i + 1;
             spawnedPorts.Add(p);
             portById[p.portId] = p;

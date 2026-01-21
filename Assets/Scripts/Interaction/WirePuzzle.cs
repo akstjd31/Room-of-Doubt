@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class WirePuzzle : InteractableBase
 {
-    [SerializeField] private Transform portsTrf;
+    [SerializeField] private Transform slotsTrf;
     [SerializeField] private WirePuzzleManager puzzleMgr;
 
     private void Awake()
     {
-        if (portsTrf == null) portsTrf = this.transform.GetChild(0);
+        if (slotsTrf == null) slotsTrf = this.transform.GetChild(0);
         if (puzzleMgr == null) puzzleMgr = this.GetComponentInChildren<WirePuzzleManager>(true);
 
         type = InteractableType.Puzzle;
@@ -41,8 +41,4 @@ public class WirePuzzle : InteractableBase
         puzzleMgr.SetupRandomPuzzle(seed);
         puzzleMgr.enabled = false;
     }
-
-
-    public Transform GetTopSlotParent() => portsTrf.GetChild(0);
-    public Transform GetBottomSlotParent() => portsTrf.GetChild(1);
 }
