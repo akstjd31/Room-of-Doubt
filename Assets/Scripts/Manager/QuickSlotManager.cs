@@ -43,6 +43,31 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
+    public void SetHintToSlot(int slotIndex, Item paperItem, int hintId, string payload)
+    {
+        if (slotIndex < 0 || slotIndex >= MAX_SLOT_COUNT) return;
+
+        slots[slotIndex].ClearSlot();
+        slots[slotIndex].AddHintItem(paperItem, hintId, payload);
+    }
+
+    public void ReadFocusedHint()
+    {
+        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return;
+
+        var slot = slots[forcusedIndex];
+        if (slot.IsEmptySlot()) return;
+        if (!slot.currentHint.HasValue)
+        {
+            Debug.Log("이 슬롯에는 힌트 데이터가 없음");
+            return;
+        }
+
+        // // HintDatabase: hintId + payload로 실제 문장 렌더링하는 쪽
+        // string text = HintDatabase.Instance.Render(slot.currentHint.hintId, slot.currentHint.payload);
+        // UIManager.Instance.ShowDocument(text);
+    }
+
     // 아이템 제거 (인덱스)
     public void RemoveItem()
     {
@@ -88,7 +113,7 @@ public class QuickSlotManager : MonoBehaviour
 
         slots[index].ClearSlot();
 
-        if (newItem != null) 
+        if (newItem != null)
             slots[index].AddItem(newItem);
     }
 

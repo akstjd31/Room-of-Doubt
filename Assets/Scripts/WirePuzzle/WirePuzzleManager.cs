@@ -13,7 +13,7 @@ public enum WireEvt : byte
     ReserveClear = 4,
     ConnectReq = 5,
     LinkSet = 6,
-    Solved = 7    
+    Solved = 7
 }
 
 public class WirePuzzleManager : MonoBehaviourPunCallbacks
@@ -279,6 +279,40 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
         return sb.ToString();
     }
 
+    public string BuildPortPairHintText()
+    {
+        if (answerPairs == null || answerPairs.Count == 0)
+            return "정답 데이터가 없습니다.";
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine("포트 번호 매핑표");
+        foreach (var p in answerPairs)
+            sb.AppendLine($"{p.a} -> {p.b}");
+
+        return sb.ToString();
+    }
+
+    // 일부만 공개(예: 처음 N개만)
+    public string BuildPartialHintText(int revealCount)
+    {
+        if (answerPairs == null || answerPairs.Count == 0)
+            return "정답 데이터가 없습니다.";
+
+        revealCount = Mathf.Clamp(revealCount, 1, answerPairs.Count);
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.AppendLine($"부분 힌트 ({revealCount}/{answerPairs.Count})");
+        for (int i = 0; i < revealCount; i++)
+        {
+            var p = answerPairs[i];
+            sb.AppendLine($"{p.a} -> {p.b}");
+        }
+        sb.AppendLine("나머지는 직접 추리하세요.");
+
+        return sb.ToString();
+    }
+
+
 
     private void SetPortMaterial(int portId, Material mat)
     {
@@ -405,7 +439,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     private void RequestConnectRPC(int aId, int bId, int actorNumber, PhotonMessageInfo info)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        if(info.Sender == null || info.Sender.ActorNumber != actorNumber) return;
+        if (info.Sender == null || info.Sender.ActorNumber != actorNumber) return;
         if (!IsValidPair(aId, bId)) return;
 
         photonView.RPC(nameof(ApplyConnectRPC), RpcTarget.AllBuffered, aId, bId, actorNumber);
