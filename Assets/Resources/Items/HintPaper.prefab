@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6840379899684632055}
   - component: {fileID: 3736430001863254830}
   m_Layer: 11
-  m_Name: Paper
+  m_Name: HintPaper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
