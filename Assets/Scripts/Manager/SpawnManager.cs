@@ -16,10 +16,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
     [SerializeField] private SpawnPointGroup puzzleSpawnPoints;
     [SerializeField] private string itemResourcesFolder = "Items";
     [SerializeField] private string puzzleResourcesFolder = "Puzzles";
-    // [SerializeField] private string hintResourcesFolder = "Hints";
     [SerializeField] private List<string> itemPrefabPaths;
     [SerializeField] private List<string> puzzlePrefabPaths;
-    // [SerializeField] private List<string> hintPrefabPaths;
 
     public bool SpawnedLocally { get; private set; }
 
@@ -29,7 +27,6 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
         LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
-        // LoadPrefabsFromResources(hintPrefabPaths, hintResourcesFolder);
     }
 
     // 해당 경로에 존재하는 아이템 경로 따오기
@@ -114,7 +111,6 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         if (itemPrefabPaths == null || itemPrefabPaths.Count < 1) return;
         if (puzzleSpawnPoints == null || puzzleSpawnPoints.Count < 1) return;
         if (puzzlePrefabPaths == null || puzzlePrefabPaths.Count < 1) return;
-        // if (hintPrefabPaths == null || hintPrefabPaths.Count < 1) return;
 
         var rand = new System.Random(seed);
 

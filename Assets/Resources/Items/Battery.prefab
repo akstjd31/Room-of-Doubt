@@ -150,8 +150,16 @@ MonoBehaviour:
   type: 0
   prompt: Battery
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}

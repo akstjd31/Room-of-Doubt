@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 
-
 [CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
 public class Item : ScriptableObject
 {
@@ -24,4 +23,27 @@ public class Item : ScriptableObject
         itemName = this.name;
     }
 #endif
+}
+
+[System.Serializable]
+public struct HintData
+{
+    public string hintKey;   // 예: "WIRE_COLOR_MAP"
+    public string payload;   // 예: "12345" (seed)
+
+    public bool HasValue => !string.IsNullOrEmpty(hintKey);
+    public static HintData Empty => new HintData { hintKey = null, payload = null };
+}
+
+[System.Serializable]
+public class ItemInstance
+{
+    public string itemId;   // Item SO GUID
+    public HintData hint;   // 동적 힌트 데이터
+
+    public ItemInstance(string itemId, HintData hint)
+    {
+        this.itemId = itemId;
+        this.hint = hint;
+    }
 }

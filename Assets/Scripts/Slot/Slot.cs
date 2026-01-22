@@ -7,45 +7,28 @@ public enum SlotType
     Quick
 }
 
-[System.Serializable]
-public struct HintData
-{
-    public string hintKey;   // 예: "WIRE_COLOR_MAP"
-    public string payload;   // 예: "12345" (seed)
-
-    public bool HasValue => !string.IsNullOrEmpty(hintKey);
-    public static HintData Empty => new HintData { hintKey = null, payload = null };
-}
 
 // 들어온 정보, 초기화만 해줌.
 public class Slot : MonoBehaviour
 {
-    public Item currentItem;
-    public HintData currentHint;
+    public ItemInstance current;
     public Image iconImage;
     public Image backgroundImage;
     public SlotType slotType;
     public int slotIndex;
 
-    public void AddItem(Item newItem)
+    public void Set(ItemInstance inst)
     {
-        currentItem = newItem;
-        iconImage.sprite = newItem.itemIcon;
+        current = inst;
+        var so = ItemManager.Instance.GetItemById(inst.itemId);
+        iconImage.sprite = so != null ? so.itemIcon : null;
     }
 
-    public void AddHintItem(Item paperItem, string hintKey, string payload)
+    public void Clear()
     {
-        currentItem = paperItem;
-        iconImage.sprite = paperItem.itemIcon;
-        currentHint = new HintData { hintKey = hintKey, payload = payload };
-    }
-
-    public void ClearSlot()
-    {
-        currentItem = null;
+        current = null;
         iconImage.sprite = null;
-        currentHint = HintData.Empty;
     }
 
-    public bool IsEmptySlot() => currentItem == null;
+    public bool IsEmptySlot() => current == null;
 }

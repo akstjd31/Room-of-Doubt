@@ -150,8 +150,16 @@ MonoBehaviour:
   type: 0
   prompt: Cube
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}

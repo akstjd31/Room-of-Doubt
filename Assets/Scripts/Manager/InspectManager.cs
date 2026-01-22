@@ -30,7 +30,7 @@ public class InspectManager : Singleton<InspectManager>
     {
         var slot = QuickSlotManager.Instance.GetFocusedSlot();
         if (slot == null) return;
-        if (slot.currentItem == null) return;
+        if (slot.current == null) return;
         
         Enter(slot);
     }
@@ -46,7 +46,8 @@ public class InspectManager : Singleton<InspectManager>
 
         if (spawned != null) Destroy(spawned);
 
-        spawned = Instantiate(slot.currentItem.itemPrefab, pivot);
+        var item = ItemManager.Instance.GetItemById(slot.current.itemId);
+        spawned = Instantiate(item.itemPrefab, pivot);
 
         spawned.transform.localRotation = pivot.transform.rotation;
 
