@@ -19,6 +19,7 @@ public class PlayerCameraController : MonoBehaviourPun
 
     [Header("Local Camera")]
     [SerializeField] private GameObject cameraRoot;
+    private CinemachineBrain brain;
     public CinemachineCamera playerCam;
 
     [Header("Value")]
@@ -53,6 +54,7 @@ public class PlayerCameraController : MonoBehaviourPun
 
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();
+        brain = cameraRoot.GetComponent<CinemachineBrain>();
 
         lookAction = playerInput.actions["Look"];
         playerCam.Priority = 20;
@@ -111,6 +113,7 @@ public class PlayerCameraController : MonoBehaviourPun
     private void LateUpdate()
     {
         if (GameManager.Instance.isPaused) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;
         if (!photonView.IsMine) return;
@@ -126,4 +129,14 @@ public class PlayerCameraController : MonoBehaviourPun
         rigid.MoveRotation(rigid.rotation * deltaRot);
     }
     
+    public void SetBlendCut()
+    {
+        brain.DefaultBlend.Style = CinemachineBlendDefinition.Styles.Cut;
+    }
+
+    public void SetBlendEaseInOut(float time)
+    {
+        brain.DefaultBlend.Style = CinemachineBlendDefinition.Styles.EaseInOut;
+        brain.DefaultBlend.Time = time;
+    }
 }

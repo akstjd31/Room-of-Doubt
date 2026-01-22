@@ -20,19 +20,13 @@ public class InspectManager : Singleton<InspectManager>
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            if (isInspecting) Exit();
-            else TryEnterFromFocusedSlot();
-        }
-
         if (isInspecting)
         {
             HandleRotate();
         }
     }
 
-    private void TryEnterFromFocusedSlot()
+    public void TryEnterFromFocusedSlot()
     {
         var slot = QuickSlotManager.Instance.GetFocusedSlot();
         if (slot == null) return;
@@ -56,10 +50,9 @@ public class InspectManager : Singleton<InspectManager>
         spawned.transform.localRotation = pivot.transform.rotation;
 
         lastMousePos = Input.mousePosition;
-
     }
 
-    private void Exit()
+    public void Exit()
     {
         cam.Priority = 0;
         isInspecting = false;

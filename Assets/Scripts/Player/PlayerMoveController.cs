@@ -55,6 +55,7 @@ public class PlayerMoveController : MonoBehaviourPun
     private void FixedUpdate()
     {
         if (UIManager.Instance.IsOpen) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (!photonView.IsMine) return;
 

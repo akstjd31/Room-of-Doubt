@@ -3,10 +3,12 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 using Photon.Realtime;
 
+[RequireComponent(typeof(PlayerCameraController))]
 public class PlayerInteractionController : MonoBehaviourPun
 {
+    private PlayerCameraController camController;
     private PlayerInput playerInput;
-    private InputAction interactInput;
+    private InputAction interactAction;
     [SerializeField] private Camera cam;
     [SerializeField] private float range = 3f;
     [SerializeField] private LayerMask interactMask;
@@ -15,27 +17,30 @@ public class PlayerInteractionController : MonoBehaviourPun
     private void Awake()
     {
         playerInput = this.GetComponent<PlayerInput>();
+        camController = this.GetComponent<PlayerCameraController>();
 
-        interactInput = playerInput.actions["Interact"];
+        interactAction = playerInput.actions["Interact"];
     }
 
     private void OnEnable()
     {
         if (!photonView.IsMine) return;
 
-        interactInput.performed += OnInteract;
+        interactAction.performed += OnInteract;
     }
 
     private void OnDisable()
     {
-        if (interactInput != null)
-            interactInput.performed -= OnInteract;
+        if (interactAction != null)
+            interactAction.performed -= OnInteract;
     }
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (!photonView.IsMine) return;
         if (current == null) return;
+        if (camController == null) return;
+
+        camController.SetBlendEaseInOut(0.5f);
 
         // 상호작용 RPC 수행
         photonView.RPC(nameof(TryInteractRPC),
@@ -82,6 +87,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     private void Update()
     {
         if (UIManager.Instance.IsOpen) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (!photonView.IsMine) return;
 
