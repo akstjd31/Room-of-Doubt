@@ -30,6 +30,12 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+            ReadFocusedHint();
+    }
+
     // 아이템 추가 (아이템)
     public void AddItem(Item item)
     {
@@ -43,12 +49,10 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
-    public void SetHintToSlot(int slotIndex, Item paperItem, int hintId, string payload)
+    public void SetHintToSlot(int slotIndex, Item paperItem, string hintKey, string payload)
     {
-        if (slotIndex < 0 || slotIndex >= MAX_SLOT_COUNT) return;
-
         slots[slotIndex].ClearSlot();
-        slots[slotIndex].AddHintItem(paperItem, hintId, payload);
+        slots[slotIndex].AddHintItem(paperItem, hintKey, payload);
     }
 
     public void ReadFocusedHint()
@@ -63,9 +67,9 @@ public class QuickSlotManager : MonoBehaviour
             return;
         }
 
-        // // HintDatabase: hintId + payload로 실제 문장 렌더링하는 쪽
-        // string text = HintDatabase.Instance.Render(slot.currentHint.hintId, slot.currentHint.payload);
-        // UIManager.Instance.ShowDocument(text);
+        // HintDatabase: hintId + payload로 실제 문장 렌더링하는 쪽
+        string text = HintDatabase.Instance.Render(slot.currentHint.hintKey, slot.currentHint.payload);
+        Debug.Log(text);
     }
 
     // 아이템 제거 (인덱스)

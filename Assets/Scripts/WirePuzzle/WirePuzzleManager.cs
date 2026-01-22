@@ -5,17 +5,6 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 
-public enum WireEvt : byte
-{
-    InitSeed = 1,
-    ReserveReq = 2,
-    ReserveSet = 3,
-    ReserveClear = 4,
-    ConnectReq = 5,
-    LinkSet = 6,
-    Solved = 7
-}
-
 public class WirePuzzleManager : MonoBehaviourPunCallbacks
 {
 

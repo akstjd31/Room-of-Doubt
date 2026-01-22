@@ -10,10 +10,11 @@ public enum SlotType
 [System.Serializable]
 public struct HintData
 {
-    public int hintId;
-    public string payload;
-    public bool HasValue => hintId != 0 || !string.IsNullOrEmpty(payload);
-    public static HintData Empty => new HintData { hintId = 0, payload = null };
+    public string hintKey;   // 예: "WIRE_COLOR_MAP"
+    public string payload;   // 예: "12345" (seed)
+
+    public bool HasValue => !string.IsNullOrEmpty(hintKey);
+    public static HintData Empty => new HintData { hintKey = null, payload = null };
 }
 
 // 들어온 정보, 초기화만 해줌.
@@ -32,11 +33,11 @@ public class Slot : MonoBehaviour
         iconImage.sprite = newItem.itemIcon;
     }
 
-    public void AddHintItem(Item paperItem, int hintId, string payload)
+    public void AddHintItem(Item paperItem, string hintKey, string payload)
     {
         currentItem = paperItem;
         iconImage.sprite = paperItem.itemIcon;
-        currentHint = new HintData { hintId = hintId, payload = payload };
+        currentHint = new HintData { hintKey = hintKey, payload = payload };
     }
 
     public void ClearSlot()

@@ -23,14 +23,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     private const string KEY_START_D_PAY = "START_HINT_D_PAY";
 
     // Start hint 지급용
-    [SerializeField] private string hintPaperItemId; // 힌트 종이 Item GUID
+    [SerializeField] private string hintPaperItemKey; // 힌트 종이 Item GUID
     [SerializeField] private int quickSlotIndexForStartHint = 0;
 
-    // 예: 힌트 템플릿 ID (나중에 HintDatabase랑 연결)
-    [SerializeField] private int hintIdForRoleA = 2001; // Wire 색 매핑표
-    [SerializeField] private int hintIdForRoleB = 2002; // (예) 포트 번호 매핑표
-    [SerializeField] private int hintIdForRoleC = 2003;
-    [SerializeField] private int hintIdForRoleD = 2004;
 
     private bool startHintGivenLocal = false;
 
@@ -57,6 +52,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Start()
     {
         StartCoroutine(SpawnPlayerWhenConnected());
+        StartCoroutine(InitAfterSceneLoaded());
     }
 
     void Update()
@@ -66,6 +62,16 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             TogglePause();
         }
+    }
+
+    private IEnumerator InitAfterSceneLoaded()
+    {
+        // 씬 전환 직후 Photon 상태/룸/플레이어리스트/룸프로퍼티가 안정화될 때까지 한 프레임~몇 프레임 양보
+        yield return null;
+        yield return new WaitUntil(() => PhotonNetwork.InRoom);
+
+        TrySetupStartHintsIfMaster();
+        TryGiveLocalStartHint();
     }
 
     private void TrySetupStartHintsIfMaster()
@@ -88,18 +94,7 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         int wireSeed = (int)seedObj;
 
-        // payload는 "seed"만 넣어도 됨 (읽을 때 WirePuzzleManager로 실제 힌트 생성)
-        // 역할별로 다른 표현을 주고 싶으면 hintId만 다르게 두면 됨.
-        var props = new PhotonHashtable
-    {
-        { KEY_START_A_ID, hintIdForRoleA }, { KEY_START_A_PAY, wireSeed.ToString() },
-        { KEY_START_B_ID, hintIdForRoleB }, { KEY_START_B_PAY, wireSeed.ToString() },
-        { KEY_START_C_ID, hintIdForRoleC }, { KEY_START_C_PAY, wireSeed.ToString() },
-        { KEY_START_D_ID, hintIdForRoleD }, { KEY_START_D_PAY, wireSeed.ToString() },
-        { KEY_START_READY, true }
-    };
-
-        room.SetCustomProperties(props);
+        CommitRandomStartHints(room, wireSeed);
         Debug.Log("[GameManager] Start hint specs committed (READY=true).");
     }
 
@@ -107,7 +102,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         if (startHintGivenLocal) return;
         if (!PhotonNetwork.InRoom) return;
-        if (!isLocalPlayerCreated) return; // 네가 이미 만든 플래그 사용
+        if (!isLocalPlayerCreated) return;
 
         var room = PhotonNetwork.CurrentRoom;
         if (room == null) return;
@@ -115,6 +110,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         // READY 확인
         if (!room.CustomProperties.TryGetValue(KEY_START_READY, out var readyObj) || !(bool)readyObj)
             return;
+
+        Debug.Log("레디 확인!");
 
         // 내 ROLE 확인 (Player CustomProperties)
         var lp = PhotonNetwork.LocalPlayer;
@@ -126,43 +123,46 @@ public class GameManager : MonoBehaviourPunCallbacks
         char role = roleStr[0];
 
         // 역할에 맞는 hintId/payload 꺼내기
-        if (!TryGetStartHintSpecForRole(room, role, out int hintId, out string payload))
+        if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
             return;
 
-        Item paperItem = ItemManager.Instance.GetItemById(hintPaperItemId);
+        Item paperItem = ItemManager.Instance.GetItemById(hintPaperItemKey);
         if (paperItem == null)
         {
-            Debug.LogError($"[GameManager] HintPaper Item not found. id={hintPaperItemId}");
+            Debug.LogError($"[GameManager] HintPaper Item not found. id={hintPaperItemKey}");
             return;
         }
 
         // 로컬 퀵슬롯에 장착
-        QuickSlotManager.Instance.SetHintToSlot(quickSlotIndexForStartHint, paperItem, hintId, payload);
+        Debug.Log($"현재 힌트 키 : {hintKey}");
+        QuickSlotManager.Instance.SetHintToSlot(quickSlotIndexForStartHint, paperItem, hintKey, payload);
         startHintGivenLocal = true;
 
-        Debug.Log($"[GameManager] Local start hint equipped. role={role}, hintId={hintId}, payload={payload}");
+        Debug.Log($"[GameManager] Local start hint equipped. role={role}, hintKey={hintKey}, payload={payload}");
     }
 
-    private bool TryGetStartHintSpecForRole(Room room, char role, out int hintId, out string payload)
+    private bool TryGetStartHintSpecForRole(Room room, char role, out string hintKey, out string payload)
     {
-        hintId = 0;
+        hintKey = null;
         payload = null;
 
-        string idKey, payKey;
+        string keyKey, payKey;
         switch (role)
         {
-            case 'A': idKey = KEY_START_A_ID; payKey = KEY_START_A_PAY; break;
-            case 'B': idKey = KEY_START_B_ID; payKey = KEY_START_B_PAY; break;
-            case 'C': idKey = KEY_START_C_ID; payKey = KEY_START_C_PAY; break;
-            default: idKey = KEY_START_D_ID; payKey = KEY_START_D_PAY; break;
+            case 'A': keyKey = KEY_START_A_ID; payKey = KEY_START_A_PAY; break;
+            case 'B': keyKey = KEY_START_B_ID; payKey = KEY_START_B_PAY; break;
+            case 'C': keyKey = KEY_START_C_ID; payKey = KEY_START_C_PAY; break;
+            default: keyKey = KEY_START_D_ID; payKey = KEY_START_D_PAY; break;
         }
 
-        if (!room.CustomProperties.TryGetValue(idKey, out var idObj)) return false;
+        if (!room.CustomProperties.TryGetValue(keyKey, out var keyObj)) return false;
         if (!room.CustomProperties.TryGetValue(payKey, out var payObj)) return false;
 
-        hintId = (int)idObj;
-        payload = (string)payObj;
-        return true;
+        // Room props는 object로 들어오니까 안전하게 string 캐스팅/변환
+        hintKey = keyObj as string ?? keyObj?.ToString();
+        payload = payObj as string ?? payObj?.ToString();
+
+        return !string.IsNullOrEmpty(hintKey);
     }
 
 
@@ -188,6 +188,57 @@ public class GameManager : MonoBehaviourPunCallbacks
             { KEY_ROLE, roles[i].ToString() }
         });
         }
+    }
+
+    private void CommitRandomStartHints(Room room, int wireSeed)
+{
+    var players = PhotonNetwork.PlayerList;
+    System.Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
+
+    var rand = new System.Random(wireSeed);
+
+    var props = new PhotonHashtable
+    {
+        { KEY_START_READY, true }
+    };
+
+    for (int i = 0; i < players.Length && i < 4; i++)
+    {
+        char role = (char)('A' + i);
+
+        string pickedHintKey = PickRandomWireHintKey(rand);
+        string payload = wireSeed.ToString();
+
+        switch (role)
+        {
+            case 'A':
+                props[KEY_START_A_ID] = pickedHintKey;
+                props[KEY_START_A_PAY] = payload;
+                break;
+            case 'B':
+                props[KEY_START_B_ID] = pickedHintKey;
+                props[KEY_START_B_PAY] = payload;
+                break;
+            case 'C':
+                props[KEY_START_C_ID] = pickedHintKey;
+                props[KEY_START_C_PAY] = payload;
+                break;
+            case 'D':
+                props[KEY_START_D_ID] = pickedHintKey;
+                props[KEY_START_D_PAY] = payload;
+                break;
+        }
+    }
+
+    room.SetCustomProperties(props);
+    Debug.Log("[GameManager] Random start hints committed.");
+}
+
+
+    // 와이어 힌트 중 하나 뽑기
+    string PickRandomWireHintKey(System.Random rand)
+    {
+        return WireHintKeys.All[rand.Next(0, WireHintKeys.All.Length)];
     }
 
     void TogglePause()
@@ -228,17 +279,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         AddData(playerPv.Owner.ActorNumber, newPlayer.GetComponent<QuickSlotManager>());
         isLocalPlayerCreated = true;
         TryGiveLocalStartHint();
-    }
-
-    public override void OnJoinedRoom()
-    {
-        TrySetupStartHintsIfMaster();
-        TryGiveLocalStartHint();
-    }
-
-    public override void OnPlayerEnteredRoom(Player newPlayer)
-    {
-        TrySetupStartHintsIfMaster();
     }
 
     public override void OnRoomPropertiesUpdate(PhotonHashtable propertiesThatChanged)
