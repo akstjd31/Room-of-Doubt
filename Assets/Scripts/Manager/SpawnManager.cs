@@ -14,11 +14,11 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private SpawnPointGroup itemSpawnPoints;
     [SerializeField] private SpawnPointGroup puzzleSpawnPoints;
-
     [SerializeField] private string itemResourcesFolder = "Items";
     [SerializeField] private string puzzleResourcesFolder = "Puzzles";
     [SerializeField] private List<string> itemPrefabPaths;
     [SerializeField] private List<string> puzzlePrefabPaths;
+
 
     public bool SpawnedLocally { get; private set; }
 
@@ -26,14 +26,18 @@ public class SpawnManager : MonoBehaviourPunCallbacks
     {
         Instance = this;
 
-        LoadItemPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
-        LoadItemPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
+        LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
+        LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
+
+        foreach (var p in itemPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
+        foreach (var p in puzzlePrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
     }
 
     // 해당 경로에 존재하는 아이템 경로 따오기
-    private void LoadItemPrefabsFromResources(List<string> prefabPaths, string resourceFolder)
+    private void LoadPrefabsFromResources(List<string> prefabPaths, string resourceFolder)
     {
-        GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(resourceFolder);
+        prefabPaths.Clear();
+        var loadedPrefabs = Resources.LoadAll<GameObject>(resourceFolder);
 
         foreach (var prefab in loadedPrefabs)
         {
@@ -41,7 +45,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             prefabPaths.Add(path);
         }
 
-        Debug.Log("경로 매핑 성공!");
+        Debug.Log($"{resourceFolder} 경로 매핑 성공!");
     }
 
     private void Start()
@@ -116,14 +120,16 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         // 아이템 스폰포인트 섞기
         var itemIndices = new List<int>();
-        for (int i = 0; i < itemSpawnPoints.Count; i++)
+        int spawnCount = Mathf.Min(itemPrefabPaths.Count, itemSpawnPoints.Count);
+        for (int i = 0; i < spawnCount; i++)
             itemIndices.Add(i);
         
         Shuffle(itemIndices, rand);
 
         // 퍼즐 스폰포인트 섞기
         var puzzleIndices = new List<int>();
-        for (int i = 0; i < puzzleSpawnPoints.Count; i++)
+        int puzzleCount = Mathf.Min(puzzlePrefabPaths.Count, puzzleSpawnPoints.Count);
+        for (int i = 0; i < puzzleCount; i++)
             puzzleIndices.Add(i);
         Shuffle(puzzleIndices, rand);
         
@@ -141,7 +147,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
             Debug.Log($"{itemObj.name} 생성!");
         }
-
+        
+        // 퍼즐 생성
         for (int i = 0; i < puzzlePrefabPaths.Count; i++)
         {
             string path = puzzlePrefabPaths[i];

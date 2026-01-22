@@ -119,6 +119,7 @@ MonoBehaviour:
   portPrefab: {fileID: 7230169412001969612, guid: 3a57ddbd388195841a76e12cf90404fb, type: 3}
   columns: 6
   pairCount: 3
+  portParent: {fileID: 2893054447143039803}
 --- !u!1 &1974656643933007161
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,7 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5426987205864724527}
   m_Layer: 0
-  m_Name: Ports
+  m_Name: Slots
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -532,6 +533,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6709041469564777500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6393446156853203931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2893054447143039803}
+  m_Layer: 11
+  m_Name: Ports
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2893054447143039803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6393446156853203931}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8432820353791613485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6542453392360017258
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,6 +701,7 @@ Transform:
   - {fileID: 8655886624797019451}
   - {fileID: 6159157882526695020}
   - {fileID: 4846629482553088940}
+  - {fileID: 2893054447143039803}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3678625978011339344
@@ -785,12 +818,20 @@ MonoBehaviour:
   type: 1
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 6101551751618836386}
   brain: {fileID: 0}
-  portsTrf: {fileID: 5426987205864724527}
+  slotsTrf: {fileID: 0}
   puzzleMgr: {fileID: 0}
 --- !u!1 &8363457568860053236
 GameObject:

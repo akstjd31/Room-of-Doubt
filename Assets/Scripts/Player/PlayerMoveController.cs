@@ -34,12 +34,12 @@ public class PlayerMoveController : MonoBehaviourPun
 
         moveAction = playerInput.actions["Move"];
 
-        if (!photonView.IsMine)
-        {
-            playerInput.enabled = false;
-            enabled = false;
-            return;
-        }
+        // if (!photonView.IsMine)
+        // {
+        //     playerInput.enabled = false;
+        //     enabled = false;
+        //     return;
+        // }
     }
     private void Start()
     {
@@ -55,6 +55,7 @@ public class PlayerMoveController : MonoBehaviourPun
     private void FixedUpdate()
     {
         if (UIManager.Instance.IsOpen) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (!photonView.IsMine) return;
 

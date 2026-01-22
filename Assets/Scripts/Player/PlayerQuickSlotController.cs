@@ -22,8 +22,6 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        if (!photonView.IsMine) return;
-
         playerInput = this.GetComponent<PlayerInput>();
         selectAction = playerInput.actions["Select"];
         scrollAction = playerInput.actions["Scroll"];
@@ -78,6 +76,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     private void OnSelectSlotPerformed(InputAction.CallbackContext ctx)
     {
         if (UIManager.Instance.IsOpen) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
 
         int nextIndex = int.Parse(ctx.control.name) - 1;
@@ -92,6 +91,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     private void OnScrollSlotPerformed(InputAction.CallbackContext ctx)
     {
         if (UIManager.Instance.IsOpen) return;
+        if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         
         float value = ctx.ReadValue<Vector2>().y;

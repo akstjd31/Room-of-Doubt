@@ -150,8 +150,16 @@ MonoBehaviour:
   type: 0
   prompt: LockedObj
   isInteracting: 0
-  requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}

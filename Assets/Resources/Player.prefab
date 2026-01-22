@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 7629103702865496340}
   - component: {fileID: 106123090159029425}
   - component: {fileID: 1923882127878252985}
+  - component: {fileID: 4133239222508536037}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -238,6 +239,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b7d7c4eb450cf4cb286ca55e47ccec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerQuickSlotController
+--- !u!114 &4133239222508536037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392177126937147979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fe974c233478e74b9cdee1788a83182, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInspectController
+  brain: {fileID: 590167588870668585}
 --- !u!1 &574530075682567166
 GameObject:
   m_ObjectHideFlags: 0

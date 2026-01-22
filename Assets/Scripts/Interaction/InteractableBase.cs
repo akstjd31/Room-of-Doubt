@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using Photon.Pun;
 using System.Collections;
+using WebSocketSharp;
 
 
 [RequireComponent(typeof(PhotonView))]
@@ -17,16 +18,16 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [SerializeField] protected bool isInteracting;                         // 현재 상호작용중인지?
 
     [Header("Item Interaction")]
-    [SerializeField] protected Item requiredItem;       // 소모/필요 아이템 (없으면 null)
-    [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
+    [SerializeField] protected ItemInstance requiredItem;       // 소모/필요 아이템 (없으면 null)
+    [SerializeField] protected ItemInstance rewardItem;         // 획득 아이템 (없으면 null)
 
     [Header("Cinemachine")]
     [SerializeField] private PlayerCameraController playerCamCtrl;
     [SerializeField] private CinemachineCamera myCam;
     [SerializeField] private CinemachineBrain brain;
 
-    public Item RequiredItem => requiredItem;           // 상호작용을 위해 필요한 아이템
-    public Item RewardItem => rewardItem;               // 상호작용 후 얻는 보상 아이템
+    public ItemInstance RequiredItem => requiredItem;           // 상호작용을 위해 필요한 아이템
+    public ItemInstance RewardItem => rewardItem;               // 상호작용 후 얻는 보상 아이템
 
     private bool isTransitioning;
     private Coroutine transitionCor;
@@ -50,10 +51,10 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public virtual bool CanInteract(int actorNumber)
     {
         // 일반적인 조사: 필요 아이템 없음.
-        if (requiredItem == null) return true;
+        if (requiredItem.itemId.IsNullOrEmpty()) return true;
 
         // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        return QuickSlotManager.Instance.CompareItem(requiredItem.ID);
+        return QuickSlotManager.Instance.CompareItem(requiredItem.itemId);
     }
 
     // 상호작용 응답
@@ -65,10 +66,10 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         // 로컬에서 상호작용이 가능한지 검증 후
         if (!CanInteract(actorNumber)) return;
 
-        if (requiredItem != null)
+        if (!requiredItem.itemId.IsNullOrEmpty())
             QuickSlotManager.Instance.RemoveItem();
 
-        if (RewardItem != null)
+        if (!RewardItem.itemId.IsNullOrEmpty())
             QuickSlotManager.Instance.AddItem(RewardItem);
 
         isInteracting = !isInteracting;
