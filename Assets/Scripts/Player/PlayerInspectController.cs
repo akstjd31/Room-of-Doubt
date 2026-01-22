@@ -32,9 +32,11 @@ public class PlayerInspectController : MonoBehaviourPun
         if (inspectAction != null)
             inspectAction.performed -= OnInspect;
     }
-
+    
     public void OnInspect(InputAction.CallbackContext ctx)
     {
+        if (QuickSlotManager.Instance.IsEmpty()) return;
+        
         if (camController != null)
             camController.SetBlendCut();
 

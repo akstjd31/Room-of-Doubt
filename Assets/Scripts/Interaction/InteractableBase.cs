@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using Photon.Pun;
 using System.Collections;
+using WebSocketSharp;
 
 
 [RequireComponent(typeof(PhotonView))]
@@ -50,7 +51,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public virtual bool CanInteract(int actorNumber)
     {
         // 일반적인 조사: 필요 아이템 없음.
-        if (requiredItem == null) return true;
+        if (requiredItem.itemId.IsNullOrEmpty()) return true;
 
         // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
         return QuickSlotManager.Instance.CompareItem(requiredItem.itemId);
@@ -65,10 +66,10 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         // 로컬에서 상호작용이 가능한지 검증 후
         if (!CanInteract(actorNumber)) return;
 
-        if (requiredItem != null)
+        if (!requiredItem.itemId.IsNullOrEmpty())
             QuickSlotManager.Instance.RemoveItem();
 
-        if (RewardItem != null)
+        if (!RewardItem.itemId.IsNullOrEmpty())
             QuickSlotManager.Instance.AddItem(RewardItem);
 
         isInteracting = !isInteracting;

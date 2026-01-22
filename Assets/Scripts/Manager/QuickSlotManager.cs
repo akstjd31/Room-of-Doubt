@@ -24,18 +24,13 @@ public class QuickSlotManager : MonoBehaviour
                 GameObject newSlotObj = Instantiate(slotPrefab.gameObject, quickSlotParent.transform);
                 slots[i] = newSlotObj.GetComponent<Slot>();
 
+                slots[i].Clear();
                 slots[i].slotType = SlotType.Quick;
                 slots[i].slotIndex = i;
             }
         }
 
         forcusedIndex = -1;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-            ReadFocusedHint();
     }
 
     // 아이템 추가 (아이템)
@@ -91,6 +86,7 @@ public class QuickSlotManager : MonoBehaviour
 
     public bool CompareItem(string itemID)
     {
+        Debug.Log("왜 아이템을 비교하지?");
         if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return false;
         if (slots[forcusedIndex].IsEmptySlot()) return false;
 
@@ -144,4 +140,6 @@ public class QuickSlotManager : MonoBehaviour
         return slots[forcusedIndex];
     }
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
+
+    public bool IsEmpty() => slots[forcusedIndex].IsEmptySlot();
 }
