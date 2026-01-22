@@ -9,7 +9,7 @@ public class Item : ScriptableObject
     [SerializeField] private string itemName;
     public string ItemName => itemName;
     public Sprite itemIcon;
-    public GameObject itemPrefab;
+    public Transform itemPrefab;
 
 #if UNITY_EDITOR
     private void OnValidate()

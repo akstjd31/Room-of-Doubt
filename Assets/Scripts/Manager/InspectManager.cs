@@ -47,7 +47,7 @@ public class InspectManager : Singleton<InspectManager>
         if (spawned != null) Destroy(spawned);
 
         var item = ItemManager.Instance.GetItemById(slot.current.itemId);
-        spawned = Instantiate(item.itemPrefab, pivot);
+        spawned = Instantiate(item.itemPrefab.gameObject, pivot);
 
         spawned.transform.localRotation = pivot.transform.rotation;
 

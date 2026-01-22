@@ -337,6 +337,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &107501130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 107501132}
+  - component: {fileID: 107501131}
+  m_Layer: 0
+  m_Name: PhotonPrefabPoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &107501131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107501130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e572362b1c15a4345904ce12f57dda0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhotonPrefabPoolManager
+  poolParent: {fileID: 204567350}
+  cachingCountPerPrefab: 0
+--- !u!4 &107501132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107501130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &147942692
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,6 +516,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLockToTarget
   Damping: 0
+--- !u!1 &204567349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 204567350}
+  m_Layer: 0
+  m_Name: PoolParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &204567350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204567349}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &245718994
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13044,8 +13121,16 @@ MonoBehaviour:
   type: 0
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -27162,8 +27247,16 @@ MonoBehaviour:
   type: 0
   prompt: Need key!
   isInteracting: 0
-  requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -29248,8 +29341,16 @@ MonoBehaviour:
   type: 0
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -30819,8 +30920,16 @@ MonoBehaviour:
   type: 0
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -31690,8 +31799,16 @@ MonoBehaviour:
   type: 0
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -36409,8 +36526,16 @@ MonoBehaviour:
   type: 0
   prompt: 
   isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 0}
+  requiredItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
+  rewardItem:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
@@ -37230,9 +37355,11 @@ SceneRoots:
   - {fileID: 1036424379}
   - {fileID: 443785779}
   - {fileID: 569727900}
+  - {fileID: 204567350}
   - {fileID: 51599751}
   - {fileID: 1460331518}
   - {fileID: 262117242}
   - {fileID: 710292033}
   - {fileID: 1755552587}
   - {fileID: 147942694}
+  - {fileID: 107501132}
