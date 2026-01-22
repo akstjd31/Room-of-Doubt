@@ -10,7 +10,7 @@ public class QuickSlotManager : MonoBehaviour
     [SerializeField] private GameObject quickSlotParent;        // 판넬
     [SerializeField] private Transform slotPrefab;              // 슬롯 프리팹
     public Slot[] slots;
-    private int forcusedIndex;
+    [SerializeField] private int forcusedIndex;
 
     private void Awake()
     {
@@ -28,6 +28,8 @@ public class QuickSlotManager : MonoBehaviour
                 slots[i].slotIndex = i;
             }
         }
+
+        forcusedIndex = -1;
     }
 
     private void Update()
@@ -126,6 +128,13 @@ public class QuickSlotManager : MonoBehaviour
     {
         if (slots[index].IsEmptySlot()) return "";
         return slots[index].currentItem.ID;
+    }
+    
+    // 현재 포커싱 중인 슬롯
+    public Slot GetFocusedSlot()
+    {
+        if (forcusedIndex < 0 || forcusedIndex >= slots.Length) return null;
+        return slots[forcusedIndex];
     }
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
 }
