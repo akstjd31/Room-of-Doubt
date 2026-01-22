@@ -47,6 +47,7 @@ public class InspectManager : Singleton<InspectManager>
         if (spawned != null) Destroy(spawned);
 
         spawned = Instantiate(slot.currentItem.itemPrefab, pivot);
+
         spawned.transform.localRotation = pivot.transform.rotation;
 
         lastMousePos = Input.mousePosition;

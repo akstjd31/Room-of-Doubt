@@ -57,21 +57,21 @@ public class QuickSlotManager : MonoBehaviour
         slots[slotIndex].AddHintItem(paperItem, hintKey, payload);
     }
 
-    public void ReadFocusedHint()
+    public string ReadFocusedHint()
     {
-        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return;
+        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return null;
 
         var slot = slots[forcusedIndex];
-        if (slot.IsEmptySlot()) return;
+        if (slot.IsEmptySlot()) return null;
         if (!slot.currentHint.HasValue)
         {
             Debug.Log("이 슬롯에는 힌트 데이터가 없음");
-            return;
+            return null;
         }
 
         // HintDatabase: hintId + payload로 실제 문장 렌더링하는 쪽
         string text = HintDatabase.Instance.Render(slot.currentHint.hintKey, slot.currentHint.payload);
-        Debug.Log(text);
+        return text;
     }
 
     // 아이템 제거 (인덱스)

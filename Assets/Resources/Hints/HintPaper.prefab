@@ -232,6 +232,8 @@ GameObject:
   - component: {fileID: 3427916035355025341}
   - component: {fileID: 7399055594133431722}
   - component: {fileID: 6135492874836383021}
+  - component: {fileID: 2454475432507177277}
+  - component: {fileID: 7724339339438651917}
   m_Layer: 11
   m_Name: Paper
   m_TagString: Untagged
@@ -332,3 +334,46 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2454475432507177277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8243352085992086579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &7724339339438651917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8243352085992086579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7590c566a16b7d44eb54954e6f33a793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HintPaper
+  type: 0
+  prompt: 
+  isInteracting: 0
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 0}
+  playerCamCtrl: {fileID: 0}
+  myCam: {fileID: 0}
+  brain: {fileID: 0}
+  text: {fileID: 8911012061573030848}
