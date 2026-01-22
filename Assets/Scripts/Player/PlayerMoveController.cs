@@ -34,12 +34,12 @@ public class PlayerMoveController : MonoBehaviourPun
 
         moveAction = playerInput.actions["Move"];
 
-        if (!photonView.IsMine)
-        {
-            playerInput.enabled = false;
-            enabled = false;
-            return;
-        }
+        // if (!photonView.IsMine)
+        // {
+        //     playerInput.enabled = false;
+        //     enabled = false;
+        //     return;
+        // }
     }
     private void Start()
     {

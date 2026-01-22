@@ -38,66 +38,71 @@ public class PhotonPrefabPoolManager : Singleton<PhotonPrefabPoolManager>, IPunP
         }
     }
 
-    public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
+public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
+{
+    var prefab = GetOrCachePrefab(prefabId);
+    if (prefab == null) return null;
+
+    // ✅ 풀링 제외(플레이어 포함 제외 대상): 그냥 일반 생성으로 반환
+    if (!ShouldPool(prefabId))
     {
-        if (!pool.TryGetValue(prefabId, out var q))
-        {
-            q = new Queue<GameObject>();
-            pool[prefabId] = q;
-        }
+        var obj = Object.Instantiate(prefab, position, rotation);
+        obj.name = prefab.name;
 
-        GameObject obj;
+        // Photon 경고 방지: PrefabPool은 inactive를 리턴하는 게 정석
+        if (obj.activeSelf) obj.SetActive(false);
 
-        if (q.Count > 0)
-        {
-            obj = q.Dequeue();
-        }
-        else
-        {
-            var prefab = GetOrCachePrefab(prefabId);
-            obj = Instantiate(prefab, poolParent);
-            obj.name = prefab.name;
-        }
-
-        var tag = obj.GetComponent<PhotonPoolTag>();
-        if (tag == null) tag = obj.AddComponent<PhotonPoolTag>();
+        // Destroy에서 ShouldPool 판단할 때 필요하니 기록은 해두자(선택)
+        var tag = obj.GetComponent<PhotonPoolTag>() ?? obj.AddComponent<PhotonPoolTag>();
         tag.PrefabId = prefabId;
-
-        obj.transform.SetPositionAndRotation(position, rotation);
-        obj.SetActive(true);
 
         return obj;
     }
 
-    public void Destroy(GameObject gameObject)
+    // ✅ 여기부터 풀링 대상(Items/Puzzles)
+    if (!pool.TryGetValue(prefabId, out var q))
+        pool[prefabId] = q = new Queue<GameObject>();
+
+    GameObject pooled = q.Count > 0 ? q.Dequeue() : Object.Instantiate(prefab, poolParent);
+    pooled.name = prefab.name;
+
+    if (pooled.activeSelf) pooled.SetActive(false);
+
+    var pooledTag = pooled.GetComponent<PhotonPoolTag>() ?? pooled.AddComponent<PhotonPoolTag>();
+    pooledTag.PrefabId = prefabId;
+
+    pooled.transform.SetPositionAndRotation(position, rotation);
+    return pooled;
+}
+
+public void Destroy(GameObject gameObject)
+{
+    if (gameObject == null) return;
+
+    var tag = gameObject.GetComponent<PhotonPoolTag>();
+
+    // ✅ 태그가 없거나, 풀링 제외 대상이면 "진짜 파괴"
+    if (tag == null || string.IsNullOrEmpty(tag.PrefabId) || !ShouldPool(tag.PrefabId))
     {
-        if (gameObject == null) return;
-
-        var tag = gameObject.GetComponent<PhotonPoolTag>();
-        if (tag == null || string.IsNullOrEmpty(tag.PrefabId))
-        {
-            DestroyImmediate(gameObject);
-            return;
-        }
-
-        gameObject.SetActive(false);
-        gameObject.transform.SetParent(poolParent);
-
-        if (!pool.TryGetValue(tag.PrefabId, out var q))
-        {
-            q = new Queue<GameObject>();
-            pool[tag.PrefabId] = q;
-        }
-
-        q.Enqueue(gameObject);
+        Object.Destroy(gameObject);   // ✅ DestroyImmediate 말고 Destroy 추천
+        return;
     }
 
-    private bool ShouldPool(string prefabId, GameObject prefab)
-    {
-        if (prefab.CompareTag("Player"))
-            return false;
+    // ✅ 풀링 대상만 반환
+    PhotonPoolUtil.ResetAllPhotonViewIds(gameObject);
+    gameObject.SetActive(false);
+    gameObject.transform.SetParent(poolParent);
 
-        return true;
+    if (!pool.TryGetValue(tag.PrefabId, out var q))
+        pool[tag.PrefabId] = q = new Queue<GameObject>();
+
+    q.Enqueue(gameObject);
+}
+
+    private bool ShouldPool(string prefabId)
+    {
+        // 풀링 허용: Items, Puzzles만
+        return prefabId.StartsWith("Items/") || prefabId.StartsWith("Puzzles/");
     }
 
 
@@ -123,4 +128,14 @@ public class PhotonPrefabPoolManager : Singleton<PhotonPrefabPoolManager>, IPunP
 public class PhotonPoolTag : MonoBehaviour
 {
     public string PrefabId;
+}
+
+static class PhotonPoolUtil
+{
+    public static void ResetAllPhotonViewIds(GameObject go)
+    {
+        var views = go.GetComponentsInChildren<PhotonView>(true);
+        foreach (var v in views)
+            v.ViewID = 0; // 중요: 재사용 전에 반드시 초기화
+    }
 }

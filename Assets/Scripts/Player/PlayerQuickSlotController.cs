@@ -22,8 +22,6 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        if (!photonView.IsMine) return;
-
         playerInput = this.GetComponent<PlayerInput>();
         selectAction = playerInput.actions["Select"];
         scrollAction = playerInput.actions["Scroll"];

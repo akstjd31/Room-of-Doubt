@@ -34,12 +34,6 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void OnEnable()
     {
-        if (!photonView.IsMine)
-        {
-            cameraRoot.SetActive(false);
-            return;
-        }
-
         lookAction.performed += OnLook;
         lookAction.canceled += OnLook;
         
@@ -48,8 +42,6 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void Awake()
     {
-        if (!photonView.IsMine) return;
-        
         Instance = this;
 
         playerInput = this.GetComponent<PlayerInput>();
@@ -62,7 +54,11 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void Start()
     {
-        if (!photonView.IsMine) return;
+        if (!photonView.IsMine)
+        {
+            cameraRoot.SetActive(false);
+            return;
+        }
 
         if (GameManager.Instance != null)
         {
@@ -112,11 +108,11 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private void LateUpdate()
     {
+        if (!photonView.IsMine) return;
         if (GameManager.Instance.isPaused) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;
-        if (!photonView.IsMine) return;
 
         float mouseX = lookInput.x * sensitivity;
         float mouseY = lookInput.y * sensitivity;
