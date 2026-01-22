@@ -46,4 +46,9 @@ public class ItemInstance
         this.itemId = itemId;
         this.hint = hint;
     }
+
+    public ItemInstance(string itemId)
+    {
+        this.itemId = itemId;
+    }
 }

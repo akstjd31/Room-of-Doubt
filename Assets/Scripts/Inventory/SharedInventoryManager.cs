@@ -132,8 +132,6 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, Flatten(sharedItems));
             return;
         }
-
-        // (Quick <-> Quick 은 사실 여기서 처리할 필요 없음. 로컬 퀵슬롯 UI 이동이면 네트워크 불필요)
     }
 
 

@@ -185,6 +185,6 @@ static class PhotonPoolUtil
     {
         var views = go.GetComponentsInChildren<PhotonView>(true);
         foreach (var v in views)
-            v.ViewID = 0; // 중요: 재사용 전에 반드시 초기화
+            v.ViewID = 0; // 뷰 ID 초기화
     }
 }
