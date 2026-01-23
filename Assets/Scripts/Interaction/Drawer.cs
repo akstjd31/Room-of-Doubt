@@ -10,6 +10,7 @@ public class Drawer : InteractableBase
     private void Awake()
     {
         anim = this.transform.parent.GetComponent<Animator>();
+        
         isOpen = false;
 
         if (keyPad == null)

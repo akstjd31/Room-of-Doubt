@@ -18,6 +18,7 @@ public class KeyPadManager : MonoBehaviourPun
     [SerializeField] private LayerMask numPadMask;
 
     public bool IsSolved { get; private set; }
+    [SerializeField] private bool isFinal;   // 최종 탈출하기 위한 키패드인가?
 
     private string input;
     private string result;
@@ -68,7 +69,16 @@ public class KeyPadManager : MonoBehaviourPun
                     if (collect == result)
                     {
                         if (!IsSolved)
-                            photonView.RPC(nameof(SuccessRPC), RpcTarget.AllBuffered);
+                        {
+                            if (isFinal)
+                            {
+                                SuccessLocal();
+                            }
+                            else
+                            {
+                                photonView.RPC(nameof(SuccessRPC), RpcTarget.AllBuffered);
+                            }
+                        }
                     }
                     else
                     {
@@ -90,6 +100,19 @@ public class KeyPadManager : MonoBehaviourPun
             codes[i] = 0;
         input = "";
     }
+    
+    // 로컬 전용 처리
+    private void SuccessLocal()
+    {
+        IsSolved = true;
+
+        Debug.Log("해결! (로컬)");
+        if (screenText != null)
+        {
+            screenText.fontSize = 1200;
+            screenText.text = "UNLOCK!";
+        }
+    }
 
     // 성공 결과만 공유
     [PunRPC]
@@ -99,7 +122,7 @@ public class KeyPadManager : MonoBehaviourPun
 
         IsSolved = true;
 
-        Debug.Log("[KeyPad] Solved!");
+        Debug.Log("해결! (RPC)");
         screenText.fontSize = 1200;
         screenText.text = "UNLOCK!";
     }
