@@ -88,8 +88,23 @@ public class PlayerInteractionController : MonoBehaviourPun
     {
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
-        if (GameManager.Instance.IsInteractingFocused) return;
         if (!photonView.IsMine) return;
+
+        if (GameManager.Instance.IsInteractingFocused)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Ray mouseRay = cam.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(mouseRay, out var mouseHit, range / 2, interactMask))
+                {
+                    var target = mouseHit.collider.GetComponent<InteractableBase>();
+                    if (target != null)
+                        photonView.RPC(nameof(TryInteractRPC), RpcTarget.All, target.ViewId);
+                }
+            }
+
+            return;
+        }
 
         // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
