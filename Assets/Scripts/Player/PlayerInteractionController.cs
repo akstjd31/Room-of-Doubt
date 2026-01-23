@@ -10,7 +10,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     private PlayerInput playerInput;
     private InputAction interactAction;
     [SerializeField] private Camera cam;
-    [SerializeField] private float range = 3f;
+    [SerializeField] private float range = 1.5f;
     [SerializeField] private LayerMask interactMask;
     private InteractableBase current;
 
@@ -95,10 +95,10 @@ public class PlayerInteractionController : MonoBehaviourPun
             if (Input.GetMouseButtonDown(0))
             {
                 Ray mouseRay = cam.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(mouseRay, out var mouseHit, range / 2, interactMask))
+                if (Physics.Raycast(mouseRay, out var mouseHit, range * 2, interactMask))
                 {
                     var target = mouseHit.collider.GetComponent<InteractableBase>();
-                    if (target != null)
+                    if (target != null && !target.Equals(current))
                         photonView.RPC(nameof(TryInteractRPC), RpcTarget.All, target.ViewId);
                 }
             }

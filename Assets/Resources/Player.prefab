@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   cameraTransform: {fileID: 3475470486247514607}
-  moveSpeed: 4
+  moveSpeed: 3
 --- !u!114 &7629103702865496340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   cam: {fileID: 398102256394945920}
-  range: 3
+  range: 1.5
   interactMask:
     serializedVersion: 2
     m_Bits: 2048

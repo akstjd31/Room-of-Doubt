@@ -13,7 +13,7 @@ public class PlayerMoveController : MonoBehaviourPun
     [SerializeField] private Transform cameraTransform;
 
     [Header("Value")]
-    [SerializeField] private float moveSpeed = 4f;
+    [SerializeField] private float moveSpeed = 3f;
     private Vector2 moveInput;
 
     private void OnEnable()

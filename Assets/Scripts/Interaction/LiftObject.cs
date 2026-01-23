@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Cushion : InteractableBase
+public class LiftObject : InteractableBase
 {
     public override void Interact(int actorNumber)
     {
         this.transform.position = new Vector3
         (
             this.transform.position.x,
-            isInteracting ? this.transform.position.y + 1 : this.transform.position.y - 1,
+            isInteracting ? this.transform.position.y + 0.3f : this.transform.position.y - 0.3f,
             this.transform.position.z
         );
     }
