@@ -10,7 +10,7 @@ public class QuickSlotManager : MonoBehaviour
     [SerializeField] private GameObject quickSlotParent;        // 판넬
     [SerializeField] private Transform slotPrefab;              // 슬롯 프리팹
     public Slot[] slots;
-    [SerializeField] private int forcusedIndex;
+    [SerializeField] private int focusedIndex;
 
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class QuickSlotManager : MonoBehaviour
             }
         }
 
-        forcusedIndex = -1;
+        focusedIndex = -1;
     }
 
     // 아이템 추가 (아이템)
@@ -56,9 +56,9 @@ public class QuickSlotManager : MonoBehaviour
 
     public string ReadFocusedHint()
     {
-        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return null;
+        if (focusedIndex < 0 || focusedIndex >= MAX_SLOT_COUNT) return null;
 
-        var slot = slots[forcusedIndex];
+        var slot = slots[focusedIndex];
         if (slot.IsEmptySlot()) return null;
         if (!slot.current.hint.HasValue)
         {
@@ -74,10 +74,10 @@ public class QuickSlotManager : MonoBehaviour
     // 아이템 제거 (인덱스)
     public void RemoveItem()
     {
-        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return;
-        if (slots[forcusedIndex].IsEmptySlot()) return;
+        if (focusedIndex < 0 || focusedIndex >= MAX_SLOT_COUNT) return;
+        if (slots[focusedIndex].IsEmptySlot()) return;
 
-        slots[forcusedIndex].Clear();
+        slots[focusedIndex].Clear();
     }
 
     public ItemInstance GetItemInstanceByIndex(int index)
@@ -89,10 +89,10 @@ public class QuickSlotManager : MonoBehaviour
     public bool CompareItem(string itemID)
     {
         Debug.Log("왜 아이템을 비교하지?");
-        if (forcusedIndex < 0 || forcusedIndex >= MAX_SLOT_COUNT) return false;
-        if (slots[forcusedIndex].IsEmptySlot()) return false;
+        if (focusedIndex < 0 || focusedIndex >= MAX_SLOT_COUNT) return false;
+        if (slots[focusedIndex].IsEmptySlot()) return false;
 
-        if (slots[forcusedIndex].current.itemId.Equals(itemID))
+        if (slots[focusedIndex].current.itemId.Equals(itemID))
             return true;
         else
         {
@@ -104,7 +104,7 @@ public class QuickSlotManager : MonoBehaviour
     // 포커싱된 슬롯 색 변경
     public void UpdateSlotFocusedColor(int index)
     {
-        forcusedIndex = index;
+        focusedIndex = index;
 
         for (int i = 0; i < MAX_SLOT_COUNT; i++)
         {
@@ -138,10 +138,10 @@ public class QuickSlotManager : MonoBehaviour
     // 현재 포커싱 중인 슬롯
     public Slot GetFocusedSlot()
     {
-        if (forcusedIndex < 0 || forcusedIndex >= slots.Length) return null;
-        return slots[forcusedIndex];
+        if (focusedIndex < 0 || focusedIndex >= slots.Length) return null;
+        return slots[focusedIndex];
     }
     public int GetMaxSlotCount() => MAX_SLOT_COUNT;
 
-    public bool IsEmpty() => slots[forcusedIndex].IsEmptySlot();
+    public bool IsEmpty() => slots[focusedIndex].IsEmptySlot();
 }

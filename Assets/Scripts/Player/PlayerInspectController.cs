@@ -35,6 +35,7 @@ public class PlayerInspectController : MonoBehaviourPun
     
     public void OnInspect(InputAction.CallbackContext ctx)
     {
+        if (QuickSlotManager.Instance.GetFocusedSlot() == null) return;
         if (QuickSlotManager.Instance.IsEmpty()) return;
         
         if (camController != null)
