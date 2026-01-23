@@ -1,16 +1,18 @@
 using System.Collections;
-using Photon.Pun;
+using TMPro;
 using UnityEngine;
 
-public class CubeObj : InteractableBase
+public class ArcadeMachine : InteractableBase
 {
+    [SerializeField] private TMP_Text text;
     public override void Interact(int actorNumber)
     {
-        this.gameObject.SetActive(false);
+        text.gameObject.SetActive(true);
     }
 
     protected override IEnumerator InitRoutine()
     {
+        text.gameObject.SetActive(false);
         yield break;
     }
 }

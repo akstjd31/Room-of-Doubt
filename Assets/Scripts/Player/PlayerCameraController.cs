@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Photon.Pun;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -38,18 +39,30 @@ public class PlayerCameraController : MonoBehaviourPun
         lookAction.canceled += OnLook;
         
         SetCursor(CursorLockMode.Locked, false);
+
+        StartCoroutine(RegisterLocalAfterOwnershipReady());
     }
 
     private void Awake()
     {
-        Instance = this;
-
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();
         brain = cameraRoot.GetComponent<CinemachineBrain>();
 
         lookAction = playerInput.actions["Look"];
-        playerCam.Priority = 20;
+    }
+
+    private IEnumerator RegisterLocalAfterOwnershipReady()
+    {
+        // PhotonView가 생길 때까지 (보통 즉시지만 안전빵)
+        yield return new WaitUntil(() => photonView != null);
+
+        // 소유권/로컬플레이어가 안정화될 때까지 한 프레임 양보
+        yield return null;
+
+        if (!photonView.IsMine) yield break;
+
+        Instance = this;
     }
 
     private void Start()
@@ -59,6 +72,8 @@ public class PlayerCameraController : MonoBehaviourPun
             cameraRoot.SetActive(false);
             return;
         }
+
+        playerCam.Priority = 20;
 
         if (GameManager.Instance != null)
         {

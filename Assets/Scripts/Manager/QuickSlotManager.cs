@@ -34,16 +34,18 @@ public class QuickSlotManager : MonoBehaviour
     }
 
     // 아이템 추가 (아이템)
-    public void AddItem(ItemInstance item)
+    public bool AddItem(ItemInstance item)
     {
         foreach (Slot slot in slots)
         {
             if (slot.IsEmptySlot())
             {
                 slot.Set(item);
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 
     public void SetHintToSlot(int slotIndex, Item paperItem, string hintKey, string payload)
@@ -132,7 +134,7 @@ public class QuickSlotManager : MonoBehaviour
         if (slots[index].IsEmptySlot()) return "";
         return slots[index].current.itemId;
     }
-    
+
     // 현재 포커싱 중인 슬롯
     public Slot GetFocusedSlot()
     {

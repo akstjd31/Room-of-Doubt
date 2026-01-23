@@ -2,11 +2,12 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 
-public class LockedObj : InteractableBase
+public class RewardObject : InteractableBase
 {
     public override void Interact(int actorNumber)
     {
-        this.gameObject.SetActive(false);
+        if (!PhotonNetwork.IsMasterClient) return;
+        PhotonNetwork.Destroy(this.gameObject);
     }
 
     protected override IEnumerator InitRoutine()

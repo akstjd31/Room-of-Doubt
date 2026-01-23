@@ -36,7 +36,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
         yield return new WaitUntil(() => PlayerCameraController.Instance != null);
-
+        
         playerCamCtrl = PlayerCameraController.Instance;
 
         if (Camera.main != null)
@@ -72,9 +72,11 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (rewardItem != null)
         {
             ItemInstance instance = new ItemInstance(rewardItem.ID, HintData.Empty);
-            QuickSlotManager.Instance.AddItem(instance);
-        }
+            bool flag = QuickSlotManager.Instance.AddItem(instance);
 
+            // 만약 아이템이 들어갈 자리가 없다?
+            if (!flag) return;
+        }
 
         isInteracting = !isInteracting;
 
