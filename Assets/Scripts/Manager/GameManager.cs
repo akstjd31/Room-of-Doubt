@@ -22,17 +22,13 @@ public class GameManager : MonoBehaviourPunCallbacks
     private const string KEY_START_D_ID = "START_HINT_D_ID";
     private const string KEY_START_D_PAY = "START_HINT_D_PAY";
 
+    [SerializeField] private SpawnPointGroup playerSpawnPointGroup;
     // Start hint 지급용
     [SerializeField] private string hintPaperItemKey; // 힌트 종이 Item GUID
     [SerializeField] private int quickSlotIndexForStartHint = 0;
 
-
     private bool startHintGivenLocal = false;
-
-    public const float MAX_X = 1f;
-    public const float MIN_X = -1f;
-    public const float MAX_Y = 5f;
-    public const float MIN_Y = 2f;
+    
     public static GameManager Instance;
     private const string KEY_ROLE = "ROLE";
     public Dictionary<int, QuickSlotManager> playerQuickSlotMgrData;  // <ActorNumber, 플레이어 옵젝>
@@ -264,15 +260,16 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator SpawnPlayerWhenConnected()
     {
-        Vector3 randPos = new Vector3
-        (
-            UnityEngine.Random.Range(MIN_X, MAX_X),
-            UnityEngine.Random.Range(MIN_Y, MAX_Y),
-            UnityEngine.Random.Range(MIN_X, MAX_X)
-        );
+        if (playerSpawnPointGroup == null)
+        {
+            Debug.LogError("스폰 포인트 그룹이 없음!");
+            yield break;
+        }
+
+        int rand = UnityEngine.Random.Range(0, playerSpawnPointGroup.Points.Length);
 
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-        var newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, randPos, Quaternion.identity);
+        var newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPointGroup.Points[rand].position, Quaternion.identity);
         var playerPv = newPlayer.GetComponent<PhotonView>();
 
         // 플레이어 데이터 저장
