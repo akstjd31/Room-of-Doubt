@@ -59,9 +59,6 @@ public static class RoomPropKeys
     public const string ROLE = "ROLE";
 
     // Room global state example (light)
-}
-
-public static class PlayerPropKeys
-{
-    public const string LAMP_ON = "LAMP_ON";
+    public const string LAMP_OWNER_ACTOR = "LAMP_OWNER_ACTOR"; // 주인
+    public const string LAMP_ON          = "LAMP_ON";          
 }
