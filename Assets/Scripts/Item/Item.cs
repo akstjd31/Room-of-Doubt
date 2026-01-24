@@ -1,29 +1,44 @@
 using UnityEngine;
 using System;
 
+public enum ItemKind
+{
+    Normal,
+    HintPaper,
+    Lamp,
+}
+
 [CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
 public class Item : ScriptableObject
 {
-    [SerializeField, ReadOnly] private string id;    // 고유 ID
+    [SerializeField, ReadOnly] private string id;
     public string ID => id;
+
     [SerializeField] private string itemName;
     public string ItemName => itemName;
+
     public Sprite itemIcon;
     public Transform itemPrefab;
+
+    [Header("Type")]
+    [SerializeField] private ItemKind kind = ItemKind.Normal;
+    public ItemKind Kind => kind;
+
+    public bool IsLamp => kind == ItemKind.Lamp;
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
         if (string.IsNullOrEmpty(id))
         {
-            id = Guid.NewGuid().ToString();
+            id = System.Guid.NewGuid().ToString();
             UnityEditor.EditorUtility.SetDirty(this);
         }
-
         itemName = this.name;
     }
 #endif
 }
+
 
 [System.Serializable]
 public struct HintData

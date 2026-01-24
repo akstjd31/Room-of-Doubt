@@ -142,7 +142,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             string path = itemPrefabPaths[i];
             int spawnIndex = itemIndices[i];
             var t = itemSpawnPoints.Get(spawnIndex);
-
+    
             GameObject itemObj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
 
             if (itemObj == null)

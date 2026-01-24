@@ -12,7 +12,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] private SpawnPointGroup playerSpawnPointGroup;
 
     [Header("Start Hint 지급")]
-    [SerializeField] private string hintPaperItemKey; // 힌트 종이 Item GUID
+    [SerializeField] private string lampItemId;      // 램프 Item SO GUID
+    [SerializeField] private string hintPaperItemId; // 힌트 종이 Item SO GUID
+
     [SerializeField] private int quickSlotIndexForStartHint = 0;
 
     private bool startHintGivenLocal = false;
@@ -94,44 +96,66 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     private void TryGiveLocalStartHint()
+{
+    if (startHintGivenLocal) return;
+    if (!PhotonNetwork.InRoom) return;
+    if (!isLocalPlayerCreated) return;
+
+    var room = PhotonNetwork.CurrentRoom;
+    if (room == null) return;
+
+    if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) ||
+        !(readyObj is bool ready) || !ready)
+        return;
+
+    var lp = PhotonNetwork.LocalPlayer;
+    if (lp.CustomProperties == null || !lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj))
+        return;
+
+    string roleStr = roleObj as string;
+    if (string.IsNullOrEmpty(roleStr)) return;
+
+    char role = roleStr[0];
+
+    // ✅ A는 램프, 나머지는 힌트
+    if (role == 'A')
     {
-        if (startHintGivenLocal) return;
-        if (!PhotonNetwork.InRoom) return;
-        if (!isLocalPlayerCreated) return;
-
-        var room = PhotonNetwork.CurrentRoom;
-        if (room == null) return;
-
-        // READY 확인
-        if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) || !(readyObj is bool ready) || !ready)
-            return;
-
-        // 내 ROLE 확인
-        var lp = PhotonNetwork.LocalPlayer;
-        if (lp.CustomProperties == null || !lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj))
-            return;
-
-        string roleStr = roleObj as string;
-        if (string.IsNullOrEmpty(roleStr)) return;
-
-        char role = roleStr[0];
-
-        // 역할에 맞는 hintId/payload 꺼내기
-        if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
-            return;
-
-        Item paperItem = ItemManager.Instance.GetItemById(hintPaperItemKey);
-        if (paperItem == null)
+        Item lamp = ItemManager.Instance.GetItemById(lampItemId);
+        if (lamp == null)
         {
-            Debug.LogError($"[GameManager] HintPaper Item not found. id={hintPaperItemKey}");
+            Debug.LogError($"[GameManager] Lamp item not found. id={lampItemId}");
             return;
         }
 
-        QuickSlotManager.Instance.SetHintToSlot(quickSlotIndexForStartHint, paperItem, hintKey, payload);
+        // 램프 지급(인벤/퀵슬롯 정책에 맞게)
+        QuickSlotManager.Instance.AddItem(new ItemInstance(lamp.ID, HintData.Empty));
         startHintGivenLocal = true;
-
-        Debug.Log($"[GameManager] Local start hint equipped. role={role}, hintKey={hintKey}, payload={payload}");
+        Debug.Log("[GameManager] A got LAMP.");
+        return;
     }
+
+    // B/C/D는 힌트 종이 지급
+    if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
+        return;
+
+    Item paper = ItemManager.Instance.GetItemById(hintPaperItemId);
+    if (paper == null)
+    {
+        Debug.LogError($"[GameManager] HintPaper item not found. id={hintPaperItemId}");
+        return;
+    }
+
+    QuickSlotManager.Instance.SetHintToSlot(
+        quickSlotIndexForStartHint,
+        paper,
+        hintKey,
+        payload
+    );
+
+    startHintGivenLocal = true;
+    Debug.Log($"[GameManager] {role} got HintPaper. hintKey={hintKey}");
+}
+
 
     private bool TryGetStartHintSpecForRole(Room room, char role, out string hintKey, out string payload)
     {

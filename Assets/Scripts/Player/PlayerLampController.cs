@@ -14,36 +14,42 @@ public class PlayerLampController : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        ApplyFromRoomProps();
+        Apply(photonView.Owner);
     }
 
-    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    private void Apply(Player p)
     {
-        if (propertiesThatChanged.ContainsKey(RoomPropKeys.LAMP_OWNER_ACTOR) ||
-            propertiesThatChanged.ContainsKey(RoomPropKeys.LAMP_ON))
+        if (lampLight == null || p == null) return;
+
+        bool on = false;
+        if (p.CustomProperties != null &&
+            p.CustomProperties.TryGetValue(PlayerPropKeys.LAMP_ON, out var obj) &&
+            obj is bool b)
         {
-            ApplyFromRoomProps();
+            on = b;
         }
+
+        lampLight.enabled = on;
     }
 
-    private void ApplyFromRoomProps()
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
-        if (lampLight == null || !PhotonNetwork.InRoom) return;
+        if (targetPlayer != photonView.Owner) return;
+        if (!changedProps.ContainsKey(PlayerPropKeys.LAMP_ON)) return;
 
-        var room = PhotonNetwork.CurrentRoom;
-        if (room == null) return;
+        Apply(targetPlayer);
+    }
+}
 
-        int ownerActor = -1;
-        bool lampOn = false;
+public static class LampNet
+{
+    public static void SetLampOn(bool on)
+    {
+        if (!PhotonNetwork.InRoom) return;
 
-        if (room.CustomProperties.TryGetValue(RoomPropKeys.LAMP_OWNER_ACTOR, out var ownerObj))
-            ownerActor = (int)ownerObj;
-
-        if (room.CustomProperties.TryGetValue(RoomPropKeys.LAMP_ON, out var onObj) && onObj is bool b)
-            lampOn = b;
-
-        bool isThisPlayerLampOwner = (photonView.Owner != null && photonView.Owner.ActorNumber == ownerActor);
-
-        lampLight.enabled = isThisPlayerLampOwner && lampOn;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
+        {
+            { PlayerPropKeys.LAMP_ON, on }
+        });
     }
 }

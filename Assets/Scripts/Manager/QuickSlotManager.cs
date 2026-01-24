@@ -102,7 +102,7 @@ public class QuickSlotManager : MonoBehaviour
     }
 
     // 포커싱된 슬롯 색 변경
-    public void UpdateSlotFocusedColor(int index)
+    public void UpdateSlotFocused(int index)
     {
         focusedIndex = index;
 
@@ -112,6 +112,20 @@ public class QuickSlotManager : MonoBehaviour
                 slots[i].backgroundImage.color = Color.green;
             else
                 slots[i].backgroundImage.color = Color.black;
+        }
+
+        if (slots[focusedIndex].current != null)
+        {
+            Item focusedItem = ItemManager.Instance.GetItemById(slots[focusedIndex].current.itemId);
+            bool lampOn = focusedItem != null && focusedItem.IsLamp;
+            Debug.Log("램프 온: " + lampOn);
+
+            
+            LampNet.SetLampOn(lampOn);
+        }
+        else
+        {
+            LampNet.SetLampOn(false);
         }
     }
 

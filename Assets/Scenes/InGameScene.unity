@@ -727,7 +727,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   playerSpawnPointGroup: {fileID: 431980868}
-  hintPaperItemKey: e511d80d-9ce7-45ce-94ab-3d668e8e4133
+  lampItemId: b855840b-d960-455e-8d9a-81fdf0cb5c12
+  hintPaperItemId: e511d80d-9ce7-45ce-94ab-3d668e8e4133
   quickSlotIndexForStartHint: 0
   playerPrefab: {fileID: 1714889846320777485, guid: 97c79ebbcdd92794db0f03a161d3f740, type: 3}
   isPaused: 0
