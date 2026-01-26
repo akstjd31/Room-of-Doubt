@@ -37,6 +37,9 @@ public class InspectManager : Singleton<InspectManager>
         if (slot == null) return;
         if (slot.current == null) return;
 
+        if (ItemManager.Instance.GetItemById(slot.current.itemId).IsLamp)
+            return;
+
         Enter(slot);
     }
 
