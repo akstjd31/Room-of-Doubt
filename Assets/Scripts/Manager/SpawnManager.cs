@@ -41,6 +41,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         foreach (var prefab in loadedPrefabs)
         {
+            if (prefab.name.Equals("Lamp")) continue;
+
             string path = $"{resourceFolder}/{prefab.name}";
             prefabPaths.Add(path);
         }
@@ -98,7 +100,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         // 시드가 없는 경우
         if (!room.CustomProperties.TryGetValue(KEY_SEED, out var seedObj)) return;
         if (!room.CustomProperties.TryGetValue(KEY_DONE, out var doneObj)) return;
-        
+
         int seed = (int)seedObj;
         bool done = (bool)doneObj;
 
@@ -118,56 +120,46 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         var rand = new System.Random(seed);
 
-        // 아이템 스폰포인트 섞기
-        Debug.Log("아이템 스폰 포인트 갯수: " + itemSpawnPoints.Count);
-        var itemIndices = new List<int>();
         int spawnCount = Mathf.Min(itemPrefabPaths.Count, itemSpawnPoints.Count);
-        for (int i = 0; i < spawnCount; i++)
+
+        var itemIndices = new List<int>(itemSpawnPoints.Count);
+        for (int i = 0; i < itemSpawnPoints.Count; i++)
             itemIndices.Add(i);
-        
+
+        // 전체 인덱스 셔플
         Shuffle(itemIndices, rand);
-
-        // 퍼즐 스폰포인트 섞기
-        Debug.Log("퍼즐 스폰 포인트 갯수: " + puzzleSpawnPoints.Count);
-        var puzzleIndices = new List<int>();
-        int puzzleCount = Mathf.Min(puzzlePrefabPaths.Count, puzzleSpawnPoints.Count);
-        for (int i = 0; i < puzzleCount; i++)
-            puzzleIndices.Add(i);
-
-        Shuffle(puzzleIndices, rand);
         
-        // 아이템 생성
-        for (int i = 0; i < itemPrefabPaths.Count; i++)
+        for (int i = 0; i < spawnCount; i++)
         {
             string path = itemPrefabPaths[i];
             int spawnIndex = itemIndices[i];
             var t = itemSpawnPoints.Get(spawnIndex);
-    
-            GameObject itemObj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
 
-            if (itemObj == null)
-                Debug.LogError($"해당 폴더에 아이템이 없음!");
-
-            Debug.Log($"{itemObj.name} 생성!");
+            var obj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
+            if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
         }
-        
-        // 퍼즐 생성
-        for (int i = 0; i < puzzlePrefabPaths.Count; i++)
+
+
+        int puzzleCount = Mathf.Min(puzzlePrefabPaths.Count, puzzleSpawnPoints.Count);
+
+        var puzzleIndices = new List<int>(puzzleSpawnPoints.Count);
+        for (int i = 0; i < puzzleSpawnPoints.Count; i++)
+            puzzleIndices.Add(i);
+
+        Shuffle(puzzleIndices, rand);
+
+        for (int i = 0; i < puzzleCount; i++)
         {
             string path = puzzlePrefabPaths[i];
             int spawnIndex = puzzleIndices[i];
-            Debug.Log("스폰 인덱스: " + spawnIndex);
             var t = puzzleSpawnPoints.Get(spawnIndex);
 
-            GameObject puzzleObj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
-
-            if (puzzleObj == null)
-                Debug.LogError($"해당 폴더에 퍼즐이 없음!");
-
-            Debug.Log($"{puzzleObj.name} 생성!");
+            var obj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
+            if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
         }
 
-        room.SetCustomProperties(new PhotonHashtable { { KEY_DONE, true }});
+
+        room.SetCustomProperties(new PhotonHashtable { { KEY_DONE, true } });
         SpawnedLocally = true;
 
         Debug.Log("모든 아이템, 퍼즐 생성 완료!");
