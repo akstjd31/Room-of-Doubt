@@ -11,7 +11,7 @@ public class HintPaper : InteractableBase
         if (text == null)
             text = this.transform.GetChild(0).GetComponent<TMP_Text>();
 
-        var content = QuickSlotManager.Instance.ReadFocusedHint();
+        var content = QuickSlotManager.Local.ReadFocusedHint();
         if (content != null)
             text.text = content;
     }

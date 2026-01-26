@@ -730,6 +730,7 @@ MonoBehaviour:
   lampItemId: b855840b-d960-455e-8d9a-81fdf0cb5c12
   hintPaperItemId: e511d80d-9ce7-45ce-94ab-3d668e8e4133
   quickSlotIndexForStartHint: 0
+  localQuickSlotMgr: {fileID: 710292032}
   playerPrefab: {fileID: 1714889846320777485, guid: 97c79ebbcdd92794db0f03a161d3f740, type: 3}
   isPaused: 0
   isLocalPlayerCreated: 0
@@ -2640,7 +2641,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuickSlotManager
   quickSlotParent: {fileID: 1568105910}
   slotPrefab: {fileID: 3265297297897320782, guid: 93b049a55b0adb84ea0f5f92f82b2c2d, type: 3}
-  slots: []
   focusedIndex: 0
 --- !u!4 &710292033
 Transform:

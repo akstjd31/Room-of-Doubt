@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using ExitGames.Client.Photon;
-using WebSocketSharp;
 
 // 현재 보관하고 있는 아이템 관리
 // 아이템이 추가, 제거, 탐색 가능한 기능
 public class SharedInventoryManager : MonoBehaviourPunCallbacks
 {
     public static SharedInventoryManager Instance;
+
     [Header("References")]
     [SerializeField] private GameObject panelObj;
     [SerializeField] private GameObject bagObj;
@@ -20,9 +20,11 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
     public ItemInstance[] sharedItems;
     [SerializeField] private int inventorySize = 20;
     private List<Slot> slots;
+
     private void Awake()
     {
         Instance = this;
+
         sharedItems = new ItemInstance[inventorySize];
         slots = new List<Slot>();
 
@@ -41,47 +43,54 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         }
     }
 
-    private void Start()
-    {
-        // UIManager.Instance.OnInvenOpened += UpdateInventory;
-    }
-
-    private void OnDestroy()
-    {
-        // UIManager.Instance.OnInvenOpened -= UpdateInventory;
-    }
-
     public void SetPanelActive(bool active) => panelObj.SetActive(active);
 
-    // 아이템 이동 요청 (로컬에서 호출)
+    // =========================
+    // Move 요청 (로컬에서 호출)
+    // =========================
     public void RequestMoveItem(SlotType fromType, int fromIdx, SlotType toType, int toIdx)
     {
-        // 이동하는 "인스턴스" 꺼내기
-        ItemInstance inst = null;
-
+        // (A) from 쪽 아이템 스냅샷
+        ItemInstance fromInst = null;
         if (fromType == SlotType.Quick)
-            inst = QuickSlotManager.Instance.GetItemInstanceByIndex(fromIdx);
+            fromInst = QuickSlotManager.Local.GetItemInstanceByIndex(fromIdx);
         else
-            inst = sharedItems[fromIdx];
+            fromInst = sharedItems[fromIdx];
 
-        SplitInstance(inst, out string itemId, out string hintKey, out string payload);
+        SplitInstance(fromInst, out string fromItemId, out string fromHintKey, out string fromPayload);
+
+        // (B) Inventory -> Quick 인 경우, "퀵슬롯 목적지(toIdx)에 현재 들어있는 아이템"도 같이 보낸다 (스왑용)
+        string quickOldItemId = "";
+        string quickOldHintKey = "";
+        string quickOldPayload = "";
+
+        if (fromType == SlotType.Inventory && toType == SlotType.Quick)
+        {
+            var quickOld = QuickSlotManager.Local.GetItemInstanceByIndex(toIdx);
+            SplitInstance(quickOld, out quickOldItemId, out quickOldHintKey, out quickOldPayload);
+        }
 
         photonView.RPC(nameof(RequestMoveRPC), RpcTarget.MasterClient,
             fromType, fromIdx, toType, toIdx,
-            itemId, hintKey, payload);
+            fromItemId, fromHintKey, fromPayload,
+            quickOldItemId, quickOldHintKey, quickOldPayload);
     }
 
-
+    // =========================
+    // Move 처리 (마스터에서)
+    // =========================
     [PunRPC]
     private void RequestMoveRPC(
-    SlotType fromType, int fromIdx,
-    SlotType toType, int toIdx,
-    string itemId, string hintKey, string payload,
-    PhotonMessageInfo info)
+        SlotType fromType, int fromIdx,
+        SlotType toType, int toIdx,
+        string fromItemId, string fromHintKey, string fromPayload,           // from 슬롯에 있던 아이템(요청자가 보냄)
+        string quickOldItemId, string quickOldHintKey, string quickOldPayload, // Inventory->Quick 스왑에 필요한 quick 목적지 기존 아이템(요청자가 보냄)
+        PhotonMessageInfo info)
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        ItemInstance movingInst = MakeInstance(itemId, hintKey, payload);
+        // from 인스턴스 복원(Quick->Inventory에서는 이게 movingInst 역할)
+        ItemInstance movingInst = MakeInstance(fromItemId, fromHintKey, fromPayload);
 
         // 1) Quick -> Inventory
         if (fromType == SlotType.Quick && toType == SlotType.Inventory)
@@ -106,15 +115,17 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         {
             if (fromIdx < 0 || fromIdx >= sharedItems.Length) return;
 
+            // 마스터 기준 인벤에서 꺼낼 아이템
             ItemInstance sendingInst = sharedItems[fromIdx];
 
-            // 퀵슬롯 기존 아이템을 인벤으로 되돌려 넣고
-            ItemInstance quickOldInst = QuickSlotManager.Instance.GetItemInstanceByIndex(toIdx);
+            // 요청자가 보내준 "퀵슬롯 목적지 기존 아이템"을 인벤으로 되돌려 넣음(스왑)
+            ItemInstance quickOldInst = MakeInstance(quickOldItemId, quickOldHintKey, quickOldPayload);
             sharedItems[fromIdx] = quickOldInst;
 
+            // 인벤 동기화
             photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, Flatten(sharedItems));
 
-            // 퀵슬롯에는 인벤에서 꺼낸 것을 넣어줌
+            // 요청자 퀵슬롯에는 인벤에서 꺼낸 아이템을 넣어줌
             SplitInstance(sendingInst, out var sendItemId, out var sendHintKey, out var sendPayload);
             photonView.RPC(nameof(ResponseQuickSlotUpdate), info.Sender, toIdx, sendItemId, sendHintKey, sendPayload);
 
@@ -134,9 +145,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         }
     }
 
-
-
-    // 결과를 매개변수로 받아 저장 및 갱신
+    // 인벤토리 동기화
     [PunRPC]
     private void SyncInventoryRPC(string[] flat)
     {
@@ -144,7 +153,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         UpdateInventoryUI();
     }
 
-    // 퀵 슬롯 갱신 작업 (여기서 PRC를 호출한 이유는 퀵 슬롯에서 하면 퀵 슬롯 포톤 뷰 RPC로 동작해야한다는 점 떄문에)
+    // 내 퀵슬롯 갱신
     [PunRPC]
     public void ResponseQuickSlotUpdate(int slotIndex, string itemId, string hintKey, string payload)
     {
@@ -155,11 +164,11 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         var inst = string.IsNullOrEmpty(itemId)
             ? null
             : new ItemInstance(itemId, hint);
-            
-        QuickSlotManager.Instance.UpdateSlotData(slotIndex, inst);
+
+        QuickSlotManager.Local.UpdateSlotData(slotIndex, inst);
     }
 
-    // 인벤토리 갱신
+    // 인벤 갱신
     private void UpdateInventoryUI()
     {
         for (int i = 0; i < sharedItems.Length; i++)
@@ -174,13 +183,56 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             }
 
             slots[i].Set(inst);
-
-            // 만약 인벤 슬롯 UI에서도 "힌트 존재" 표시가 필요하면
-            // inst.hint.HasValue 로 뱃지/아이콘 표시 가능
         }
     }
 
+    // 나간 플레이어 전용 퀵 슬롯을 인벤에 옮기기
+    public void AbsorbPackedQuickSlots(string[] snapshotFlat)
+    {
+        Debug.Log($"[Absorb CALL] isMaster={PhotonNetwork.IsMasterClient}, len={(snapshotFlat==null ? -1 : snapshotFlat.Length)}");
 
+        if (!PhotonNetwork.IsMasterClient) return;
+        if (snapshotFlat == null || snapshotFlat.Length == 0) return;
+
+        // 3개 단위( itemId, hintKey, payload )
+        int slotCount = snapshotFlat.Length / 3;
+
+        for (int i = 0; i < slotCount; i++)
+        {
+            int baseIdx = i * 3;
+
+            string itemId = snapshotFlat[baseIdx + 0];
+            string hintKey = snapshotFlat[baseIdx + 1];
+            string payload = snapshotFlat[baseIdx + 2];
+
+            if (string.IsNullOrEmpty(itemId))
+                continue;
+
+            ItemInstance inst = MakeInstance(itemId, hintKey, payload);
+
+            if (!InsertFirstEmpty(inst))
+            {
+                Debug.LogWarning("[SharedInventory] Inventory full. Some items could not be absorbed.");
+                break;
+            }
+        }
+        
+        // 공유 인벤토리니 RPC 수행
+        photonView.RPC(nameof(SyncInventoryRPC), RpcTarget.All, Flatten(sharedItems));
+    }
+
+    private bool InsertFirstEmpty(ItemInstance inst)
+    {
+        for (int i = 0; i < sharedItems.Length; i++)
+        {
+            if (sharedItems[i] != null) continue;
+            sharedItems[i] = inst;
+            return true;
+        }
+        return false;
+    }
+
+    // 아이템 인스턴스 형태로 만들기 (슬롯 복원)
     private ItemInstance MakeInstance(string itemId, string hintKey, string payload)
     {
         if (string.IsNullOrEmpty(itemId)) return null;
@@ -192,6 +244,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         return new ItemInstance(itemId, hint);
     }
 
+    // 평면 형태의 stirng 배열로 바꾸기 (아이템 인스턴스에서)
     private string[] Flatten(ItemInstance[] arr)
     {
         var flat = new string[arr.Length * 3];
@@ -206,6 +259,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         return flat;
     }
 
+    // Flatten으로 바뀐 string 배열을 슬롯 배열(ItemInstance)로 반환
     private ItemInstance[] Unflatten(string[] flat)
     {
         int len = flat.Length / 3;
@@ -221,7 +275,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
         return arr;
     }
 
-
+    // 전송이 가능한 문자열 데이터로 나누기
     private void SplitInstance(ItemInstance inst, out string itemId, out string hintKey, out string payload)
     {
         if (inst == null)
@@ -232,11 +286,11 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        itemId = inst.itemId;
+        itemId = inst.itemId ?? "";
         if (inst.hint.HasValue)
         {
-            hintKey = inst.hint.hintKey;
-            payload = inst.hint.payload;
+            hintKey = inst.hint.hintKey ?? "";
+            payload = inst.hint.payload ?? "";
         }
         else
         {
@@ -244,5 +298,4 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             payload = "";
         }
     }
-
 }

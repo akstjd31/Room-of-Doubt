@@ -54,7 +54,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (requiredItem == null) return true;
 
         // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        return QuickSlotManager.Instance.CompareItem(requiredItem.ID);
+        return QuickSlotManager.Local.CompareItem(requiredItem.ID);
     }
 
     // 상호작용 응답
@@ -67,12 +67,12 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (!CanInteract(actorNumber)) return;
 
         if (requiredItem != null)
-            QuickSlotManager.Instance.RemoveItem();
+            QuickSlotManager.Local.RemoveItem();
 
         if (rewardItem != null)
         {
             ItemInstance instance = new ItemInstance(rewardItem.ID, HintData.Empty);
-            bool flag = QuickSlotManager.Instance.AddItem(instance);
+            bool flag = QuickSlotManager.Local.AddItem(instance);
 
             // 만약 아이템이 들어갈 자리가 없다?
             if (!flag) return;
@@ -119,7 +119,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         // 순간 이동이 가능해서 이 위치에 둠
         UIManager.Instance.SetPlayerAimActive(false);
-        QuickSlotManager.Instance.SetActiveSlotParent(false);
+        QuickSlotManager.Local.SetActiveSlotParent(false);
         GameManager.Instance.EnterInteracting();
 
         yield return WaitForBlendComplete();
@@ -141,7 +141,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         yield return WaitForBlendComplete();
 
         UIManager.Instance.SetPlayerAimActive(true);
-        QuickSlotManager.Instance.SetActiveSlotParent(true);
+        QuickSlotManager.Local.SetActiveSlotParent(true);
         GameManager.Instance.ExitInteracting();
 
         Cursor.lockState = CursorLockMode.Locked;

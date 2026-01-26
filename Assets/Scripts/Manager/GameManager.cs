@@ -7,21 +7,23 @@ using PhotonHashtable = ExitGames.Client.Photon.Hashtable;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameManager : MonoBehaviourPunCallbacks
+public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
-    [SerializeField] private SpawnPointGroup playerSpawnPointGroup;
+    public static GameManager Instance;
+    [SerializeField] private SpawnPointGroup playerSpawnPointGroup; // 플레이어 스폰 포인트 지정
 
     [Header("Start Hint 지급")]
-    [SerializeField] private string lampItemId;      // 램프 Item SO GUID
-    [SerializeField] private string hintPaperItemId; // 힌트 종이 Item SO GUID
+    [SerializeField] private string lampItemId;                     // 램프 Item SO GUID
+    [SerializeField] private string hintPaperItemId;                // 힌트 종이 Item SO GUID
 
-    [SerializeField] private int quickSlotIndexForStartHint = 0;
+    [SerializeField] private int quickSlotIndexForStartHint = 0;    // 무조건 0번째에 지급
 
-    private bool startHintGivenLocal = false;
+    private bool startHintGivenLocal = false;                       // 힌트를 주었는지?
 
-    public static GameManager Instance;
+    [SerializeField] private QuickSlotManager localQuickSlotMgr;    // 로컬 퀵 슬롯 (반드시 연결)
 
-    public Dictionary<int, QuickSlotManager> playerQuickSlotMgrData;
+    // actorNumber -> packed quickslot snapshot
+    private readonly Dictionary<int, string[]> quickSlotSnapshotByActor = new();
     [SerializeField] private Transform playerPrefab;
 
     public event Action OnGamePaused;
@@ -37,7 +39,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         Instance = this;
-        playerQuickSlotMgrData = new Dictionary<int, QuickSlotManager>();
+    }
+
+    public override void OnEnable()
+    {
+        base.OnEnable();
+        PhotonNetwork.AddCallbackTarget(this);
     }
 
     void Start()
@@ -45,6 +52,27 @@ public class GameManager : MonoBehaviourPunCallbacks
         StartCoroutine(SpawnPlayerWhenConnected());
         StartCoroutine(InitAfterSceneLoaded());
     }
+
+    public override void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+        base.OnDisable();
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        if (photonEvent.Code != QuickSlotNet.EVT_QUICKSLOT_SNAPSHOT) return;
+
+        int senderActor = photonEvent.Sender;
+        var snapshot = photonEvent.CustomData as string[];
+        if (snapshot == null) return;
+
+        Debug.Log($"[QS RECV] sender={senderActor}, isMaster={PhotonNetwork.IsMasterClient}, len={snapshot.Length}, mod3={snapshot.Length % 3}");
+
+        if (PhotonNetwork.IsMasterClient)
+            quickSlotSnapshotByActor[senderActor] = snapshot;
+    }
+
 
     void Update()
     {
@@ -96,65 +124,65 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     private void TryGiveLocalStartHint()
-{
-    if (startHintGivenLocal) return;
-    if (!PhotonNetwork.InRoom) return;
-    if (!isLocalPlayerCreated) return;
-
-    var room = PhotonNetwork.CurrentRoom;
-    if (room == null) return;
-
-    if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) ||
-        !(readyObj is bool ready) || !ready)
-        return;
-
-    var lp = PhotonNetwork.LocalPlayer;
-    if (lp.CustomProperties == null || !lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj))
-        return;
-
-    string roleStr = roleObj as string;
-    if (string.IsNullOrEmpty(roleStr)) return;
-
-    char role = roleStr[0];
-
-    // ✅ A는 램프, 나머지는 힌트
-    if (role == 'A')
     {
-        Item lamp = ItemManager.Instance.GetItemById(lampItemId);
-        if (lamp == null)
+        if (startHintGivenLocal) return;
+        if (!PhotonNetwork.InRoom) return;
+        if (!isLocalPlayerCreated) return;
+
+        var room = PhotonNetwork.CurrentRoom;
+        if (room == null) return;
+
+        if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) ||
+            !(readyObj is bool ready) || !ready)
+            return;
+
+        var lp = PhotonNetwork.LocalPlayer;
+        if (lp.CustomProperties == null || !lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj))
+            return;
+
+        string roleStr = roleObj as string;
+        if (string.IsNullOrEmpty(roleStr)) return;
+
+        char role = roleStr[0];
+
+        // A는 램프, 나머진 힌트
+        if (role == 'A')
         {
-            Debug.LogError($"[GameManager] Lamp item not found. id={lampItemId}");
+            Item lamp = ItemManager.Instance.GetItemById(lampItemId);
+            if (lamp == null)
+            {
+                Debug.LogError($"[GameManager] Lamp item not found. id={lampItemId}");
+                return;
+            }
+
+            // 램프 지급(인벤/퀵슬롯 정책에 맞게)
+            QuickSlotManager.Local.AddItem(new ItemInstance(lamp.ID, HintData.Empty));
+            startHintGivenLocal = true;
+            Debug.Log("[GameManager] A got LAMP.");
             return;
         }
 
-        // 램프 지급(인벤/퀵슬롯 정책에 맞게)
-        QuickSlotManager.Instance.AddItem(new ItemInstance(lamp.ID, HintData.Empty));
+        // B/C/D는 힌트 종이 지급
+        if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
+            return;
+
+        Item paper = ItemManager.Instance.GetItemById(hintPaperItemId);
+        if (paper == null)
+        {
+            Debug.LogError($"[GameManager] HintPaper item not found. id={hintPaperItemId}");
+            return;
+        }
+
+        QuickSlotManager.Local.SetHintToSlot(
+            quickSlotIndexForStartHint,
+            paper,
+            hintKey,
+            payload
+        );
+
         startHintGivenLocal = true;
-        Debug.Log("[GameManager] A got LAMP.");
-        return;
+        Debug.Log($"[GameManager] {role} got HintPaper. hintKey={hintKey}");
     }
-
-    // B/C/D는 힌트 종이 지급
-    if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
-        return;
-
-    Item paper = ItemManager.Instance.GetItemById(hintPaperItemId);
-    if (paper == null)
-    {
-        Debug.LogError($"[GameManager] HintPaper item not found. id={hintPaperItemId}");
-        return;
-    }
-
-    QuickSlotManager.Instance.SetHintToSlot(
-        quickSlotIndexForStartHint,
-        paper,
-        hintKey,
-        payload
-    );
-
-    startHintGivenLocal = true;
-    Debug.Log($"[GameManager] {role} got HintPaper. hintKey={hintKey}");
-}
 
 
     private bool TryGetStartHintSpecForRole(Room room, char role, out string hintKey, out string payload)
@@ -168,7 +196,7 @@ public class GameManager : MonoBehaviourPunCallbacks
             case 'A': keyKey = RoomPropKeys.START_A_ID; payKey = RoomPropKeys.START_A_PAY; break;
             case 'B': keyKey = RoomPropKeys.START_B_ID; payKey = RoomPropKeys.START_B_PAY; break;
             case 'C': keyKey = RoomPropKeys.START_C_ID; payKey = RoomPropKeys.START_C_PAY; break;
-            default:  keyKey = RoomPropKeys.START_D_ID; payKey = RoomPropKeys.START_D_PAY; break;
+            default: keyKey = RoomPropKeys.START_D_ID; payKey = RoomPropKeys.START_D_PAY; break;
         }
 
         if (!room.CustomProperties.TryGetValue(keyKey, out var keyObj)) return false;
@@ -220,7 +248,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             char role = (char)('A' + i);
 
-            // ✅ 핵심: WireStart 풀에서만 뽑기
             string pickedHintKey = PickRandomWireStartHintKey(rand);
 
             // payload는 지금은 wireSeed로 통일 (필요하면 role/인덱스/서브시드 포함 가능)
@@ -278,44 +305,95 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
 
-        var newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, playerSpawnPointGroup.Points[rand].position, Quaternion.identity);
+        var newPlayer = PhotonNetwork.Instantiate(
+            playerPrefab.name,
+            playerSpawnPointGroup.Points[rand].position,
+            Quaternion.identity
+        );
+
         var playerPv = newPlayer.GetComponent<PhotonView>();
 
-        AddData(playerPv.Owner.ActorNumber, newPlayer.GetComponent<QuickSlotManager>());
-        isLocalPlayerCreated = true;
+        if (playerPv.IsMine)
+        {
+            if (localQuickSlotMgr == null)
+            {
+                Debug.LogError("localQuickSlotMgr가 할당되지 않았음! (씬에 배치 후 연결 필요)");
+            }
+            else
+            {
+                // 로컬 퀵 슬롯 등록
+                int myActor = PhotonNetwork.LocalPlayer.ActorNumber;
+                localQuickSlotMgr.AssignOwner(myActor);
+                Debug.Log("로컬 퀵슬롯 추가됨!");
+            }
 
-        TryGiveLocalStartHint();
+            isLocalPlayerCreated = true;
+            TryGiveLocalStartHint();
+        }
     }
 
+    // 방 커스텀 프로퍼티가 변경되었을 때
     public override void OnRoomPropertiesUpdate(PhotonHashtable propertiesThatChanged)
     {
         TrySetupStartHintsIfMaster();
         TryGiveLocalStartHint();
     }
 
+    // 특정 플레이어의 커스텀 프로퍼티가 변경되었을 떄
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, PhotonHashtable changedProps)
     {
         if (targetPlayer.IsLocal && changedProps.ContainsKey(RoomPropKeys.ROLE))
             TryGiveLocalStartHint();
     }
 
+    // 특정 플레이어가 나갔을 때 (남아있는 플레이어들한테서 호출)
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
+        if (!PhotonNetwork.IsMasterClient) return;
+
         int actorNum = otherPlayer.ActorNumber;
-        if (playerQuickSlotMgrData.ContainsKey(actorNum))
+
+        // 마스터 캐시에서 찾아보기
+        if (quickSlotSnapshotByActor.TryGetValue(actorNum, out var snapshot))
         {
-            PhotonNetwork.Destroy(playerQuickSlotMgrData[actorNum].gameObject);
-            RemoveData(actorNum);
+            SharedInventoryManager.Instance.AbsorbPackedQuickSlots(snapshot);
+            quickSlotSnapshotByActor.Remove(actorNum);
+            return;
+        }
+
+        if (otherPlayer.CustomProperties.TryGetValue("QS", out var obj) && obj is string joined && !string.IsNullOrEmpty(joined))
+        {
+            var recovered = joined.Split('|');
+            SharedInventoryManager.Instance.AbsorbPackedQuickSlots(recovered);
+
+            // 혹시 모르니 캐시 제거
+            quickSlotSnapshotByActor.Remove(actorNum);
+            return;
+        }
+
+        Debug.LogWarning($"[LeftRoom] actor={actorNum} snapshot not found (cache+props).");
+    }
+
+
+    // 마스터 클라이언트 변경 시 (기존 마스터가 연결이 끊겼을 때)
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        // 새 마스터에게 스냅샷 전송
+        QuickSlotManager.Local?.NotifySnapshotToMaster();
+
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        quickSlotSnapshotByActor.Clear();
+
+        // 새 마스터 클라가 모든 플레이어 상태를 복구
+        foreach (var p in PhotonNetwork.PlayerList)
+        {
+            if (p.CustomProperties.TryGetValue("QS", out var obj) && obj is string joined && !string.IsNullOrEmpty(joined))
+            {
+                quickSlotSnapshotByActor[p.ActorNumber] = joined.Split('|');
+            }
         }
     }
 
-    private void AddData(int actorNumber, QuickSlotManager quickSlot)
-    {
-        playerQuickSlotMgrData[actorNumber] = quickSlot;
-    }
-
-    private void RemoveData(int actorNumber)
-    {
-        playerQuickSlotMgrData.Remove(actorNumber);
-    }
+    public QuickSlotManager LocalQuickSlot => localQuickSlotMgr;
 }

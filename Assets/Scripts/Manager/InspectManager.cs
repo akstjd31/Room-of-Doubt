@@ -33,7 +33,7 @@ public class InspectManager : Singleton<InspectManager>
     // 초기 검증 (현재 슬롯에 아이템이 있는지 부터)
     public void TryEnterFromFocusedSlot()
     {
-        var slot = QuickSlotManager.Instance.GetFocusedSlot();
+        var slot = QuickSlotManager.Local.GetFocusedSlot();
         if (slot == null) return;
         if (slot.current == null) return;
 
