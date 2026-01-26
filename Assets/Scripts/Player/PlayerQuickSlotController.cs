@@ -84,7 +84,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         if (nextIndex < 0 || nextIndex >= maxSlotCount) return;
         selectedSlotIndex = nextIndex;
 
-        QuickSlotManager.Instance.UpdateSlotFocusedColor(selectedSlotIndex);
+        QuickSlotManager.Instance.UpdateSlotFocused(selectedSlotIndex);
     }
 
     // 스크롤로 슬롯 변경 방식
@@ -103,6 +103,6 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         else if (nextIndex >= maxSlotCount) nextIndex = 0;
         
         selectedSlotIndex = nextIndex;
-        QuickSlotManager.Instance.UpdateSlotFocusedColor(selectedSlotIndex);
+        QuickSlotManager.Instance.UpdateSlotFocused(selectedSlotIndex);
     }
 }

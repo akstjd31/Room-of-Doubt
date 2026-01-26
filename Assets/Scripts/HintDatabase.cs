@@ -18,13 +18,13 @@ public class HintDatabase : Singleton<HintDatabase>
         // hintId에 따라 표현을 다르게
         switch (hintKey)
         {
-            case WireHintKeys.COLOR_MAP:
+            case HintKeys.WIRE_COLOR_MAP:
                 return wireMgr.BuildColorHintText();
 
-            case WireHintKeys.PORT_MAP:
+            case HintKeys.WIRE_PORT_MAP:
                 return wireMgr.BuildPortPairHintText();
 
-            case WireHintKeys.PARTIAL:
+            case HintKeys.WIRE_PARTIAL:
                 return wireMgr.BuildPartialHintText(2);
         }
 

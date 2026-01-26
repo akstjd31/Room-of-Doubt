@@ -2,24 +2,9 @@ using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 
-public static class WireHintKeys
-{
-    public const string COLOR_MAP = "WIRE_COLOR_MAP";   // 색 → 색 힌트
-    public const string PORT_MAP  = "WIRE_PORT_MAP";    // 포트 → 포트 힌트
-    public const string PARTIAL   = "WIRE_PARTIAL";     // 일부 공개 힌트
-
-    public static readonly string[] All =
-    {
-        COLOR_MAP,
-        PORT_MAP,
-        PARTIAL
-    };
-}
-
 
 public class WirePuzzle : InteractableBase
 {
-    private const string KEY_WIRE_SEED = "PUZ_WIRE_SEED";
     [SerializeField] private Transform slotsTrf;
     [SerializeField] private WirePuzzleManager puzzleMgr;
 
@@ -41,8 +26,8 @@ public class WirePuzzle : InteractableBase
             var room = PhotonNetwork.CurrentRoom;
 
             
-            int seed;
-            if (room.CustomProperties.TryGetValue(KEY_WIRE_SEED, out var seedObj))
+            int seed = PhotonNetwork.ServerTimestamp ^ photonView.ViewID;
+            if (room.CustomProperties.TryGetValue(PuzzleKeys.KEY_WIRE_SEED, out var seedObj))
                 seed = (int)seedObj;
             else
             {
@@ -50,7 +35,7 @@ public class WirePuzzle : InteractableBase
 
                 room.SetCustomProperties(new ExitGames.Client.Photon.Hashtable
                 {
-                    { KEY_WIRE_SEED, seed }
+                    { PuzzleKeys.KEY_WIRE_SEED, seed }
                 });
             }
 

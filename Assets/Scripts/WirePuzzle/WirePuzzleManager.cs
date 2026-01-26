@@ -544,5 +544,6 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
         Debug.Log("해결!");
 
         // 이후 작업 
+        GameManager.Instance.PowerOn();
     }
 }

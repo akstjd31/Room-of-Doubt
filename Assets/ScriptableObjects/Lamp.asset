@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d134a95c2ef77924ab1eeba4fbf7bcb4, type: 3}
-  m_Name: HintPaper
+  m_Name: Lamp
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  id: e511d80d-9ce7-45ce-94ab-3d668e8e4133
-  itemName: HintPaper
-  itemIcon: {fileID: 21300000, guid: 56bbc6b42271d4177ac313247f47ac1f, type: 3}
-  itemPrefab: {fileID: 99563391413544885, guid: 651e153d539847e43b06afe3bff12063, type: 3}
-  kind: 1
+  id: b855840b-d960-455e-8d9a-81fdf0cb5c12
+  itemName: Lamp
+  itemIcon: {fileID: 21300000, guid: 9587663c4d27e47b19a118aabaac4a08, type: 3}
+  itemPrefab: {fileID: 2558555004061470723, guid: f768157a585d893499c35a43fce30439, type: 3}
+  kind: 2
