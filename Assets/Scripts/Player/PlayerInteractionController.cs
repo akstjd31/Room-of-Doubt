@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
 using Photon.Realtime;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(PlayerCameraController))]
 public class PlayerInteractionController : MonoBehaviourPun
@@ -76,7 +77,7 @@ public class PlayerInteractionController : MonoBehaviourPun
         {
             if (pv == null) continue;
             if (pv.OwnerActorNr != player.ActorNumber) continue;
-            
+
             if (pv.CompareTag("Player"))
                 return pv;
         }
@@ -94,8 +95,11 @@ public class PlayerInteractionController : MonoBehaviourPun
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Ray mouseRay = cam.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(mouseRay, out var mouseHit, range * 2, interactMask))
+                var brain = Camera.main.GetComponent<CinemachineBrain>();
+                Camera outCam = brain.OutputCamera;
+                Ray mouseRay = outCam.ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(mouseRay, out var mouseHit, 999f, interactMask))
                 {
                     var target = mouseHit.collider.GetComponent<InteractableBase>();
                     if (target != null && !target.Equals(current))

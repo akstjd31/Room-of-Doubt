@@ -114,6 +114,8 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     {
         if (myCam == null || playerCamCtrl == null) yield break;
 
+        this.gameObject.GetComponent<Collider>().enabled = false;
+
         myCam.Priority = 20;
         playerCamCtrl.playerCam.Priority = 0;
 
@@ -147,6 +149,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        this.gameObject.GetComponent<Collider>().enabled = true;
         Debug.Log("상호작용 종료 (카메라 원위치)");
     }
 
