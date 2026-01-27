@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 1923882127878252985}
   - component: {fileID: 4133239222508536037}
   - component: {fileID: 8442560728596569362}
+  - component: {fileID: 6385598528548991360}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -118,9 +119,9 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 3
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -155,7 +156,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -445,6 +446,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLampController
   lampLight: {fileID: 2945261924944499729}
+--- !u!114 &6385598528548991360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392177126937147979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f93534e4ed4909442a24e0cfce842575, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TalkController
 --- !u!1 &574530075682567166
 GameObject:
   m_ObjectHideFlags: 0
