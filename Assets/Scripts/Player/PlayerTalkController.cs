@@ -56,6 +56,10 @@ public class PlayerTalkController : MonoBehaviourPun
 
         recorder.TransmitEnabled = false;
     }
+    
+    private void Update()
+    {
+    }
 
     private void OnTalkStarted(InputAction.CallbackContext ctx) => recorder.TransmitEnabled = true;
     private void OnTalkCanceled(InputAction.CallbackContext ctx) => recorder.TransmitEnabled = false;
