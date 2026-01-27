@@ -111,21 +111,19 @@ public class PlayerInteractionController : MonoBehaviourPun
             return;
         }
 
-        // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        RaycastHit hit;
-
-        // 장애물이 먼저 보이면 리턴 (관통 방지)
-        if (Physics.Raycast(ray, out hit, range, obstacleMask))
-            return;
-
-        if (Physics.Raycast(ray, out hit, range, interactMask))
-            current = hit.collider.GetComponent<InteractableBase>();
-        
+        if (Physics.Raycast(ray, out var hit, range, obstacleMask | interactMask))
+        {
+            // 먼저 맞은게 Interactable이면 OK, 아니면 막힘
+            var interactable = hit.collider.GetComponentInParent<InteractableBase>();
+            if (interactable != null && ((1 << hit.collider.gameObject.layer) & interactMask) != 0)
+                current = interactable;
+            else
+                current = null;
+        }
         else
         {
-            if (current != null)
-                current = null;
+            current = null;
         }
     }
 
