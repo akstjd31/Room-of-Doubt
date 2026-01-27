@@ -121,8 +121,6 @@ public class PlayerInteractionController : MonoBehaviourPun
             if (current != null)
                 current = null;
         }
-
-        UIManager.Instance.UpdateObjectNameText(current?.Prompt);
     }
 
     // 레이 시각화

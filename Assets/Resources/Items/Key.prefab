@@ -128,7 +128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RewardObject
   type: 0
-  prompt: Key
+  prompt: "\uD0A4\uB97C \uC8FC\uC6E0\uB2E4!"
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}

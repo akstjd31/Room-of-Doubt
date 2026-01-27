@@ -29,6 +29,11 @@ public class Door : InteractableBase
                 isOpen = !isOpen;
                 anim.SetBool("IsOpen", isOpen);
             }
+            else
+            {
+                if (Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
+                    UIManager.Instance.ShowMessage(prompt);
+            }
         }
         else
         {
