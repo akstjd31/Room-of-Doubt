@@ -102,7 +102,8 @@ InitTestScene*.unity*
 Assets/Resources/StoreAssets*
 !Assets/Resources/StoreAssets*.meta
 
-# 포톤 서버 세팅 (App ID 공유 X)
+# 포톤 전체 & 포톤 서버 세팅 (App ID 공유 X)
+Photon*
 PhotonServerSettings.asset
 
 # 파이어베이스 구글 서비스 X

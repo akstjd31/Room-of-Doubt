@@ -185,9 +185,9 @@ public class QuickSlotManager : MonoBehaviour
 
     public bool CompareItem(string itemID)
     {
-        Debug.Log("왜 아이템을 비교하지?");
         if (focusedIndex < 0 || focusedIndex >= MAX_SLOT_COUNT) return false;
         if (slots[focusedIndex].IsEmptySlot()) return false;
+
 
         if (slots[focusedIndex].current.itemId.Equals(itemID))
             return true;

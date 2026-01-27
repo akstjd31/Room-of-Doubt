@@ -64,7 +64,11 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         if (isTransitioning) return;
 
         // 로컬에서 상호작용이 가능한지 검증 후
-        if (!CanInteract(actorNumber)) return;
+        if (!CanInteract(actorNumber))
+        {
+            UIManager.Instance.ShowMessage(prompt);
+            return;
+        }
 
         if (requiredItem != null)
             QuickSlotManager.Local.RemoveItem();
