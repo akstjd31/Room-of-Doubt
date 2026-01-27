@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6163162959460129248}
   - component: {fileID: 7059859369474026691}
   - component: {fileID: 3039436307159185465}
+  - component: {fileID: 2496721008595825786}
   - component: {fileID: 8736018497008175271}
   - component: {fileID: 6316836921326286498}
   - component: {fileID: 734787304191550281}
@@ -299,6 +300,22 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActionMap
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &2496721008595825786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 392177126937147979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48a0c86371c0dea43a128adf43b1c7fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  HeadPivot: {fileID: 3262602550046941542}
+  cameraPivot: {fileID: 3475470486247514607}
+  myCam: {fileID: 3614151623724746744}
+  disableOnEscape: []
 --- !u!114 &8736018497008175271
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,8 +30,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public event Action OnGameResumed;
     public bool isPaused = false;
 
-    public bool IsInteractingFocused; //{ get; private set; }
-    public bool isLocalPlayerCreated;
+    public bool IsInteractingFocused { get; private set; }
+    private bool isLocalPlayerCreated;
 
     [Header("Light")]
     [SerializeField] private GameObject[] lights;

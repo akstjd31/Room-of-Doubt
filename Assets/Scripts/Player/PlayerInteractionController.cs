@@ -5,9 +5,11 @@ using Photon.Realtime;
 using Unity.Cinemachine;
 
 [RequireComponent(typeof(PlayerCameraController))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerInteractionController : MonoBehaviourPun
 {
     private PlayerCameraController camController;
+    private PlayerController playerController;
     private PlayerInput playerInput;
     private InputAction interactAction;
     [SerializeField] private Camera cam;
@@ -20,6 +22,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     {
         playerInput = this.GetComponent<PlayerInput>();
         camController = this.GetComponent<PlayerCameraController>();
+        playerController = this.GetComponent<PlayerController>();
 
         interactAction = playerInput.actions["Interact"];
     }
@@ -88,10 +91,11 @@ public class PlayerInteractionController : MonoBehaviourPun
     // 카메라 중심 레이 발사
     private void Update()
     {
+        if (!photonView.IsMine) return;
+        if (playerController.IsEscaped) return;
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
-        if (!photonView.IsMine) return;
-
+        
         if (GameManager.Instance.IsInteractingFocused)
         {
             if (Input.GetMouseButtonDown(0))
@@ -114,7 +118,7 @@ public class PlayerInteractionController : MonoBehaviourPun
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         if (Physics.Raycast(ray, out var hit, range, obstacleMask | interactMask))
         {
-            // 먼저 맞은게 Interactable이면 OK, 아니면 막힘
+            // Interactable 기준
             var interactable = hit.collider.GetComponentInParent<InteractableBase>();
             if (interactable != null && ((1 << hit.collider.gameObject.layer) & interactMask) != 0)
                 current = interactable;
