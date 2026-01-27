@@ -458,6 +458,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f93534e4ed4909442a24e0cfce842575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TalkController
+  occlusionMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  blockedVolume: 0.1
+  openVolume: 1
+  lerpSpeed: 5
 --- !u!1 &574530075682567166
 GameObject:
   m_ObjectHideFlags: 0

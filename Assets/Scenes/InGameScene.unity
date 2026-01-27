@@ -1176,6 +1176,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPivot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.047
@@ -1516,6 +1520,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPivot (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1697,6 +1705,10 @@ PrefabInstance:
     - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_Name
       value: DoorPivot (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2006,6 +2018,10 @@ PrefabInstance:
     - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_Name
       value: DoorPivot (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3287,6 +3303,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPivot
       objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4434,6 +4454,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPivot
       objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.047
@@ -4604,51 +4628,6 @@ MonoBehaviour:
   sceneViewId: 3
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!1 &1237330421
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1237330423}
-  - component: {fileID: 1237330422}
-  m_Layer: 0
-  m_Name: VoiceLogger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1237330422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1237330421}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a86f533fd9917dd4da8601e9eb542c96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PhotonVoice::Photon.Voice.Unity.VoiceLogger
-  LogLevel: 2
---- !u!4 &1237330423
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1237330421}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1257157088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5814,6 +5793,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DoorPivot (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6066,6 +6049,10 @@ PrefabInstance:
     - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_Name
       value: DoorPivot (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6854,6 +6841,10 @@ PrefabInstance:
     - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_Name
       value: DoorPivot (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5066206484629946086, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5147641822531087272, guid: 6d5cdc0e923acf94c967cb1cd340a8b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -49363,4 +49354,3 @@ SceneRoots:
   - {fileID: 147942694}
   - {fileID: 107501132}
   - {fileID: 620996378}
-  - {fileID: 1237330423}

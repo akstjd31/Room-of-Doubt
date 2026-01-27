@@ -36,9 +36,6 @@ public class Door : InteractableBase
         }
         else
         {
-            if (RequiredItem != null)
-                ShowLocalPrompt(actorNumber);
-
             isOpen = !isOpen;
             anim.SetBool("IsOpen", isOpen);
         }

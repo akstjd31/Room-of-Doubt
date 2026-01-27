@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// 로컬 리스너 정보가 담길 헬퍼
 public static class LocalListener
 {
     private static Transform cached;
@@ -15,7 +16,7 @@ public static class LocalListener
 
             return cached;
         }
-        
+
         set => cached = value;
     }
 }

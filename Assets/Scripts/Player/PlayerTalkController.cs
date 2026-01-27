@@ -34,6 +34,10 @@ public class PlayerTalkController : MonoBehaviourPun
 
         talkAction.started += OnTalkStarted;
         talkAction.canceled += OnTalkCanceled;
+
+        // 생성되자마자 리스너 트랜스폼 등록
+        var al = GetComponentInChildren<AudioListener>();
+        if (al != null) LocalListener.Transform = al.transform;
     }
 
     private void OnDisable()
@@ -59,6 +63,20 @@ public class PlayerTalkController : MonoBehaviourPun
     
     private void Update()
     {
+        var listener = LocalListener.Transform;
+        if (listener == null) return;
+
+        // 두 사이 거리 비교 및 레이를 쏴 사이에 장애물이 있는 경우 볼륨 조절
+        Vector3 from = this.transform.position;
+        Vector3 to = listener.transform.position;
+        Vector3 dir = to - from;
+        float dist = dir.magnitude;
+        if (dist <= 0.01f) return;
+
+        bool blocked = Physics.Raycast(from, dir / dist, dist , occlusionMask);
+
+        float target = blocked ? blockedVolume : openVolume;
+        audioSource.volume = Mathf.Lerp(audioSource.volume, target, Time.deltaTime * lerpSpeed);
     }
 
     private void OnTalkStarted(InputAction.CallbackContext ctx) => recorder.TransmitEnabled = true;
