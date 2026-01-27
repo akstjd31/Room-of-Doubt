@@ -31,15 +31,23 @@ public class Door : InteractableBase
             }
             else
             {
-                if (Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
-                    UIManager.Instance.ShowMessage(prompt);
+                ShowLocalPrompt(actorNumber);
             }
         }
         else
         {
+            if (RequiredItem != null)
+                ShowLocalPrompt(actorNumber);
+
             isOpen = !isOpen;
             anim.SetBool("IsOpen", isOpen);
         }
+    }
+
+    private void ShowLocalPrompt(int actorNumber)
+    {
+        if (Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
+            UIManager.Instance.ShowMessage(prompt);
     }
 
     protected override IEnumerator InitRoutine()

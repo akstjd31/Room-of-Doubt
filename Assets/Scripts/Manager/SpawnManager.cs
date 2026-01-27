@@ -139,7 +139,6 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
         }
 
-
         int puzzleCount = Mathf.Min(puzzlePrefabPaths.Count, puzzleSpawnPoints.Count);
 
         var puzzleIndices = new List<int>(puzzleSpawnPoints.Count);

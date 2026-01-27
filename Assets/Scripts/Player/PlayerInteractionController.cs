@@ -13,6 +13,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     [SerializeField] private Camera cam;
     [SerializeField] private float range = 1.5f;
     [SerializeField] private LayerMask interactMask;
+    [SerializeField] private LayerMask obstacleMask;
     private InteractableBase current;
 
     private void Awake()
@@ -112,10 +113,15 @@ public class PlayerInteractionController : MonoBehaviourPun
 
         // 카메라 중심으로 레이 발사
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        if (Physics.Raycast(ray, out var hit, range, interactMask))
-        {
+        RaycastHit hit;
+
+        // 장애물이 먼저 보이면 리턴 (관통 방지)
+        if (Physics.Raycast(ray, out hit, range, obstacleMask))
+            return;
+
+        if (Physics.Raycast(ray, out hit, range, interactMask))
             current = hit.collider.GetComponent<InteractableBase>();
-        }
+        
         else
         {
             if (current != null)
