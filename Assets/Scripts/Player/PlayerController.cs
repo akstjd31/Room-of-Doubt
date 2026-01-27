@@ -11,14 +11,14 @@ public class PlayerController : MonoBehaviourPun
     [SerializeField] private Transform cameraPivot; // 기존 내 카메라 루트
     [SerializeField] private CinemachineCamera myCam;
     public Transform CameraPivot => cameraPivot;
-    [SerializeField] private MonoBehaviour[] disableOnEscape; // 이동/상호작용 스크립트들
+    [SerializeField] private MonoBehaviour[] playerMonos; // 이동/상호작용 스크립트들
 
     private void Awake()
     {
-        disableOnEscape = GetComponentsInChildren<MonoBehaviour>(true);
+        playerMonos = GetComponentsInChildren<MonoBehaviour>(true);
 
         // 스크립트 자신이나, 꺼지면 안 되는 건 제외
-        disableOnEscape = disableOnEscape
+        playerMonos = playerMonos
             .Where(m => m != this)
             .Where(m => !(m is PhotonView))
             .Where(m => !(m is CinemachineBrain))
@@ -42,8 +42,22 @@ public class PlayerController : MonoBehaviourPun
 
         if (!photonView.IsMine) return;
 
-        // 내 조작 끄기
-        foreach (var b in disableOnEscape) if (b) b.enabled = false;
+        // 모노붙은거 제거
+        foreach (var mono in playerMonos) if (mono) mono.enabled = false;
+        
+        // 시각적 요소 제거
+        foreach (var r in GetComponentsInChildren<Renderer>(true))
+            r.enabled = false;
+
+        // 충돌 제거
+        foreach (var c in GetComponentsInChildren<Collider>(true))
+            c.enabled = false;
+
+        var rb = GetComponent<Rigidbody>();
+        if (rb)
+        {
+            rb.isKinematic = true;
+        }
 
         // 기존 로컬 카메라 끄고(선택)
         if (myCam) myCam.gameObject.SetActive(false);
