@@ -28,7 +28,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    public bool isPaused = false;
+    [SerializeField] private int timeLimitSeconds = 180;
+    public int TimeLimitSeconds => timeLimitSeconds;
+    public bool IsPaused {get; private set; }
 
     public bool IsInteractingFocused { get; private set; }
     private bool isLocalPlayerCreated;
@@ -274,8 +276,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void TogglePause()
     {
-        isPaused = !isPaused;
-        if (isPaused) OnGamePaused?.Invoke();
+        IsPaused = !IsPaused;
+        if (IsPaused) OnGamePaused?.Invoke();
         else OnGameResumed?.Invoke();
     }
 

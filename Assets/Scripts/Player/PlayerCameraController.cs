@@ -125,7 +125,7 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
         if (playerController.IsEscaped) return;
-        if (GameManager.Instance.isPaused) return;
+        if (GameManager.Instance.IsPaused) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;

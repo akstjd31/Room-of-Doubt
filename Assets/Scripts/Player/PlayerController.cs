@@ -1,26 +1,26 @@
 using UnityEngine;
 using System.Linq;
 using Photon.Pun;
-using UnityEngine.InputSystem;
-using Unity.Cinemachine;
+using Unity.Cinemachine; // 너 프로젝트 기준
 
 public class PlayerController : MonoBehaviourPun
 {
     public bool IsEscaped { get; private set; }
-    public Transform HeadPivot; // 카메라 피벗/머리 트랜스폼
-    [SerializeField] private Transform cameraPivot; // 기존 내 카메라 루트
-    [SerializeField] private CinemachineCamera myCam;
+
+    public Transform HeadPivot;
+    [SerializeField] private Transform cameraPivot;
     public Transform CameraPivot => cameraPivot;
-    [SerializeField] private MonoBehaviour[] playerMonos; // 이동/상호작용 스크립트들
+
+    [SerializeField] private CinemachineCamera myCam; // "내 플레이 vcam" 용도로만 쓰기
+    [SerializeField] private MonoBehaviour[] playerMonos;
 
     private void Awake()
     {
-        playerMonos = GetComponentsInChildren<MonoBehaviour>(true);
-
-        // 스크립트 자신이나, 꺼지면 안 되는 건 제외
-        playerMonos = playerMonos
+        // 자동 수집(주의: 너무 많이 꺼질 수 있으니 아래 Exclude를 잘 잡아야 함)
+        playerMonos = GetComponentsInChildren<MonoBehaviour>(true)
             .Where(m => m != this)
             .Where(m => !(m is PhotonView))
+            // CinemachineBrain은 보통 "메인 출력 카메라"에 있음. 플레이어 하위에 있으면 제외
             .Where(m => !(m is CinemachineBrain))
             .ToArray();
     }
@@ -36,34 +36,59 @@ public class PlayerController : MonoBehaviourPun
             SpectatorManager.Instance.UnRegister(this);
     }
 
-    public void Escape()
+    private void OnTriggerEnter(Collider other)
     {
+        if (!photonView.IsMine) return;
+        if (IsEscaped) return;
+
+        if (other.CompareTag("EscapeBox"))
+        {
+            photonView.RPC(nameof(RequestEscapeToMaster), RpcTarget.MasterClient, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+    }
+
+    [PunRPC]
+    private void RequestEscapeToMaster(int actorNumber, PhotonMessageInfo info)
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        if (info.Sender.ActorNumber != actorNumber) return;
+
+        photonView.RPC(nameof(ApplyEscapeAll), RpcTarget.All, actorNumber);
+
+        TimeAttackSync.StartTimeAttack();
+    }
+
+    [PunRPC]
+    private void ApplyEscapeAll(int actorNumber)
+    {
+        // 내 오브젝트가 해당 actor의 것인지 확인
+        if (photonView.OwnerActorNr != actorNumber) return;
+
         IsEscaped = true;
 
-        if (!photonView.IsMine) return;
+        // 1) 조작/상호작용 끄기 (로컬만)
+        if (photonView.IsMine)
+        {
+            foreach (var mono in playerMonos)
+                if (mono) mono.enabled = false;
 
-        // 모노붙은거 제거
-        foreach (var mono in playerMonos) if (mono) mono.enabled = false;
-        
-        // 시각적 요소 제거
+            // 내 전용 시네머신 카메라 끄기 
+            if (myCam) myCam.gameObject.SetActive(false);
+
+            // 관전 시작(로컬만)
+            SpectatorManager.Instance.EnterSpectate();
+        }
+
+        // 2) 모두에게 공통으로 적용: 시각/충돌 제거(유령화)
         foreach (var r in GetComponentsInChildren<Renderer>(true))
             r.enabled = false;
 
-        // 충돌 제거
         foreach (var c in GetComponentsInChildren<Collider>(true))
             c.enabled = false;
 
         var rb = GetComponent<Rigidbody>();
-        if (rb)
-        {
-            rb.isKinematic = true;
-        }
-
-        // 기존 로컬 카메라 끄고(선택)
-        if (myCam) myCam.gameObject.SetActive(false);
-
-        // 관전 시작
-        SpectatorManager.Instance.EnterSpectate();
+        if (rb) rb.isKinematic = true;
     }
 
     private void Update()
@@ -72,14 +97,6 @@ public class PlayerController : MonoBehaviourPun
         if (!IsEscaped) return;
 
         if (Input.GetMouseButtonDown(0))
-        {
             SpectatorManager.Instance.NextTarget();
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("EscapeBox"))
-            Escape();
     }
 }
