@@ -439,7 +439,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: -2753936571140471322, guid: 2815a124d4995f94184f9dc13fa1b4f7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -492,8 +492,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2815a124d4995f94184f9dc13fa1b4f7, type: 2}
+  m_sharedMaterial: {fileID: -2753936571140471322, guid: 2815a124d4995f94184f9dc13fa1b4f7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -699,8 +699,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5201526634505017404}
-  - component: {fileID: 4433682679274146677}
   - component: {fileID: 615802812071173551}
+  - component: {fileID: 4433682679274146677}
   - component: {fileID: 6046715314795054723}
   - component: {fileID: 3175833682216228026}
   m_Layer: 11
@@ -741,26 +741,6 @@ Transform:
   - {fileID: 5387156614411769385}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &4433682679274146677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 648462453064209414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89b666ce5fa16b047a5e136a105dd9da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KeyPadManager
-  collect: 2345
-  codes: 
-  currentNumLength: 0
-  screenText: {fileID: 6694245241808517310}
-  numPadMask:
-    serializedVersion: 2
-    m_Bits: 8192
-  isFinal: 0
 --- !u!65 &615802812071173551
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -782,6 +762,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6.9249787, y: 1.983443, z: 7.9831924}
   m_Center: {x: -0.011398554, y: 0.49172163, z: 0.3776455}
+--- !u!114 &4433682679274146677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648462453064209414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b666ce5fa16b047a5e136a105dd9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeyPadManager
+  collect: 2345
+  codes: 
+  currentNumLength: 0
+  screenText: {fileID: 6694245241808517310}
+  numPadMask:
+    serializedVersion: 2
+    m_Bits: 8192
+  isFinal: 0
 --- !u!114 &6046715314795054723
 MonoBehaviour:
   m_ObjectHideFlags: 0

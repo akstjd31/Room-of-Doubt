@@ -10,6 +10,8 @@ public class KeyPad : InteractableBase
         if (keyPadMgr == null)
         {
             keyPadMgr = this.GetComponent<KeyPadManager>();    
+            keyPadMgr.Init();
+            
             keyPadMgr.enabled = false;
         }
         

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using ExitGames.Client.Photon;
 
-public class KeyPadManager : MonoBehaviourPun
+public class KeyPadManager : MonoBehaviourPunCallbacks
 {
     private const int MAX_CODE_LENGTH = 4;
+    private const string ROOM_PROP_KEY = "KP_ANSWER";
 
     [Header("Answer")]
-    [SerializeField] private string collect = "1234"; // 정답
+    [SerializeField] private string collect; // 정답
 
     [Header("Runtime")]
     [SerializeField] private int[] codes;
@@ -23,11 +25,13 @@ public class KeyPadManager : MonoBehaviourPun
     private string input;
     private string result;
 
-    private void Start()
+    public void Init()
     {
         codes = new int[MAX_CODE_LENGTH];
         input = "";
         currentNumLength = 0;
+
+        EnsureSharedAnswer();
     }
 
     private void Update()
@@ -93,6 +97,33 @@ public class KeyPadManager : MonoBehaviourPun
         }
     }
 
+    private void EnsureSharedAnswer()
+    {
+        if (!PhotonNetwork.InRoom) return;
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        string newAnswer = GenerateRandomDigits(MAX_CODE_LENGTH);
+        var props = new Hashtable { { ROOM_PROP_KEY, newAnswer } };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(props);
+
+        // 현재 플레이어들에게 즉시 적용 + 늦게 들어오는 유저도 적용되게 Buffered
+        photonView.RPC(nameof(SetAnswerRPC), RpcTarget.AllBuffered, newAnswer);
+
+        Debug.Log($"비밀번호 설정 완료! 현재: {collect}");
+    }
+
+    // 0 ~ 9 까지 랜덤 수 생성
+    private string GenerateRandomDigits(int length)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder(length);
+        for (int i = 0; i < length; i++)
+            sb.Append(UnityEngine.Random.Range(0, 10));
+        return sb.ToString();
+    }
+
+    [PunRPC]
+    private void SetAnswerRPC(string answer) => collect = answer;
+
     private void ResetLocalInput()
     {
         currentNumLength = 0;
@@ -100,7 +131,7 @@ public class KeyPadManager : MonoBehaviourPun
             codes[i] = 0;
         input = "";
     }
-    
+
     // 로컬 전용 처리
     private void SuccessLocal()
     {
@@ -123,7 +154,11 @@ public class KeyPadManager : MonoBehaviourPun
         IsSolved = true;
 
         Debug.Log("해결! (RPC)");
-        screenText.fontSize = 1200;
-        screenText.text = "UNLOCK!";
+
+        if (screenText != null)
+        {
+            screenText.fontSize = 1200;
+            screenText.text = "UNLOCK!";
+        }
     }
 }
