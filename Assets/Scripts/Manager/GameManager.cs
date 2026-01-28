@@ -10,6 +10,10 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static GameManager Instance;
+
+    [SerializeField] private RoomRewardData rewardData;
+    public RoomRewardData RewardData => rewardData;
+
     [SerializeField] private SpawnPointGroup playerSpawnPointGroup; // 플레이어 스폰 포인트 지정
 
     [Header("Start Hint 지급")]
@@ -74,12 +78,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.IsMasterClient)
             quickSlotSnapshotByActor[senderActor] = snapshot;
     }
-
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
+    }
+
+    public void OnRoomCleared()
+    {
+        var data = rewardData;
+        
     }
 
     // 불 키기(로컬 적용만) - 네트워크 동기화까지 하려면 RoomPropKeys.POWER_ON 이용 권장

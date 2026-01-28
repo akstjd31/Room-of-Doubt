@@ -34,7 +34,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
             
-            // S == Started, 즉 시작됨을 알림.
+            // S == Started, 시작!
             ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "S", true } };
             PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
