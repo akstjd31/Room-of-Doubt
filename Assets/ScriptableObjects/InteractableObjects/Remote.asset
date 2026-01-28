@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d134a95c2ef77924ab1eeba4fbf7bcb4, type: 3}
-  m_Name: Key
+  m_Name: Remote
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  id: 95c9b031-fe5e-46c9-9394-c255d7d5246f
-  itemName: Key
-  itemIcon: {fileID: 21300000, guid: 13c925c9c6716194f9fe832914b37154, type: 3}
-  itemPrefab: {fileID: 2214911250415650842, guid: 212f240784d682d4ba8a002ea1ab63c8, type: 3}
+  id: 88bf78c9-5e53-4d3e-b70d-b8f794fa2f78
+  itemName: Remote
+  itemIcon: {fileID: 21300000, guid: 50fab7618ff4a204192bb61844437aa5, type: 3}
+  itemPrefab: {fileID: 1870017816956067303, guid: 20bd50a2d8e0ae64aa21b289abe5bd7b, type: 3}
   kind: 0
   consumeType: 1

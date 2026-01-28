@@ -8,6 +8,12 @@ public enum ItemKind
     Lamp,
 }
 
+// 사용하면 없어지는가? / 없어지지 않는가?
+public enum ConsumeType
+{
+    Consumable, 
+    Permanent
+}
 [CreateAssetMenu(fileName = "Item", menuName = "Scriptable Objects/Item")]
 public class Item : ScriptableObject
 {
@@ -23,6 +29,9 @@ public class Item : ScriptableObject
     [Header("Type")]
     [SerializeField] private ItemKind kind = ItemKind.Normal;
     public ItemKind Kind => kind;
+
+    [SerializeField] private ConsumeType consumeType = ConsumeType.Consumable;
+    public ConsumeType ConsumeType => consumeType;
 
     public bool IsLamp => kind == ItemKind.Lamp;
 

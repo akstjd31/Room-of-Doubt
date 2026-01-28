@@ -70,7 +70,8 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
             return;
         }
 
-        if (requiredItem != null)
+        // 상호작용을 위해 필요 아이템 존재 & 소모 아이템일 경우
+        if (requiredItem != null && requiredItem.ConsumeType.Equals(ConsumeType.Consumable))
             QuickSlotManager.Local.RemoveItem();
 
         if (rewardItem != null)
