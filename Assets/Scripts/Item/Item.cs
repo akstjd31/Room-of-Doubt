@@ -32,7 +32,6 @@ public class Item : ScriptableObject
 
     [SerializeField] private ConsumeType consumeType = ConsumeType.Consumable;
     public ConsumeType ConsumeType => consumeType;
-
     public bool IsLamp => kind == ItemKind.Lamp;
 
 #if UNITY_EDITOR

@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         foreach (var prefab in loadedPrefabs)
         {
-            if (prefab.name.Equals("Lamp")) continue;
+            if (prefab.name.Equals("Lamp") || prefab.name.Equals("HintPaper")) continue;
 
             string path = $"{resourceFolder}/{prefab.name}";
             prefabPaths.Add(path);

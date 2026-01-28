@@ -11,6 +11,19 @@ public class InspectManager : MonoBehaviour
     [SerializeField] private CinemachineCamera cam;     // 포커싱될 캠
     [SerializeField] private float rotateSpeed = 0.2f;  // 아이템 잡고 마우스로 회전시킬 때 속도
 
+    [Header("Zoom")]
+    [SerializeField] private float zoomSpeed = 0.6f;
+    [SerializeField] private float minDistance = 0.25f;   // pivot을 절대 못 넘게 (0보다 크게)
+    [SerializeField] private float maxDistance = 2.5f;
+    [SerializeField] private float zoomLerp = 12f;
+
+    private float dist;
+    private float distTarget;
+
+    private Vector3 camPosOrigin;
+    private Quaternion camRotOrigin;
+
+
     public bool IsInspecting => isInspecting;
     private bool isInspecting;
 
@@ -23,16 +36,31 @@ public class InspectManager : MonoBehaviour
     {
         Instance = this;
     }
+
     private void Start()
     {
         cam.Priority = 0;
         originQut = pivot != null ? pivot.rotation : transform.rotation;
+
+        camPosOrigin = cam.transform.position;
+        camRotOrigin = cam.transform.rotation;
+
+        if (pivot != null)
+        {
+            dist = distTarget = Vector3.Distance(cam.transform.position, pivot.position);
+            dist = distTarget = Mathf.Clamp(distTarget, minDistance, maxDistance);
+        }
     }
+
+
 
     private void Update()
     {
         if (isInspecting)
+        {
             HandleRotate();
+            HandleZoom();
+        }
     }
 
     // 초기 검증 (현재 슬롯에 아이템이 있는지 부터)
@@ -58,6 +86,8 @@ public class InspectManager : MonoBehaviour
         cam.Priority = 100;
         isInspecting = true;
 
+        dist = distTarget = Mathf.Clamp(Vector3.Distance(cam.transform.position, pivot.position), minDistance, maxDistance);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -72,7 +102,7 @@ public class InspectManager : MonoBehaviour
         if (item == null || item.itemPrefab == null) return;
 
 
-        spawnedPrefabId = $"Hints/{item.itemPrefab.name}";
+        spawnedPrefabId = $"Items/{item.itemPrefab.name}";
 
         spawned = PhotonPrefabPoolManager.Instance.GetLocal(
             spawnedPrefabId,
@@ -123,4 +153,30 @@ public class InspectManager : MonoBehaviour
             pivot.Rotate(Vector3.right, delta.y * rotateSpeed, Space.World);
         }
     }
+
+    private void HandleZoom()
+    {
+        float wheel = Input.mouseScrollDelta.y;
+        if (Mathf.Abs(wheel) > 0.01f)
+        {
+            // 휠 올리면 가까워지게(거리 감소)
+            distTarget = Mathf.Clamp(distTarget - wheel * zoomSpeed, minDistance, maxDistance);
+        }
+
+        dist = Mathf.Lerp(dist, distTarget, Time.deltaTime * zoomLerp);
+
+        // ✅ 카메라가 pivot을 바라보고 있다는 전제:
+        // 카메라의 forward 방향으로 "pivot에서 뒤로" dist만큼 떨어뜨린 위치로 고정
+        // (pivot -> camera 방향으로 항상 양수 dist 유지 = pivot 통과 불가)
+        Vector3 dir = (cam.transform.position - pivot.position).normalized;
+        if (dir.sqrMagnitude < 0.0001f)
+            dir = -cam.transform.forward; // 혹시 같은 위치면 fallback
+
+        cam.transform.position = pivot.position + dir * dist;
+
+        // ✅ 항상 pivot을 바라보게(원하면 끄기)
+        cam.transform.LookAt(pivot);
+    }
+
+
 }
