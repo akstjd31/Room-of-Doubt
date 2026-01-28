@@ -82,7 +82,6 @@ public class UIManager : MonoBehaviourPunCallbacks
     private void OnTimeAttackExpired()
     {
         ShowMessage("시간 초과!");
-
         RoomRewardManager.Instance.FinalizeGoldRewards();
     }
 

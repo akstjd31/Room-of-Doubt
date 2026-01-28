@@ -5,8 +5,9 @@ using UnityEngine;
 /// <summary>
 /// 포톤 네트워크로 생성/파괴될 때 오브젝트 풀로 관리하기 위한 클래스
 /// </summary>
-public class PhotonPrefabPoolManager : Singleton<PhotonPrefabPoolManager>, IPunPrefabPool
+public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
 {
+    public static PhotonPrefabPoolManager Instance;
     [Header("Optional Settings")]
     [SerializeField] private Transform poolParent;                      // 풀 부모
     [SerializeField] private int cachingCountPerPrefab = 0;             // 미리 캐싱된 프리팹 개수
@@ -16,6 +17,7 @@ public class PhotonPrefabPoolManager : Singleton<PhotonPrefabPoolManager>, IPunP
 
     private void Awake()
     {
+        Instance = this;
         PhotonNetwork.PrefabPool = this;
     }
 

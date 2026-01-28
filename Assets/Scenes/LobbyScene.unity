@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyManager
   db: {fileID: 357229472}
+  quickMachingbtn: {fileID: 1053195663}
 --- !u!4 &103858363
 Transform:
   m_ObjectHideFlags: 0

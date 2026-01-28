@@ -93,6 +93,7 @@ public class FirebaseAuthManager : MonoBehaviour
         {
             user = loginTask.Result.User;
             startButton.interactable = true;
+            UserDataManager.Instance.SetNickname(user.DisplayName);
         }
     }
 

@@ -29,9 +29,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    [SerializeField] private int timeLimitSeconds = 10;
+    [SerializeField] private int timeLimitSeconds = 30;
     public int TimeLimitSeconds => timeLimitSeconds;
-    public bool IsPaused {get; private set; }
+    public bool IsPaused { get; private set; }
 
     public bool IsInteractingFocused { get; private set; }
     private bool isLocalPlayerCreated;
@@ -81,7 +81,32 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             TogglePause();
     }
 
-    // 불 키기(로컬 적용만) - 네트워크 동기화까지 하려면 RoomPropKeys.POWER_ON 이용 권장
+    public void MoveAllToLobby()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        StartCoroutine(MoveAllToLobbyCor());
+    }
+
+    private IEnumerator MoveAllToLobbyCor()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        if (!PhotonNetwork.IsMasterClient) yield break;
+
+        Debug.Log("방 종료 -> 전원 LeaveRoom 요청");
+        photonView.RPC(nameof(LeaveRoomRPC), RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void LeaveRoomRPC()
+    {
+        if (PhotonNetwork.InRoom)
+            PhotonNetwork.LeaveRoom();
+    }
+
+    // 특정 퍼즐 해결 시 방에 있는 불 키기
     public void PowerOn()
     {
         if (lights == null || lights.Length < 1) return;
@@ -395,6 +420,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
         }
     }
+
+    public override void OnLeftRoom()
+{
+    UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+}
 
     public QuickSlotManager LocalQuickSlot => localQuickSlotMgr;
 }

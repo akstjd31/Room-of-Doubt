@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviourPun
 
     private void Awake()
     {
-        
         playerMonos = GetComponentsInChildren<MonoBehaviour>(true)
             .Where(m => m != this)
             .Where(m => !(m is PhotonView))

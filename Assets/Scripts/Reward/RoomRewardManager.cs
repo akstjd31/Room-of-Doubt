@@ -39,17 +39,11 @@ public class RoomRewardManager : MonoBehaviourPun
         photonView.RPC(nameof(GrantExpRPC), RpcTarget.All, actorNumber, rewardData.exp);
     }
 
+    // 경험치 주기
     [PunRPC]
     private void GrantExpRPC(int targetActor, int exp)
     {
         if (PhotonNetwork.LocalPlayer.ActorNumber != targetActor) return;
-
-        int n = escapedActors.Count;
-        if (n <= 0)
-        {
-            Debug.Log("탈출한 사람이 없음! 경험치 못줌");
-            return;
-        }
 
         if (UserDataManager.Instance == null)
         {
@@ -61,6 +55,7 @@ public class RoomRewardManager : MonoBehaviourPun
         Debug.Log($"보상 경험치 : {exp}");
     }
 
+    // 주어진 시간이 다 지나면 골드 계산 후 지급
     public void FinalizeGoldRewards()
     {
         if (!PhotonNetwork.IsMasterClient) return;
@@ -92,8 +87,10 @@ public class RoomRewardManager : MonoBehaviourPun
         }
 
         Debug.Log($"(마스터의 알림) 전체 골드량: {totalGold}, n빵한 최대 골드량: {share}, 남는 골드: {remainder}");
+        GameManager.Instance.MoveAllToLobby();
     }
 
+    // 돈 주기
     [PunRPC]
     private void GrantGoldRPC(int targetActor, int gold)
     {
