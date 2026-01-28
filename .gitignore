@@ -109,7 +109,7 @@ PhotonServerSettings.asset
 # 파이어베이스 구글 서비스 X
 google-services.json
 google-services-desktop.json
-Firebase*
+Assets/Firebase*
 
 
 

@@ -1,15 +1,17 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using System;
 using System.Collections;
+using Photon.Pun;
+using ExitGames.Client.Photon;
 
-// 일단 텍스트 출력용 관리자인데 나중에 바뀔 수 있음.
-public class UIManager : Singleton<UIManager>
+public class UIManager : MonoBehaviourPunCallbacks
 {
+    public static UIManager Instance;
+
     [Header("Fade effect")]
     [SerializeField] private TextMeshProUGUI promptText;
-    [SerializeField] private float fadeOutTime = 1.2f;  // 천천히 사라지는 시간
+    [SerializeField] private float fadeOutTime = 1.2f;
 
     private Coroutine routine;
 
@@ -18,6 +20,24 @@ public class UIManager : Singleton<UIManager>
     public bool IsOpen { get; private set; }
     public event Action OnInvenOpened;
     public event Action OnInvenClosed;
+
+    // =========================
+    // Time Attack UI (추가)
+    // =========================
+    private const string TA_START = "TA_START";
+
+    [Header("Time Attack UI")]
+    [SerializeField] private TextMeshProUGUI timeAttackText;  // 타이머 텍스트
+    [SerializeField] private bool showMilliseconds = false;   // 00:00.0 형태
+
+    private bool timeAttackStarted;
+    private double timeAttackStartTime; // PhotonNetwork.Time 기준
+    private bool timeAttackFinished;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -32,6 +52,59 @@ public class UIManager : Singleton<UIManager>
     {
         if (Input.GetKeyDown(KeyCode.Tab))
             ToggleUI();
+
+        if (!timeAttackStarted || timeAttackFinished || timeAttackText == null) return;
+        if (GameManager.Instance == null) return;
+
+        // 타임어택 표시 갱신   
+        double elapsed = PhotonNetwork.Time - timeAttackStartTime;
+        if (elapsed < 0) elapsed = 0;
+
+        double remain = GameManager.Instance.TimeLimitSeconds - elapsed;
+        if (remain < 0) remain = 0;
+
+        timeAttackText.text = FormatTime(remain);
+
+        if (remain <= 0.0f && !timeAttackFinished)
+        {
+            timeAttackFinished = true;
+            OnTimeAttackExpired();
+        }
+
+    }
+
+    public void StartTimeAttack(double startTime)
+    {
+        timeAttackStartTime = startTime;
+        timeAttackStarted = true;
+    }
+
+    private void OnTimeAttackExpired()
+    {
+        ShowMessage("시간 초과!");
+        RoomRewardManager.Instance.FinalizeGoldRewards();
+    }
+
+    public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        if (propertiesThatChanged.TryGetValue(TA_START, out var v) && v is double t)
+        {
+            StartTimeAttack(t);
+        }
+    }
+
+
+    private string FormatTime(double seconds)
+    {
+        int total = Mathf.FloorToInt((float)seconds);
+        int mm = total / 60;
+        int ss = total % 60;
+
+        if (!showMilliseconds)
+            return $"{mm:00}:{ss:00}";
+
+        int ms1 = Mathf.FloorToInt((float)((seconds - total) * 10.0)); // 0.0~0.9
+        return $"{mm:00}:{ss:00}.{ms1:0}";
     }
 
     void ToggleUI()

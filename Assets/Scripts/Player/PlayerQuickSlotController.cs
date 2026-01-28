@@ -3,10 +3,12 @@ using UnityEngine.InputSystem;
 using Photon.Pun;
 
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
 {
     private int selectedSlotIndex;
     private int maxSlotCount;
+    private PlayerController playerController;
     private PlayerInput playerInput;
     private InputAction selectAction, scrollAction;
 
@@ -23,6 +25,8 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         playerInput = this.GetComponent<PlayerInput>();
+        playerController = this.GetComponent<PlayerController>();
+
         selectAction = playerInput.actions["Select"];
         scrollAction = playerInput.actions["Scroll"];
 
@@ -75,6 +79,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         // 숫자 버튼으로 슬롯 변경 방식
     private void OnSelectSlotPerformed(InputAction.CallbackContext ctx)
     {
+        if (playerController.IsEscaped) return;
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
@@ -90,6 +95,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
     // 스크롤로 슬롯 변경 방식
     private void OnScrollSlotPerformed(InputAction.CallbackContext ctx)
     {
+        if (playerController.IsEscaped) return;
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;

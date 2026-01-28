@@ -4,8 +4,9 @@ using Unity.Cinemachine;
 /// <summary>
 /// 아이템 자세히 보기를 위한 매니저 클래스
 /// </summary>
-public class InspectManager : Singleton<InspectManager>
+public class InspectManager : MonoBehaviour
 {
+    public static InspectManager Instance;
     [SerializeField] private Transform pivot;           // 아이템이 생성될 위치
     [SerializeField] private CinemachineCamera cam;     // 포커싱될 캠
     [SerializeField] private float rotateSpeed = 0.2f;  // 아이템 잡고 마우스로 회전시킬 때 속도
@@ -18,6 +19,10 @@ public class InspectManager : Singleton<InspectManager>
     private Quaternion originQut;
     private string spawnedPrefabId;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Start()
     {
         cam.Priority = 0;

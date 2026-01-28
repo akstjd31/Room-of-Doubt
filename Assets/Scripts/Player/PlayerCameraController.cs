@@ -7,9 +7,11 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerCameraController : MonoBehaviourPun
 {
     public static PlayerCameraController Instance;
+    private PlayerController playerController;
     private PlayerInput playerInput;
     private InputAction lookAction;
     private Rigidbody rigid;
@@ -48,6 +50,7 @@ public class PlayerCameraController : MonoBehaviourPun
         playerInput = this.GetComponent<PlayerInput>();
         rigid = this.GetComponent<Rigidbody>();
         brain = cameraRoot.GetComponent<CinemachineBrain>();
+        playerController = this.GetComponent<PlayerController>();
 
         lookAction = playerInput.actions["Look"];
     }
@@ -106,9 +109,6 @@ public class PlayerCameraController : MonoBehaviourPun
         UIManager.Instance.OnInvenClosed -= HandleResumed;
     }
 
-    private void HandlePause() => SetCursor(CursorLockMode.None, true);
-    private void HandleResumed() => SetCursor(CursorLockMode.Locked, false);
-
     private void SetCursor(CursorLockMode mode, bool v)
     {
         Cursor.lockState = mode;
@@ -124,7 +124,8 @@ public class PlayerCameraController : MonoBehaviourPun
     private void LateUpdate()
     {
         if (!photonView.IsMine) return;
-        if (GameManager.Instance.isPaused) return;
+        if (playerController.IsEscaped) return;
+        if (GameManager.Instance.IsPaused) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;
@@ -150,4 +151,7 @@ public class PlayerCameraController : MonoBehaviourPun
         brain.DefaultBlend.Style = CinemachineBlendDefinition.Styles.EaseInOut;
         brain.DefaultBlend.Time = time;
     }
+
+    private void HandlePause() => SetCursor(CursorLockMode.None, true);
+    private void HandleResumed() => SetCursor(CursorLockMode.Locked, false);
 }

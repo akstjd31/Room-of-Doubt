@@ -10,6 +10,7 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static GameManager Instance;
+
     [SerializeField] private SpawnPointGroup playerSpawnPointGroup; // 플레이어 스폰 포인트 지정
 
     [Header("Start Hint 지급")]
@@ -28,10 +29,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    public bool isPaused = false;
+    [SerializeField] private int timeLimitSeconds = 30;
+    public int TimeLimitSeconds => timeLimitSeconds;
+    public bool IsPaused { get; private set; }
 
-    public bool IsInteractingFocused; //{ get; private set; }
-    public bool isLocalPlayerCreated;
+    public bool IsInteractingFocused { get; private set; }
+    private bool isLocalPlayerCreated;
 
     [Header("Light")]
     [SerializeField] private GameObject[] lights;
@@ -72,15 +75,35 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         if (PhotonNetwork.IsMasterClient)
             quickSlotSnapshotByActor[senderActor] = snapshot;
     }
-
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
     }
 
-    // 불 키기(로컬 적용만) - 네트워크 동기화까지 하려면 RoomPropKeys.POWER_ON 이용 권장
+    public void MoveAllToLobby()
+    {
+        StartCoroutine(MoveAllToLobbyCor());
+    }
+
+    private IEnumerator MoveAllToLobbyCor()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        if (!PhotonNetwork.IsMasterClient) yield break;
+
+        Debug.Log("방 종료 -> 전원 LeaveRoom 요청");
+        photonView.RPC(nameof(LeaveRoomRPC), RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void LeaveRoomRPC()
+    {
+        if (PhotonNetwork.InRoom)
+            PhotonNetwork.LeaveRoom();
+    }
+
+    // 특정 퍼즐 해결 시 방에 있는 불 키기
     public void PowerOn()
     {
         if (lights == null || lights.Length < 1) return;
@@ -274,8 +297,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void TogglePause()
     {
-        isPaused = !isPaused;
-        if (isPaused) OnGamePaused?.Invoke();
+        IsPaused = !IsPaused;
+        if (IsPaused) OnGamePaused?.Invoke();
         else OnGameResumed?.Invoke();
     }
 
@@ -394,6 +417,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             }
         }
     }
+
+    public override void OnLeftRoom()
+{
+    UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+}
 
     public QuickSlotManager LocalQuickSlot => localQuickSlotMgr;
 }

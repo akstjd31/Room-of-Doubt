@@ -28,9 +28,6 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
         LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
-
-        foreach (var p in itemPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
-        foreach (var p in puzzlePrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
     }
 
     // 해당 경로에 존재하는 아이템 경로 따오기
@@ -52,6 +49,9 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        foreach (var p in itemPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
+        foreach (var p in puzzlePrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
+        
         StartCoroutine(WaitAndInit());
     }
 
