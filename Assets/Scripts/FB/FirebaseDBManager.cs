@@ -93,8 +93,7 @@ public class FirebaseDBManager : MonoBehaviour
             };
 
             UserDataManager.Instance.SetData(data);
-
-            Debug.Log("로드 완료!");
+            Debug.Log("로드 성공!");
         }
         catch (Exception e)
         {

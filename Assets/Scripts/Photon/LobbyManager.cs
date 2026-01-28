@@ -41,6 +41,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log($"마스터 서버에 연결됨. (콜백) 클라이언트 상태: {PhotonNetwork.NetworkClientState}");
+        SaveData();
         JoinLobbySafe();
     }
 
@@ -83,7 +84,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (quickMachingbtn) quickMachingbtn.interactable = true;
 
         if (db != null)
+        {
             await db.LoaduserDataAsync();
+        }
     }
 
     public void RandomOrCreateRoom()
@@ -119,4 +122,6 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         if (quickMachingbtn) quickMachingbtn.interactable = false;
         lobbyReady = false;
     }
+
+    private async void SaveData() => await db.SaveUserDataAsync();
 }
