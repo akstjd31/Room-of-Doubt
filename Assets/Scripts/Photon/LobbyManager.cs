@@ -14,6 +14,9 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     private void Awake()
     {
         if (quickMachingbtn) quickMachingbtn.interactable = false;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private IEnumerator Start()
@@ -58,7 +61,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.InLobby)
         {
-            lobbyReady = true;
+           lobbyReady = true;
             OnLobbyReady();
             return;
         }
@@ -112,8 +115,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         Debug.Log($"방에 입장! (콜백) {PhotonNetwork.CurrentRoom.Name}");
 
-        if (PhotonNetwork.IsMasterClient)
-            PhotonNetwork.LoadLevel("RoomScene");
+        PhotonNetwork.LoadLevel("RoomScene");
     }
 
     public override void OnDisconnected(DisconnectCause cause)

@@ -83,9 +83,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void MoveAllToLobby()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         StartCoroutine(MoveAllToLobbyCor());
     }
 
