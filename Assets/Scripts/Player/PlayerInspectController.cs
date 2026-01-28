@@ -44,5 +44,7 @@ public class PlayerInspectController : MonoBehaviourPun
         var inspectMgr = InspectManager.Instance;
         if (inspectMgr.IsInspecting) inspectMgr.Exit();
         else inspectMgr.TryEnterFromFocusedSlot();
+
+        UIManager.Instance.SetPlayerAimActive(!inspectMgr.IsInspecting);
     }
 }

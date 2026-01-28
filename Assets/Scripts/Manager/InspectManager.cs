@@ -17,8 +17,10 @@ public class InspectManager : MonoBehaviour
     [SerializeField] private float maxDistance = 2.5f;
     [SerializeField] private float zoomLerp = 12f;
 
+    private float baseDist;
     private float dist;
     private float distTarget;
+    private Vector3 baseDir;
 
     private Vector3 camPosOrigin;
     private Quaternion camRotOrigin;
@@ -37,20 +39,24 @@ public class InspectManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+private void Start()
+{
+    cam.Priority = 0;
+    originQut = pivot != null ? pivot.rotation : transform.rotation;
+
+    // 기본 거리/방향 저장
+    if (pivot != null && cam != null)
     {
-        cam.Priority = 0;
-        originQut = pivot != null ? pivot.rotation : transform.rotation;
+        Vector3 v = cam.transform.position - pivot.position;
+        if (v.sqrMagnitude < 0.0001f) v = -cam.transform.forward;
 
-        camPosOrigin = cam.transform.position;
-        camRotOrigin = cam.transform.rotation;
+        baseDist = v.magnitude;
+        baseDir = v.normalized;
 
-        if (pivot != null)
-        {
-            dist = distTarget = Vector3.Distance(cam.transform.position, pivot.position);
-            dist = distTarget = Mathf.Clamp(distTarget, minDistance, maxDistance);
-        }
+        dist = distTarget = baseDist;
     }
+}
+
 
 
 
@@ -86,7 +92,9 @@ public class InspectManager : MonoBehaviour
         cam.Priority = 100;
         isInspecting = true;
 
-        dist = distTarget = Mathf.Clamp(Vector3.Distance(cam.transform.position, pivot.position), minDistance, maxDistance);
+        dist = distTarget = baseDist;
+        cam.transform.position = pivot.position + baseDir * baseDist;
+        cam.transform.LookAt(pivot);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
