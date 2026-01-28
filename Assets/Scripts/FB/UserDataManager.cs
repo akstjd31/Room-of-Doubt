@@ -8,6 +8,7 @@ public class UserData
     public int exp;
     public int level;
 }
+
 public class UserDataManager : Singleton<UserDataManager>
 {
     public UserData Data { get; private set; } = new UserData();

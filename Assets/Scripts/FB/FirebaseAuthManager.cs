@@ -92,7 +92,7 @@ public class FirebaseAuthManager : MonoBehaviour
         else
         {
             user = loginTask.Result.User;
-            //startButton.interactable = true;
+            startButton.interactable = true;
         }
     }
 

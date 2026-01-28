@@ -6,10 +6,13 @@ using System.Collections;
 
 public class LobbyManager : MonoBehaviourPunCallbacks
 {
+    [SerializeField] private FirebaseDBManager db;
     IEnumerator Start()
     {
         yield return new WaitUntil(() => PhotonNetwork.IsConnected);
         PhotonNetwork.JoinLobby();
+
+        DataLoad();
     }
 
     public override void OnJoinedLobby()
@@ -24,5 +27,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return;
             
         SceneManager.LoadScene("RoomScene");
+    }
+
+    public async void DataLoad()
+    {
+        await db.LoaduserDataAsync();
+    }
+
+    public async void DataSave()
+    {
+        await db.SaveUserDataAsync();
     }
 }
