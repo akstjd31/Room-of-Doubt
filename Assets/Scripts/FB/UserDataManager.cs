@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class UserData
 {
+    public string nickname;
     public int gold;
     public int exp;
     public int level;
@@ -17,6 +18,12 @@ public class UserDataManager : Singleton<UserDataManager>
     public void SetData(UserData data)
     {
         Data = data ?? new UserData();
+        OnDataChanged?.Invoke(Data);
+    }
+    
+    public void SetNickname(string nickname)
+    {
+        Data.nickname = nickname;
         OnDataChanged?.Invoke(Data);
     }
 

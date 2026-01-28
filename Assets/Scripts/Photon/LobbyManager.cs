@@ -11,7 +11,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     {
         yield return new WaitUntil(() => PhotonNetwork.IsConnected);
         PhotonNetwork.JoinLobby();
-
+        
         DataLoad();
     }
 

@@ -55,6 +55,9 @@ public class PlayerController : MonoBehaviourPun
 
         photonView.RPC(nameof(ApplyEscapeAll), RpcTarget.All, actorNumber);
 
+        if (RoomRewardManager.Instance != null)
+            RoomRewardManager.Instance.NotifyEscapedToMaster(actorNumber);
+
         TimeAttackSync.StartTimeAttack();
     }
 

@@ -15,6 +15,12 @@ public class PhotonConnectionManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsConnected)
             return;
 
+        if (UserDataManager.Instance != null)
+        {
+            PhotonNetwork.NickName = UserDataManager.Instance.Data.nickname;
+            Debug.Log($"유저 닉네임 설정 완료! 닉네임: {PhotonNetwork.NickName}");
+        }
+
         // 그럼 유저한테 연결중이다는 문구가 필요하겠지? => 일단 나중에 추가
         Debug.Log("서버 연결 시도 중..");
         PhotonNetwork.ConnectUsingSettings();

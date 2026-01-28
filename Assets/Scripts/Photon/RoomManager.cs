@@ -25,6 +25,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinLobby();
 
         yield return new WaitUntil(() => PhotonNetwork.InLobby);
+
         PhotonNetwork.JoinRandomOrCreateRoom(expectedMaxPlayers: MAX_PLAYER);
     }
 

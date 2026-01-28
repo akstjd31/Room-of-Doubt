@@ -53,6 +53,7 @@ public class FirebaseDBManager : MonoBehaviour
 
         Dictionary<string, object> updates = new Dictionary<string, object>
         {
+            ["nickname"] = data.nickname,
             ["money"] = data.gold,
             ["exp"] = data.exp,
             ["level"] = data.level,
@@ -78,12 +79,14 @@ public class FirebaseDBManager : MonoBehaviour
         {
             DataSnapshot snap = await UserNode().GetValueAsync();
 
+            string nickname = ReadString(snap, "nickname", "NoName");
             int gold = ReadInt(snap, "money", 0);
             int exp = ReadInt(snap, "exp", 0);
             int level = ReadInt(snap, "level", 1);
 
             var data = new UserData
             {
+                nickname = nickname,
                 gold = gold,
                 exp = exp,
                 level = level
@@ -114,7 +117,20 @@ public class FirebaseDBManager : MonoBehaviour
 
         if (int.TryParse(child.Value.ToString(), out int parsed))
             return parsed;
-        
+
         return defaultValue;
-    }      
+    }
+
+    private string ReadString(DataSnapshot parent, string key, string defaultValue)
+    {
+        if (parent == null)
+            return defaultValue;
+
+        DataSnapshot child = parent.Child(key);
+        if (child == null || !child.Exists || child.Value == null)
+            return defaultValue;
+
+        return child.Value.ToString();
+    }
+
 }

@@ -156,6 +156,8 @@ public class FirebaseAuthManager : MonoBehaviour
                     startButton.interactable = true;
                 }
             }
+
+            UserDataManager.Instance.SetNickname(userName);
         }
     }
 }

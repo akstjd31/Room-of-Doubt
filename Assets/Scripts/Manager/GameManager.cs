@@ -11,9 +11,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 {
     public static GameManager Instance;
 
-    [SerializeField] private RoomRewardData rewardData;
-    public RoomRewardData RewardData => rewardData;
-
     [SerializeField] private SpawnPointGroup playerSpawnPointGroup; // 플레이어 스폰 포인트 지정
 
     [Header("Start Hint 지급")]
@@ -32,7 +29,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    [SerializeField] private int timeLimitSeconds = 180;
+    [SerializeField] private int timeLimitSeconds = 10;
     public int TimeLimitSeconds => timeLimitSeconds;
     public bool IsPaused {get; private set; }
 
@@ -82,12 +79,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
-    }
-
-    public void OnRoomCleared()
-    {
-        var data = rewardData;
-        
     }
 
     // 불 키기(로컬 적용만) - 네트워크 동기화까지 하려면 RoomPropKeys.POWER_ON 이용 권장

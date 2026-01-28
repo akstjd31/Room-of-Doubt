@@ -83,8 +83,7 @@ public class UIManager : MonoBehaviourPunCallbacks
     {
         ShowMessage("시간 초과!");
 
-        // TODO: GameManager에 실패 처리 호출 같은 거
-        // GameManager.Instance.FailGame();
+        RoomRewardManager.Instance.FinalizeGoldRewards();
     }
 
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
