@@ -1,16 +1,17 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
 
 public class LiftObject : InteractableBase
 {
     public override void Interact(int actorNumber)
     {
-        this.transform.position = new Vector3
-        (
-            this.transform.position.x,
-            isInteracting ? this.transform.position.y + 0.3f : this.transform.position.y - 0.3f,
-            this.transform.position.z
-        );
+        // 로컬만 실행
+        if (PhotonNetwork.LocalPlayer.ActorNumber != actorNumber)
+            return;
+
+        float delta = isInteracting ? 0.3f : -0.3f;
+        transform.position += new Vector3(0f, delta, 0f);
     }
 
     protected override IEnumerator InitRoutine()
