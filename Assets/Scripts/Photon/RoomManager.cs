@@ -9,12 +9,12 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        if (!PhotonNetwork.InRoom)
-        {
-            Debug.LogWarning("[Room] Not in room. Go back to LobbyScene.");
-            PhotonNetwork.LoadLevel("LobbyScene");
-            return;
-        }
+        // if (!PhotonNetwork.InRoom)
+        // {
+        //     Debug.LogWarning("[Room] Not in room. Go back to LobbyScene.");
+        //     PhotonNetwork.LoadLevel("LobbyScene");
+        //     return;
+        // }
 
         RefreshUI();
     }
