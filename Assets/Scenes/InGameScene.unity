@@ -1375,10 +1375,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &392845013
 MonoBehaviour:
@@ -1817,10 +1819,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 1846367982}
 --- !u!114 &479474992
 MonoBehaviour:
@@ -2004,10 +2008,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &550990214
 MonoBehaviour:
@@ -2310,10 +2316,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &592053105
 MonoBehaviour:
@@ -3640,10 +3648,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 11400000, guid: 4c5e2368fe4f5d84ea704b010cc6bc21, type: 2}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &864636104
 MonoBehaviour:
@@ -4890,10 +4900,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1213209221
 MonoBehaviour:
@@ -5581,10 +5593,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1447942554
 MonoBehaviour:
@@ -5625,10 +5639,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1447942556
 MonoBehaviour:
@@ -6316,10 +6332,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1622723509
 MonoBehaviour:
@@ -6722,10 +6740,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1756166157
 MonoBehaviour:
@@ -7067,31 +7087,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 40.879013
+      value: 72.543526
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 81.24177
+      value: 73.35999
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 49.539036
+      value: -23.862408
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.88784677
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.2583808
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.10638789
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6090499832629391101, guid: be4c870b724561a4193af060c874cac1, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.3655806
+      value: -0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7507,10 +7527,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &1881888712
 MonoBehaviour:
@@ -8869,10 +8891,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &179620382628582914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13245,10 +13269,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &1080934999919567656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14714,10 +14740,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &1468343739183314953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17158,10 +17186,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &1976738855908886175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17660,10 +17690,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &2109476012141212402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22984,10 +23016,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &3332808168241164128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23451,10 +23485,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &3421113914686469667
 MonoBehaviour:
@@ -24603,10 +24639,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPad: {fileID: 0}
 --- !u!114 &3659928520576199945
 MonoBehaviour:
@@ -26094,10 +26132,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &3911057186750384653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28963,10 +29003,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &4436188471088038791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30818,10 +30860,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &4914314985878125057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33249,10 +33293,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &5480658253210732659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35331,10 +35377,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &5966088337702201928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37579,10 +37627,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &6336419504131546392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38078,10 +38128,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
   needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!114 &6423464865142155841
 MonoBehaviour:
   m_ObjectHideFlags: 0

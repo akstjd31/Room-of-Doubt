@@ -18,7 +18,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [SerializeField] protected bool isInteracting;                         // 현재 상호작용중인지?
 
     [Header("Item Interaction")]
-    [SerializeField] protected Item requiredItem;       // 줍기 위해 요구되는 아이템 (없으면 null)
+    [SerializeField] protected Item requiredItem;       // 상호작용 위해 요구되는 아이템 (없으면 null)
     [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
     [SerializeField] protected Item hostItem;           // 부품 본체가 되는 아이템
     [SerializeField] protected Item needItem;           // 필요 부품 아이템
@@ -59,7 +59,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public void RequestInteract(int actorNumber)
     {
         // 연타 방지용
-        if (isTransitioning) { Debug.Log("이게 문제라고?"); return; }
+        if (isTransitioning) return;
 
         // 로컬에서 상호작용이 가능한지 검증 후
         if (!CanInteract(actorNumber))
@@ -68,15 +68,12 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
             return;
         }
 
-        Debug.Log("CanInteract 통과!");
-
         // 상호작용을 위해 필요 아이템 존재 & 소모 아이템일 경우
         if (requiredItem != null && requiredItem.ConsumeType.Equals(ConsumeType.Consumable))
             QuickSlotManager.Local.RemoveItem();
 
         if (rewardItem != null)
         {
-            Debug.Log("설마 여길 들어오진 않겠지?");
             ItemInstance instance = new ItemInstance(rewardItem.ID, HintData.Empty);
             bool flag = QuickSlotManager.Local.AddItem(instance);
 
