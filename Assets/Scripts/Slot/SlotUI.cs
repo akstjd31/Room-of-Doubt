@@ -20,6 +20,8 @@ public class SlotUI : MonoBehaviour,
     {
         if (CurrnetSlot.IsEmptySlot()) return;
 
+        UIDragState.Begin(this);
+
         dragIcon = DragIcon.Instance;
         dragIcon.Show(CurrnetSlot.iconImage.sprite);
 
@@ -39,6 +41,8 @@ public class SlotUI : MonoBehaviour,
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
+
+        UIDragState.End();
     }
 
     public void OnDrop(PointerEventData eventData)

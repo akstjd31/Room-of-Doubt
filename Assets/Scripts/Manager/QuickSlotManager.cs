@@ -198,6 +198,24 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
+    // 현재 퀵 슬롯에 해당 아이템이 존재하면 사용
+    public bool TryUseItemInQuickSlot(string itemID)
+    {
+        if (slots == null) return false;
+        foreach (var slot in slots)
+        {
+            if (slot.IsEmptySlot()) continue;
+            
+            if (slot.current.itemId.Equals(itemID))
+            {
+                slot.Clear();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // 포커싱된 슬롯 색 변경
     public void UpdateSlotFocused(int index)
     {

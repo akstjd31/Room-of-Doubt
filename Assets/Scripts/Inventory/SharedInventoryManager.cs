@@ -45,9 +45,6 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
 
     public void SetPanelActive(bool active) => panelObj.SetActive(active);
 
-    // =========================
-    // Move 요청 (로컬에서 호출)
-    // =========================
     public void RequestMoveItem(SlotType fromType, int fromIdx, SlotType toType, int toIdx)
     {
         // (A) from 쪽 아이템 스냅샷
@@ -76,9 +73,6 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
             quickOldItemId, quickOldHintKey, quickOldPayload);
     }
 
-    // =========================
-    // Move 처리 (마스터에서)
-    // =========================
     [PunRPC]
     private void RequestMoveRPC(
         SlotType fromType, int fromIdx,

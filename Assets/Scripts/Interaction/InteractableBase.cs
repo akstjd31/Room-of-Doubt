@@ -18,16 +18,14 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [SerializeField] protected bool isInteracting;                         // 현재 상호작용중인지?
 
     [Header("Item Interaction")]
-    [SerializeField] protected Item requiredItem;       // 소모/필요 아이템 (없으면 null)
+    [SerializeField] protected Item requiredItem;       // 줍기 위해 요구되는 아이템 (없으면 null)
     [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
+    [SerializeField] protected Item needItem;           // 이걸 사용하기 위해 필요로 하는 아이템 (ex. 건전지 등)
 
     [Header("Cinemachine")]
     [SerializeField] private PlayerCameraController playerCamCtrl;
     [SerializeField] private CinemachineCamera myCam;
     [SerializeField] private CinemachineBrain brain;
-
-    public Item RequiredItem => requiredItem;           // 상호작용을 위해 필요한 아이템
-    public Item RewardItem => rewardItem;               // 상호작용 후 얻는 보상 아이템
 
     private bool isTransitioning;
     private Coroutine transitionCor;
@@ -50,11 +48,15 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 상호작용 가능 여부 판단
     public virtual bool CanInteract(int actorNumber)
     {
-        // 일반적인 조사: 필요 아이템 없음.
-        if (requiredItem == null) return true;
+        // 일반적인 조사: 요구되는 아이템 & 사용하기 위해 필요로 하는 아이템이 없음.
+        if (requiredItem == null && needItem == null) return true;
 
-        // 상호작용에 필요한 아이템이 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        return QuickSlotManager.Local.CompareItem(requiredItem.ID);
+        // 해당 오브젝트와의 상호작용으로 요구되는 아이템이 null이 아니라면 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
+        if (requiredItem != null && needItem == null) return QuickSlotManager.Local.CompareItem(requiredItem.ID);
+        
+        // 만약 필요로 하는 아이템이 null이 아니라면 퀵 슬롯 전체에서 해당 아이템이 존재하는지 확인
+        // if (requiredItem == null && needItem != null) return
+        return false;
     }
 
     // 상호작용 응답
