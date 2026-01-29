@@ -23,6 +23,14 @@ public class Item : ScriptableObject
     [SerializeField] private string itemName;
     public string ItemName => itemName;
 
+// Item.cs 안에 추가
+[Header("Required Part (Optional)")]
+[SerializeField] private Item requiredPart;
+public Item RequiredPart => requiredPart;
+public string RequiredPartId => requiredPart != null ? requiredPart.ID : null;
+public bool RequiresPart => requiredPart != null;
+
+
     public Sprite itemIcon;
     public Transform itemPrefab;
 
@@ -61,15 +69,18 @@ public struct HintData
 [System.Serializable]
 public class ItemInstance
 {
-    public string itemId;   // Item SO GUID
-    public string requiredToUseId;
-    public bool hasRequiredPart;
-    public HintData hint;   // 동적 힌트 데이터
+    public string itemId;            // 본체 아이템 ID
+    public HintData hint;
 
-    public ItemInstance(string itemId, HintData hint, string requiredToUseId = null)
+    // 장착된 부품 (없으면 null)
+    public string installedPartId;   // 예: 배터리 ID
+
+    public ItemInstance(string itemId, HintData hint, string installedPartId = null)
     {
         this.itemId = itemId;
         this.hint = hint;
-        this.requiredToUseId = requiredToUseId;
+        this.installedPartId = installedPartId;
     }
+
+    public bool HasInstalledPart => !string.IsNullOrEmpty(installedPartId);
 }

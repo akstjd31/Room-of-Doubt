@@ -83,27 +83,26 @@ public class QuickSlotManager : MonoBehaviour
     public string[] PackSnapshotFlat()
     {
         int max = GetMaxSlotCount();
-        var flat = new string[max * 3];
+        var flat = new string[max * 4]; // 슬롯 당 4칸
 
         for (int i = 0; i < max; i++)
         {
             var inst = GetItemInstanceByIndex(i);
-            int baseIdx = i * 3;
+            int baseIdx = i * 4;
 
-            // 만약 null 이라면 비어있는 문자열 보내기 (null은 오류 발생하기 쉬운 문제)
             if (inst == null)
             {
                 flat[baseIdx + 0] = "";
                 flat[baseIdx + 1] = "";
                 flat[baseIdx + 2] = "";
+                flat[baseIdx + 3] = "";
                 continue;
             }
 
-            // 1번째 칸: 아이템 ID
+            // 1) itemId
             flat[baseIdx + 0] = inst.itemId ?? "";
 
-            // 2번째 칸: 힌트 키
-            // 3번째 칸: 힌트 데이터
+            // 2) hintKey, 3) payload
             if (inst.hint.HasValue)
             {
                 flat[baseIdx + 1] = inst.hint.hintKey ?? "";
@@ -114,6 +113,9 @@ public class QuickSlotManager : MonoBehaviour
                 flat[baseIdx + 1] = "";
                 flat[baseIdx + 2] = "";
             }
+
+            // 4) installedPartId
+            flat[baseIdx + 3] = inst.installedPartId ?? "";
         }
 
         return flat;
@@ -126,8 +128,8 @@ public class QuickSlotManager : MonoBehaviour
 
         var flat = PackSnapshotFlat();
 
-        Debug.Log($"[QS SEND] actor={PhotonNetwork.LocalPlayer.ActorNumber}, len={flat.Length}");
-        
+        Debug.Log($"액터: {PhotonNetwork.LocalPlayer.ActorNumber}, 플랫 길이: {flat.Length}");
+
         // 네트워크 이벤트 전송
         PhotonNetwork.RaiseEvent(
             QuickSlotNet.EVT_QUICKSLOT_SNAPSHOT,    // 이게 뭔데?
@@ -198,25 +200,18 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
-    // 현재 퀵 슬롯에 해당 아이템이 존재하면 사용
-    public bool TryUseItemInQuickSlot(string itemID)
+    public bool CanUseItem(ItemInstance inst)
     {
-        if (slots == null) return false;
-        foreach (var slot in slots)
-        {
-            if (slot.IsEmptySlot()) continue;
-            
-            if (slot.current.itemId.Equals(itemID))
-            {
-                slot.Clear();
-                return true;
-            }
-        }
+        if (inst == null) return false;
 
-        return false;
+        Item def = ItemManager.Instance.GetItemById(inst.itemId);
+        if (def == null) return false;
+
+        // 만약 부품이 필요 없는 아이템이다? 바로 사용
+        if (!def.RequiresPart) return true;       
+        return inst.HasInstalledPart;                 
     }
 
-    public bool CanUseItem(ItemInstance inst) => inst.hasRequiredPart;
 
     // 포커싱된 슬롯 색 변경
     public void UpdateSlotFocused(int index)
@@ -259,10 +254,20 @@ public class QuickSlotManager : MonoBehaviour
         PhotonNetwork.LocalPlayer.SetCustomProperties(ht);
     }
 
-
+    public int FindFirstSlotIndexByItemId(string itemId)
+    {
+        for (int i = 0; i < GetMaxSlotCount(); i++)
+        {
+            var inst = GetItemInstanceByIndex(i);
+            if (inst == null) continue;
+            if (inst.itemId == itemId) return i;
+        }
+        return -1;
+    }
 
     public void SetActiveSlotParent(bool active) => quickSlotParent.SetActive(active);
 
+    // 해당 인덱스에 아이템 인스턴스 세팅하기
     public void UpdateSlotData(int index, ItemInstance inst)
     {
         if (index < 0 || index >= MAX_SLOT_COUNT) return;
@@ -273,14 +278,6 @@ public class QuickSlotManager : MonoBehaviour
 
         NotifySnapshotToMaster();
         SaveSnapshotToProps();
-    }
-
-
-    // 매개변수로 받은 인덱스에 존재하는 아이템 ID를 반환
-    public string GetItemIdByIndex(int index)
-    {
-        if (slots[index].IsEmptySlot()) return "";
-        return slots[index].current.itemId;
     }
 
     // 현재 포커싱 중인 슬롯

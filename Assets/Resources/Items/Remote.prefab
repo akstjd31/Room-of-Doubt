@@ -476,8 +476,10 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 11400000, guid: 400fb7e42948b094680fe5b712a82e65, type: 2}
+  hostItem: {fileID: 11400000, guid: 400fb7e42948b094680fe5b712a82e65, type: 2}
   needItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
   tapeObj: {fileID: 3770746100424562239}

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   id: 88bf78c9-5e53-4d3e-b70d-b8f794fa2f78
   itemName: Remote
+  requiredPart: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
   itemIcon: {fileID: 21300000, guid: 50fab7618ff4a204192bb61844437aa5, type: 3}
   itemPrefab: {fileID: 6131204759265383874, guid: 99ef63dc51ada774491712be6fe3042c, type: 3}
   kind: 0

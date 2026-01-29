@@ -20,8 +20,9 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [Header("Item Interaction")]
     [SerializeField] protected Item requiredItem;       // 줍기 위해 요구되는 아이템 (없으면 null)
     [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
-    [SerializeField] protected Item needItem;           // 이걸 사용하기 위해 필요로 하는 아이템 (ex. 건전지 등)
-    public Item NeedItem => needItem;
+    [SerializeField] protected Item hostItem;           // 부품 본체가 되는 아이템
+    [SerializeField] protected Item needItem;           // 필요 부품 아이템
+
 
     [Header("Cinemachine")]
     [SerializeField] protected PlayerCameraController playerCamCtrl;
@@ -46,27 +47,23 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 상호작용 가능 여부 판단
     public virtual bool CanInteract(int actorNumber)
     {
-        // 일반적인 조사: 요구되는 아이템 & 사용하기 위해 필요로 하는 아이템이 없음.
-        if (requiredItem == null && needItem == null) return true;
+        // 일반적인 조사: 요구되는 아이템 & 사용하기 위해 필요로 하는 아이템이 없음. 
+        if (requiredItem == null) return true;
 
-        // 해당 오브젝트와의 상호작용으로 요구되는 아이템이 null이 아니라면 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
-        if (requiredItem != null && needItem == null) return QuickSlotManager.Local.CompareItem(requiredItem.ID);
-        
-        return true;
+        // 해당 오브젝트와의 상호작용으로 요구되는 아이템이 null이 아니라면 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단 
+        return QuickSlotManager.Local.CompareItem(requiredItem.ID);
     }
+
 
     // 상호작용 응답
     public void RequestInteract(int actorNumber)
     {
-        Debug.Log("잘 들어왔는데");
-
         // 연타 방지용
         if (isTransitioning) { Debug.Log("이게 문제라고?"); return; }
 
         // 로컬에서 상호작용이 가능한지 검증 후
         if (!CanInteract(actorNumber))
         {
-            Debug.Log("CanInteract가 false 라고?");
             UIManager.Instance.ShowMessage(prompt);
             return;
         }
@@ -185,4 +182,67 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         }
         return null;
     }
+
+    // 호스트 아이템에 부품을 끼워넣는 시도
+    public virtual bool TryInstallToHost(ItemInstance draggedPart, out string failReason)
+    {
+        failReason = null;
+
+        if (needItem == null || hostItem == null)
+        {
+            failReason = "설정이 안 된 오브젝트입니다.";
+            return false;
+        }
+
+        if (draggedPart == null || !draggedPart.itemId.Equals(needItem.ID))
+        {
+            failReason = "필요한 아이템이 아닙니다!";
+            return false;
+        }
+
+        // hostItem이 부품 요구 아이템인지 확인
+        if (!hostItem.RequiresPart)
+        {
+            failReason = "이 아이템은 부품이 필요 없습니다.";
+            return false;
+        }
+
+        // hostItem이 요구하는 부품이 현재 필요한 부품(needItem)과 일치하는지 확인
+        if (hostItem.ID.Equals(needItem.ID))
+        {
+            failReason = "이 부품은 해당 아이템에 맞지 않습니다.";
+            return false;
+        }
+
+        // 퀵 슬롯에서 호스트 아이템이 있는지 확인
+        int hostSlot = QuickSlotManager.Local.FindFirstSlotIndexByItemId(hostItem.ID);
+        if (hostSlot < 0)
+        {
+            failReason = $"{hostItem.ItemName}이(가) 퀵슬롯에 없습니다.";
+            return false;
+        }
+
+        // 안에 내용물 확인
+        var hostInst = QuickSlotManager.Local.GetItemInstanceByIndex(hostSlot);
+        if (hostInst == null)
+        {
+            failReason = "호스트 아이템이 없습니다.";
+            return false;
+        }
+
+        // 장착된 부품이 혹여나 있으면?
+        if (!string.IsNullOrEmpty(hostInst.installedPartId))
+        {
+            failReason = "이미 부품이 장착되어 있습니다.";
+            return false;
+        }
+
+        hostInst.installedPartId = needItem.ID;
+
+        // UI/스냅샷 갱신
+        QuickSlotManager.Local.UpdateSlotData(hostSlot, hostInst);
+
+        return true;
+    }
+
 }

@@ -72,7 +72,7 @@ public class SlotUI : MonoBehaviourPun,
             from.CurrnetSlot.slotType, fromIndex,
             this.CurrnetSlot.slotType, toIndex
         );
-        
+
         // 만약 인벤토리 자체를 로컬에서 관리하고 싶다면 아래 코드를 사용 ▼
         // this(드롭 받은 슬롯)가 비어있을 때만 이동
         // if (CurrnetSlot.IsEmptySlot())
@@ -100,14 +100,23 @@ public class SlotUI : MonoBehaviourPun,
 
     private void TryUseOnWorld(PointerEventData eventData)
     {
-        var brain = Camera.main.GetComponent<CinemachineBrain>();
+        var brain = Camera.main ? Camera.main.GetComponent<CinemachineBrain>() : null;
         if (brain == null) return;
-        if (CurrnetSlot.IsEmptySlot()) return;
 
-        var item = CurrnetSlot.current;
-        if (item == null) return;
-        
-        Camera cam = brain.OutputCamera;
+        if (CurrnetSlot == null || CurrnetSlot.IsEmptySlot()) return;
+
+        var inst = CurrnetSlot.current;
+        if (inst == null || string.IsNullOrEmpty(inst.itemId)) return;
+
+        // ✅ 1) 아이템이 "부품 필요" 타입이면 장착 여부 검사
+        // (QuickSlotManager의 CanUseItem을 'RequiresPart면 installedPartId 필요'로 바꿔둔 상태라고 가정)
+        if (!QuickSlotManager.Local.CanUseItem(inst))
+        {
+            UIManager.Instance.ShowMessage("부품이 필요합니다!"); // 문구는 취향대로
+            return;
+        }
+
+        Camera cam = brain.OutputCamera != null ? brain.OutputCamera : Camera.main;
         Ray ray = cam.ScreenPointToRay(eventData.position);
 
         if (!Physics.Raycast(ray, out var hit, 100f, interactableMask))
@@ -116,7 +125,18 @@ public class SlotUI : MonoBehaviourPun,
         var target = hit.collider.GetComponent<InteractableBase>();
         if (target == null) return;
 
-        var pv = target.GetComponent<PhotonView>();
-        if (pv == null) return;
+        if (target.TryInstallToHost(inst, out var reason))
+        {
+            // ✅ 성공: 드래그한 부품(배터리) 슬롯 소비(비우기)
+            QuickSlotManager.Local.UpdateSlotData(CurrnetSlot.slotIndex, null);
+            UIManager.Instance.ShowMessage("부품을 장착했습니다!");
+
+            if (target is Remote remote)
+                remote.RefreshTapeState();
+        }
+        else
+        {
+            UIManager.Instance.ShowMessage(reason);
+        }
     }
 }
