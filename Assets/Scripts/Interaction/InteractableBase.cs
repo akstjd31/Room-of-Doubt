@@ -21,21 +21,19 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [SerializeField] protected Item requiredItem;       // 줍기 위해 요구되는 아이템 (없으면 null)
     [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
     [SerializeField] protected Item needItem;           // 이걸 사용하기 위해 필요로 하는 아이템 (ex. 건전지 등)
+    public Item NeedItem => needItem;
 
     [Header("Cinemachine")]
-    [SerializeField] private PlayerCameraController playerCamCtrl;
-    [SerializeField] private CinemachineCamera myCam;
+    [SerializeField] protected PlayerCameraController playerCamCtrl;
+    [SerializeField] protected CinemachineCamera myCam;
     [SerializeField] private CinemachineBrain brain;
 
-    private bool isTransitioning;
+    [SerializeField] private bool isTransitioning;
     private Coroutine transitionCor;
 
     private IEnumerator Start()
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-        yield return new WaitUntil(() => PlayerCameraController.Instance != null);
-        
-        playerCamCtrl = PlayerCameraController.Instance;
 
         if (Camera.main != null)
             brain = Camera.main.GetComponent<CinemachineBrain>();
@@ -54,23 +52,26 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         // 해당 오브젝트와의 상호작용으로 요구되는 아이템이 null이 아니라면 현재 슬롯(SelectedSlot)에 존재하는지 여부 판단
         if (requiredItem != null && needItem == null) return QuickSlotManager.Local.CompareItem(requiredItem.ID);
         
-        // 만약 필요로 하는 아이템이 null이 아니라면 퀵 슬롯 전체에서 해당 아이템이 존재하는지 확인
-        // if (requiredItem == null && needItem != null) return
-        return false;
+        return true;
     }
 
     // 상호작용 응답
     public void RequestInteract(int actorNumber)
     {
+        Debug.Log("잘 들어왔는데");
+
         // 연타 방지용
-        if (isTransitioning) return;
+        if (isTransitioning) { Debug.Log("이게 문제라고?"); return; }
 
         // 로컬에서 상호작용이 가능한지 검증 후
         if (!CanInteract(actorNumber))
         {
+            Debug.Log("CanInteract가 false 라고?");
             UIManager.Instance.ShowMessage(prompt);
             return;
         }
+
+        Debug.Log("CanInteract 통과!");
 
         // 상호작용을 위해 필요 아이템 존재 & 소모 아이템일 경우
         if (requiredItem != null && requiredItem.ConsumeType.Equals(ConsumeType.Consumable))
@@ -78,6 +79,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         if (rewardItem != null)
         {
+            Debug.Log("설마 여길 들어오진 않겠지?");
             ItemInstance instance = new ItemInstance(rewardItem.ID, HintData.Empty);
             bool flag = QuickSlotManager.Local.AddItem(instance);
 
@@ -94,7 +96,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
             transitionCor = StartCoroutine(TransitionRoutine(isInteracting));
 
         // 실제 상호작용은 RPC로 전달
-        photonView.RPC(nameof(InteractRPC), RpcTarget.AllBuffered, actorNumber);
+        photonView.RPC(nameof(InteractRPC), RpcTarget.All, actorNumber);
     }
 
     [PunRPC]
@@ -169,5 +171,18 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         while (brain.ActiveBlend != null)
             yield return null;
+    }
+
+    protected PlayerCameraController FindLocalCamCtrl()
+    {
+        // 비활성 오브젝트까지 포함하려면 Resources.FindObjectsOfTypeAll도 가능하지만
+        // 보통은 활성 기준이면 FindObjectsOfType로 충분.
+        var all = FindObjectsOfType<PlayerCameraController>(true);
+        foreach (var c in all)
+        {
+            if (c != null && c.photonView != null && c.photonView.IsMine)
+                return c;
+        }
+        return null;
     }
 }

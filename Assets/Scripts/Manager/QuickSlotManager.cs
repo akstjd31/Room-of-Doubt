@@ -216,6 +216,8 @@ public class QuickSlotManager : MonoBehaviour
         return false;
     }
 
+    public bool CanUseItem(ItemInstance inst) => inst.hasRequiredPart;
+
     // 포커싱된 슬롯 색 변경
     public void UpdateSlotFocused(int index)
     {

@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerCameraController : MonoBehaviourPun
 {
-    public static PlayerCameraController Instance;
     private PlayerController playerController;
     private PlayerInput playerInput;
     private InputAction lookAction;
@@ -59,13 +58,10 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         // PhotonView가 생길 때까지 (보통 즉시지만 안전빵)
         yield return new WaitUntil(() => photonView != null);
+        if (!photonView.IsMine) yield break;
 
         // 소유권/로컬플레이어가 안정화될 때까지 한 프레임 양보
         yield return null;
-
-        if (!photonView.IsMine) yield break;
-
-        Instance = this;
     }
 
     private void Start()
@@ -73,6 +69,7 @@ public class PlayerCameraController : MonoBehaviourPun
         if (!photonView.IsMine)
         {
             cameraRoot.SetActive(false);
+            playerInput.enabled = false;
             return;
         }
 

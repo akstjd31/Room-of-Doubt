@@ -190,10 +190,7 @@ GameObject:
   - component: {fileID: 6962226125459148434}
   - component: {fileID: 1590482288320623087}
   - component: {fileID: 9092934561059851716}
-  - component: {fileID: 1148770291246559654}
-  - component: {fileID: 4309578689041278172}
-  - component: {fileID: 3160427521692508609}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: TV_Remote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,72 +269,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &1148770291246559654
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2870928452700014261}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 260e5eb61c71059489b5fa2bab69c19f, type: 3}
---- !u!114 &4309578689041278172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2870928452700014261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &3160427521692508609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2870928452700014261}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de41028a661f10d489c9b6bb01e8adc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Remote
-  type: 0
-  prompt: 
-  isInteracting: 0
-  requiredItem: {fileID: 0}
-  rewardItem: {fileID: 11400000, guid: 400fb7e42948b094680fe5b712a82e65, type: 2}
-  needItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
-  playerCamCtrl: {fileID: 0}
-  myCam: {fileID: 0}
-  brain: {fileID: 0}
-  tapeObj: {fileID: 3770746100424562239}
 --- !u!1 &3770746100424562239
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,7 +281,7 @@ GameObject:
   - component: {fileID: 4689524291261227084}
   - component: {fileID: 9056956860773614759}
   - component: {fileID: 1569755876994532562}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +390,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6131204759265383874}
-  m_Layer: 0
+  - component: {fileID: 5863113875665746297}
+  - component: {fileID: 6167037668520539530}
+  - component: {fileID: 3099512455894160678}
+  m_Layer: 11
   m_Name: Remote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,3 +416,68 @@ Transform:
   - {fileID: 6962226125459148434}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5863113875665746297
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6485349921890268453}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.07199502, y: 0.0224684, z: 0.17775452}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6167037668520539530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6485349921890268453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonUnityNetworking::Photon.Pun.PhotonView
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &3099512455894160678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6485349921890268453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de41028a661f10d489c9b6bb01e8adc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Remote
+  type: 0
+  prompt: "\uBE60\uAFB8\uBA39\uC74C"
+  isInteracting: 0
+  requiredItem: {fileID: 0}
+  rewardItem: {fileID: 11400000, guid: 400fb7e42948b094680fe5b712a82e65, type: 2}
+  needItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
+  playerCamCtrl: {fileID: 0}
+  myCam: {fileID: 0}
+  brain: {fileID: 0}
+  tapeObj: {fileID: 3770746100424562239}

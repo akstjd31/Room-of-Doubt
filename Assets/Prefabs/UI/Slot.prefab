@@ -214,9 +214,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5be5bbc898ad864a9309ba421d6fb21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slot
-  currentItem: {fileID: 0}
+  current:
+    itemId: 
+    hint:
+      hintKey: 
+      payload: 
   iconImage: {fileID: 3787487834052408136}
   backgroundImage: {fileID: 5683413164856139048}
+  slotType: 0
+  slotIndex: 0
 --- !u!114 &6625329562207595996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,3 +236,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotUI
   canvasGroup: {fileID: 0}
+  interactableMask:
+    serializedVersion: 2
+    m_Bits: 2048

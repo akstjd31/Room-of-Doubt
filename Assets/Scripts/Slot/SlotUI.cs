@@ -1,11 +1,15 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Photon.Pun;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(Slot))]
-public class SlotUI : MonoBehaviour,
+public class SlotUI : MonoBehaviourPun,
     IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField] private CanvasGroup canvasGroup;
+    // [SerializeField] private Camera worldRayCamera;     
+    [SerializeField] private LayerMask interactableMask;
     public Slot CurrnetSlot { get; private set; }
     private Transform originalParent;
     private DragIcon dragIcon;
@@ -41,6 +45,14 @@ public class SlotUI : MonoBehaviour,
 
         if (canvasGroup != null)
             canvasGroup.blocksRaycasts = true;
+
+        bool droppedOnSlotUI = eventData.pointerEnter != null &&
+                                eventData.pointerEnter.GetComponentInParent<SlotUI>() != null;
+
+        if (!droppedOnSlotUI)
+        {
+            TryUseOnWorld(eventData);
+        }
 
         UIDragState.End();
     }
@@ -84,5 +96,27 @@ public class SlotUI : MonoBehaviour,
         //     from.CurrnetSlot.ClearSlot();
         //     from.CurrnetSlot.AddItem(temp);
         // }
+    }
+
+    private void TryUseOnWorld(PointerEventData eventData)
+    {
+        var brain = Camera.main.GetComponent<CinemachineBrain>();
+        if (brain == null) return;
+        if (CurrnetSlot.IsEmptySlot()) return;
+
+        var item = CurrnetSlot.current;
+        if (item == null) return;
+        
+        Camera cam = brain.OutputCamera;
+        Ray ray = cam.ScreenPointToRay(eventData.position);
+
+        if (!Physics.Raycast(ray, out var hit, 100f, interactableMask))
+            return;
+
+        var target = hit.collider.GetComponent<InteractableBase>();
+        if (target == null) return;
+
+        var pv = target.GetComponent<PhotonView>();
+        if (pv == null) return;
     }
 }

@@ -62,16 +62,14 @@ public struct HintData
 public class ItemInstance
 {
     public string itemId;   // Item SO GUID
+    public string requiredToUseId;
+    public bool hasRequiredPart;
     public HintData hint;   // 동적 힌트 데이터
 
-    public ItemInstance(string itemId, HintData hint)
+    public ItemInstance(string itemId, HintData hint, string requiredToUseId = null)
     {
         this.itemId = itemId;
         this.hint = hint;
-    }
-
-    public ItemInstance(string itemId)
-    {
-        this.itemId = itemId;
+        this.requiredToUseId = requiredToUseId;
     }
 }

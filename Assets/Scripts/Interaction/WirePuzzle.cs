@@ -21,6 +21,13 @@ public class WirePuzzle : InteractableBase
         if (puzzleMgr == null) yield break;
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
 
+        while (playerCamCtrl == null)
+        {
+            playerCamCtrl = FindLocalCamCtrl();
+            if (playerCamCtrl == null)
+                yield return null; // 다음 프레임
+        }
+
         if (PhotonNetwork.IsMasterClient)
         {
             var room = PhotonNetwork.CurrentRoom;

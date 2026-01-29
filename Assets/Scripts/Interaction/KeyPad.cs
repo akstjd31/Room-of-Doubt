@@ -28,7 +28,12 @@ public class KeyPad : InteractableBase
 
     protected override IEnumerator InitRoutine()
     {
-        if (keyPadMgr == null) yield break;
+        while (playerCamCtrl == null)
+        {
+            playerCamCtrl = FindLocalCamCtrl();
+            if (playerCamCtrl == null)
+                yield return null; // 다음 프레임
+        }
     }
 
     public bool IsSolved() => keyPadMgr.IsSolved;

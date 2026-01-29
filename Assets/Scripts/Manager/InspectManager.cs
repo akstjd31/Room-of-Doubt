@@ -62,11 +62,13 @@ private void Start()
 
     private void Update()
     {
-        if (isInspecting)
-        {
-            HandleRotate();
-            HandleZoom();
-        }
+        // 특정 퀵 슬롯에서 아이템 드래그 중이라면
+        if (UIDragState.IsDragging) return;
+        
+        if (!isInspecting) return;
+
+        HandleRotate();
+        HandleZoom();
     }
 
     // 초기 검증 (현재 슬롯에 아이템이 있는지 부터)
