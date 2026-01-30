@@ -121,6 +121,8 @@ private void Start()
             Quaternion.identity
         );
 
+        spawned.GetComponent<Rigidbody>().isKinematic = true;
+
         if (spawned == null)
         {
             Debug.LogError($"Inspect 풀 Get 실패: {spawnedPrefabId}");
@@ -135,6 +137,8 @@ private void Start()
     {
         cam.Priority = 0;
         isInspecting = false;
+
+        spawned.GetComponent<Rigidbody>().isKinematic = false;
 
         // 풀 반환
         if (spawned != null)

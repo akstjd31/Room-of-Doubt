@@ -132,9 +132,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 11400000, guid: 3dc423dc2426e3e41b6079d978af3473, type: 2}
+  hostItem: {fileID: 0}
+  needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 0}
   brain: {fileID: 0}
+  isTransitioning: 0
 --- !u!54 &1969330043814508426
 Rigidbody:
   m_ObjectHideFlags: 0
