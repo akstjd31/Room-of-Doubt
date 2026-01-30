@@ -31,7 +31,8 @@ public class Drawer : InteractableBase
             keyPad = null;
         }
 
-        UIManager.Instance.ShowMessage(prompt);
+        if (!Cursor.visible)
+            UIManager.Instance.ShowMessage(prompt);
     }
 
     protected override IEnumerator InitRoutine()
