@@ -10,7 +10,7 @@ public class Drawer : InteractableBase
     private void Awake()
     {
         anim = this.transform.parent.GetComponent<Animator>();
-        
+
         isOpen = false;
 
         if (keyPad == null)
@@ -19,17 +19,26 @@ public class Drawer : InteractableBase
 
     public override void Interact(int actorNumber)
     {
-        if (keyPad.IsSolved())
+        if (keyPad == null)
         {
-            if (prompt.Length >= 1) prompt = "";
+            isOpen = !isOpen;
+            anim.SetBool("IsOpen", isOpen);
+            return;
+        }
+        else
+        {
+            if (keyPad.IsSolved())
+            {
+                if (prompt.Length >= 1) prompt = "";
 
-            if (!Cursor.visible)
-            {            
-                isOpen = !isOpen;
-                anim.SetBool("IsOpen", isOpen); 
+                if (!Cursor.visible)
+                {
+                    isOpen = !isOpen;
+                    anim.SetBool("IsOpen", isOpen);
+                }
             }
         }
-
+        
         if (!Cursor.visible)
             UIManager.Instance.ShowMessage(prompt);
     }

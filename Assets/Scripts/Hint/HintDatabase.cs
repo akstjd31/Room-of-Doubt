@@ -29,9 +29,7 @@ public class HintDatabase : Singleton<HintDatabase>
         }
     }
 
-    /// <summary>
-    /// "POS=2|VAL=7" 형태의 페이로드를 읽어 "2번째 숫자는 7이다" 문장 생성
-    /// </summary>
+    // "POS=2|VAL=7" 형태 필수!!
     private string ParseDigitPayload(string payload)
     {
         if (string.IsNullOrEmpty(payload)) return "종이가 너무 낡아 글자를 알아볼 수 없습니다.";
@@ -63,6 +61,6 @@ public class HintDatabase : Singleton<HintDatabase>
             return templates[index];
         }
 
-        return "일부 숫자가 보이지만 문맥을 파악하기 어렵습니다.";
+        return "이건 버그야";
     }
 }

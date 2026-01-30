@@ -77,8 +77,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
     void Update()
     {
+        if (InspectManager.Instance.IsInspecting) return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
+        {
             TogglePause();
+        }
     }
 
     public void MoveAllToLobby()
