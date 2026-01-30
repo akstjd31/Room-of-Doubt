@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Television : InteractableBase
 {
-    [SerializeField] private GameObject screenObj;
+    [SerializeField] private HintPaper hintPaper;
     private bool isOn = false;
     public override void Interact(int actorNumber)
     {
@@ -35,11 +35,17 @@ public class Television : InteractableBase
         }
 
         isOn = !isOn;
-        screenObj.SetActive(isOn);
+        hintPaper.gameObject.SetActive(isOn);
     }
 
     protected override IEnumerator InitRoutine()
     {
+        if (hintPaper != null)
+        {
+            yield return new WaitUntil(() => hintPaper.InitComplete);
+            hintPaper.transform.parent.gameObject.SetActive(false);
+        }
+
         yield break;
     }
 

@@ -332,7 +332,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 // GameManager의 PhotonView를 사용하여 RPC를 쏩니다.
                 // 종이의 이름(gameObject.name)과 뽑힌 숫자를 보냅니다.
-                Debug.Log(paper.name);
                 photonView.RPC(nameof(SyncSinglePaperRPC), RpcTarget.AllBuffered, paper.gameObject.name, $"POS={pos}|VAL={val}");
             }
         }
@@ -341,15 +340,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [PunRPC]
     private void SyncSinglePaperRPC(string paperName, string val)
     {
-        // 이름으로 해당 종이 오브젝트를 찾습니다.
-        GameObject go = GameObject.Find(paperName);
-        if (go != null)
+        var papers = Resources.FindObjectsOfTypeAll<HintPaper>();
+
+        foreach (var paper in papers)
         {
-            HintPaper paper = go.GetComponent<HintPaper>();
-            paper.SetHintText(val);
+            if (paper.gameObject.name == paperName)
+            {
+                paper.SetHintText(val);
+                return;
+            }
         }
     }
-    
+
+
 
     // bool값 가져오기
     private bool GetPropBool(Room room, string key)

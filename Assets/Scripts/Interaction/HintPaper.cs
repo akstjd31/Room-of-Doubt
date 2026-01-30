@@ -6,11 +6,11 @@ using Photon.Pun;
 public class HintPaper : InteractableBase
 {
     [SerializeField] private TMP_Text text;
+    public bool InitComplete { get; private set; }
 
     protected override IEnumerator InitRoutine()
     {
-        // 이제 종이 스스로 데이터를 요청하지 않습니다.
-        // GameManager가 보내주는 데이터를 기다립니다.
+        InitComplete = false;
         yield break; 
     }
 
@@ -22,14 +22,17 @@ public class HintPaper : InteractableBase
         text.text = val;
 
         if (hintData.HasValue) return;
-        
+
         hintData = new HintData { hintKey = HintKeys.KEYPAD_DIGIT, payload = val };
         Debug.Log("힌트 세팅 완료: " + val);
+        InitComplete = true;
     }
 
     public override void Interact(int actorNumber)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-        PhotonNetwork.Destroy(this.gameObject);
+
+        if (rewardItem != null)
+            PhotonNetwork.Destroy(this.gameObject);
     }
 }
