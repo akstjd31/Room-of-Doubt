@@ -108,11 +108,10 @@ public class SlotUI : MonoBehaviourPun,
         var inst = CurrnetSlot.current;
         if (inst == null || string.IsNullOrEmpty(inst.itemId)) return;
 
-        // ✅ 1) 아이템이 "부품 필요" 타입이면 장착 여부 검사
-        // (QuickSlotManager의 CanUseItem을 'RequiresPart면 installedPartId 필요'로 바꿔둔 상태라고 가정)
+        // 현재 아이템을 사용할 수 있는지? (부품이 필요한지? 필요하다면 해당 부품이 끼워져 있는지?)
         if (!QuickSlotManager.Local.CanUseItem(inst))
         {
-            UIManager.Instance.ShowMessage("부품이 필요합니다!"); // 문구는 취향대로
+            UIManager.Instance.ShowMessage("부품이 필요합니다!");
             return;
         }
 
@@ -127,9 +126,7 @@ public class SlotUI : MonoBehaviourPun,
 
         if (target.TryInstallToHost(inst, out var reason))
         {
-            // ✅ 성공: 드래그한 부품(배터리) 슬롯 소비(비우기)
             QuickSlotManager.Local.UpdateSlotData(CurrnetSlot.slotIndex, null);
-            UIManager.Instance.ShowMessage("부품을 장착했습니다!");
 
             if (target is Remote remote)
                 remote.RefreshTapeState();

@@ -127,108 +127,47 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         var room = PhotonNetwork.CurrentRoom;
         if (room == null) return;
 
-        // 규칙: 4명 다 찼을 때만 시작 힌트 커밋
-        // if (room.PlayerCount < 4) return;
-
         AssignRolesIfMaster();
 
         // 이미 READY면 중복 커밋 방지
-        if (room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) && readyObj is bool b && b)
+        if (room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj)
+            && readyObj is bool b && b)
             return;
 
-        // WirePuzzle seed 필요
-        if (!room.CustomProperties.TryGetValue(PuzzleKeys.KEY_WIRE_SEED, out var seedObj))
+        // 퍼즐 시드 수집
+        if (!TryCollectPuzzleSeeds(room, out var seeds))
             return;
 
-        int wireSeed = (int)seedObj;
-
-        CommitRandomStartHints(room, wireSeed);
+        CommitRandomStartHints(room, seeds);
         Debug.Log("[GameManager] Start hint specs committed (READY=true).");
     }
 
-    private void TryGiveLocalStartHint()
+    private bool TryCollectPuzzleSeeds(Room room, out Dictionary<string, int> seeds)
     {
-        if (startHintGivenLocal) return;
-        if (!PhotonNetwork.InRoom) return;
-        if (!isLocalPlayerCreated) return;
+        seeds = new Dictionary<string, int>();
 
-        var room = PhotonNetwork.CurrentRoom;
-        if (room == null) return;
+        // 퍼즐 시드 추가
+        bool ok = true;
+        ok &= TryAddSeed(room, PuzzleKeys.KEY_WIRE_SEED, seeds);
+        ok &= TryAddSeed(room, PuzzleKeys.KEYPAD_SEED, seeds);
 
-        if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var readyObj) ||
-            !(readyObj is bool ready) || !ready)
-            return;
-
-        var lp = PhotonNetwork.LocalPlayer;
-        if (lp.CustomProperties == null || !lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj))
-            return;
-
-        string roleStr = roleObj as string;
-        if (string.IsNullOrEmpty(roleStr)) return;
-
-        char role = roleStr[0];
-
-        // A는 램프, 나머진 힌트
-        if (role == 'A')
-        {
-            Item lamp = ItemManager.Instance.GetItemById(lampItemId);
-            if (lamp == null)
-            {
-                Debug.LogError($"[GameManager] Lamp item not found. id={lampItemId}");
-                return;
-            }
-
-            // 램프 지급(인벤/퀵슬롯 정책에 맞게)
-            QuickSlotManager.Local.AddItem(new ItemInstance(lamp.ID, HintData.Empty));
-            startHintGivenLocal = true;
-            Debug.Log("[GameManager] A got LAMP.");
-            return;
-        }
-
-        // B/C/D는 힌트 종이 지급
-        if (!TryGetStartHintSpecForRole(room, role, out string hintKey, out string payload))
-            return;
-
-        Item paper = ItemManager.Instance.GetItemById(hintPaperItemId);
-        if (paper == null)
-        {
-            Debug.LogError($"[GameManager] HintPaper item not found. id={hintPaperItemId}");
-            return;
-        }
-
-        QuickSlotManager.Local.SetHintToSlot(
-            quickSlotIndexForStartHint,
-            paper,
-            hintKey,
-            payload
-        );
-
-        startHintGivenLocal = true;
-        Debug.Log($"[GameManager] {role} got HintPaper. hintKey={hintKey}");
+        return ok;
     }
 
-
-    private bool TryGetStartHintSpecForRole(Room room, char role, out string hintKey, out string payload)
+    private bool TryAddSeed(Room room, string key, Dictionary<string, int> dict)
     {
-        hintKey = null;
-        payload = null;
+        if (!room.CustomProperties.TryGetValue(key, out var obj))
+            return false;
 
-        string keyKey, payKey;
-        switch (role)
-        {
-            case 'A': keyKey = RoomPropKeys.START_A_ID; payKey = RoomPropKeys.START_A_PAY; break;
-            case 'B': keyKey = RoomPropKeys.START_B_ID; payKey = RoomPropKeys.START_B_PAY; break;
-            case 'C': keyKey = RoomPropKeys.START_C_ID; payKey = RoomPropKeys.START_C_PAY; break;
-            default: keyKey = RoomPropKeys.START_D_ID; payKey = RoomPropKeys.START_D_PAY; break;
-        }
+        // Photon 커스텀 프로퍼티는 int로 들어오지만 혹시 몰라 방어적으로 처리
+        int seed;
+        if (obj is int i) seed = i;
+        else if (obj is long l) seed = unchecked((int)l);
+        else if (!int.TryParse(obj.ToString(), out seed))
+            return false;
 
-        if (!room.CustomProperties.TryGetValue(keyKey, out var keyObj)) return false;
-        if (!room.CustomProperties.TryGetValue(payKey, out var payObj)) return false;
-
-        hintKey = keyObj as string ?? keyObj?.ToString();
-        payload = payObj as string ?? payObj?.ToString();
-
-        return !string.IsNullOrEmpty(hintKey);
+        dict[key] = seed;
+        return true;
     }
 
     private void AssignRolesIfMaster()
@@ -255,44 +194,134 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    private void CommitRandomStartHints(Room room, int wireSeed)
+    private void CommitRandomStartHints(Room room, Dictionary<string, int> puzzleSeeds)
     {
         var players = PhotonNetwork.PlayerList;
         Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
 
-        var rand = new System.Random(wireSeed);
-
-        var props = new PhotonHashtable
+        // 결정적 시드 생성
+        int combinedSeed = 17;
+        foreach (var kv in puzzleSeeds)
         {
-            { RoomPropKeys.START_READY, true }
-        };
+            unchecked { combinedSeed = combinedSeed * 31 + kv.Key.GetHashCode() + kv.Value; }
+        }
+        var rand = new System.Random(combinedSeed);
+
+        // 힌트 풀 섞기
+        var shuffledHints = new List<string>(HintPools.Start);
+        for (int i = shuffledHints.Count - 1; i > 0; i--)
+        {
+            int r = rand.Next(0, i + 1);
+            (shuffledHints[i], shuffledHints[r]) = (shuffledHints[r], shuffledHints[i]);
+        }
+
+        // 현재 접속한 인원 수 기준
+        int lampOwnerIndex = rand.Next(0, players.Length);
+
+        var props = new PhotonHashtable { { RoomPropKeys.START_READY, true } };
 
         for (int i = 0; i < players.Length && i < 4; i++)
         {
-            char role = (char)('A' + i);
+            string hintKey = (i < shuffledHints.Count) ? shuffledHints[i] : "";
+            string payload = BuildSeedPayload(puzzleSeeds);
+            bool isLampOwner = (i == lampOwnerIndex); // 현재 루프 순서가 당첨 번호와 같으면 true
 
-            string pickedHintKey = PickRandomWireStartHintKey(rand);
-
-            // payload는 지금은 wireSeed로 통일 (필요하면 role/인덱스/서브시드 포함 가능)
-            string payload = wireSeed.ToString();
-
-            switch (role)
+            // 각 역할(A,B,C,D) 프로퍼티에 데이터 할당
+            switch (i)
             {
-                case 'A': props[RoomPropKeys.START_A_ID] = pickedHintKey; props[RoomPropKeys.START_A_PAY] = payload; break;
-                case 'B': props[RoomPropKeys.START_B_ID] = pickedHintKey; props[RoomPropKeys.START_B_PAY] = payload; break;
-                case 'C': props[RoomPropKeys.START_C_ID] = pickedHintKey; props[RoomPropKeys.START_C_PAY] = payload; break;
-                case 'D': props[RoomPropKeys.START_D_ID] = pickedHintKey; props[RoomPropKeys.START_D_PAY] = payload; break;
+                case 0:
+                    props[RoomPropKeys.START_A_ID] = hintKey;
+                    props[RoomPropKeys.START_A_PAY] = payload;
+                    props[RoomPropKeys.START_A_LAMP] = isLampOwner; break;
+                case 1:
+                    props[RoomPropKeys.START_B_ID] = hintKey;
+                    props[RoomPropKeys.START_B_PAY] = payload;
+                    props[RoomPropKeys.START_B_LAMP] = isLampOwner; break;
+                case 2:
+                    props[RoomPropKeys.START_C_ID] = hintKey;
+                    props[RoomPropKeys.START_C_PAY] = payload;
+                    props[RoomPropKeys.START_C_LAMP] = isLampOwner; break;
+                case 3:
+                    props[RoomPropKeys.START_D_ID] = hintKey;
+                    props[RoomPropKeys.START_D_PAY] = payload;
+                    props[RoomPropKeys.START_D_LAMP] = isLampOwner; break;
             }
         }
-
         room.SetCustomProperties(props);
-        Debug.Log("[GameManager] Random start hints committed.");
     }
 
-    private string PickRandomWireStartHintKey(System.Random rand)
+    private void TryGiveLocalStartHint()
     {
-        var pool = HintPools.WireStart;
-        return pool[rand.Next(0, pool.Length)];
+        if (startHintGivenLocal || !PhotonNetwork.InRoom || !isLocalPlayerCreated) return;
+
+        var room = PhotonNetwork.CurrentRoom;
+        if (!room.CustomProperties.TryGetValue(RoomPropKeys.START_READY, out var ready) || !(bool)ready) return;
+
+        var lp = PhotonNetwork.LocalPlayer;
+        if (!lp.CustomProperties.TryGetValue(RoomPropKeys.ROLE, out var roleObj)) return;
+
+        char role = roleObj.ToString()[0];
+        string hintKey = ""; string payload = ""; bool hasLamp = false;
+
+        // 역할별 데이터 매칭
+        switch (role)
+        {
+            case 'A':
+                hintKey = room.CustomProperties[RoomPropKeys.START_A_ID] as string;
+                payload = room.CustomProperties[RoomPropKeys.START_A_PAY] as string;
+                hasLamp = GetPropBool(room, RoomPropKeys.START_A_LAMP); break;
+            case 'B':
+                hintKey = room.CustomProperties[RoomPropKeys.START_B_ID] as string;
+                payload = room.CustomProperties[RoomPropKeys.START_B_PAY] as string;
+                hasLamp = GetPropBool(room, RoomPropKeys.START_B_LAMP); break;
+            case 'C':
+                hintKey = room.CustomProperties[RoomPropKeys.START_C_ID] as string;
+                payload = room.CustomProperties[RoomPropKeys.START_C_PAY] as string;
+                hasLamp = GetPropBool(room, RoomPropKeys.START_C_LAMP); break;
+            case 'D':
+                hintKey = room.CustomProperties[RoomPropKeys.START_D_ID] as string;
+                payload = room.CustomProperties[RoomPropKeys.START_D_PAY] as string;
+                hasLamp = GetPropBool(room, RoomPropKeys.START_D_LAMP); break;
+        }
+
+        // 램프 지급 (1명만)
+        if (hasLamp)
+        {
+            Item lamp = ItemManager.Instance.GetItemById(lampItemId);
+            if (lamp != null) QuickSlotManager.Local.AddItem(new ItemInstance(lamp.ID, HintData.Empty));
+            Debug.Log($"[Game] I am the Lamp Owner! ({role})");
+        }
+        else
+        {
+            // 힌트 종이 지급 (나머지)
+            Item paper = ItemManager.Instance.GetItemById(hintPaperItemId);
+            if (paper != null && !string.IsNullOrEmpty(hintKey))
+            {
+                QuickSlotManager.Local.SetHintToSlot(quickSlotIndexForStartHint, paper, hintKey, payload);
+
+            }
+        }
+        startHintGivenLocal = true;
+    }
+
+    // bool값 가져오기
+    private bool GetPropBool(Room room, string key)
+    {
+        if (room.CustomProperties.TryGetValue(key, out var obj) && obj is bool b) return b;
+        return false;
+    }
+
+    private string BuildSeedPayload(Dictionary<string, int> seeds)
+    {
+        // 키 순서 고정
+        var keys = new List<string>(seeds.Keys);
+        keys.Sort(StringComparer.Ordinal);
+
+        var parts = new List<string>(keys.Count);
+        foreach (var k in keys)
+            parts.Add($"{k}={seeds[k]}");
+
+        return string.Join("|", parts);
     }
 
     void TogglePause()
@@ -419,9 +448,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     public override void OnLeftRoom()
-{
-    UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
-}
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("LobbyScene");
+    }
 
     public QuickSlotManager LocalQuickSlot => localQuickSlotMgr;
 }

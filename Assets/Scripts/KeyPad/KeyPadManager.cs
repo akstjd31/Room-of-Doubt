@@ -8,7 +8,7 @@ using ExitGames.Client.Photon;
 public class KeyPadManager : MonoBehaviourPunCallbacks
 {
     private const int MAX_CODE_LENGTH = 4;
-    private const string ROOM_PROP_KEY = "KP_ANSWER";
+    
 
     [Header("Answer")]
     [SerializeField] private string collect; // 정답
@@ -103,7 +103,7 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsMasterClient) return;
 
         string newAnswer = GenerateRandomDigits(MAX_CODE_LENGTH);
-        var props = new Hashtable { { ROOM_PROP_KEY, newAnswer } };
+        var props = new Hashtable { { PuzzleKeys.KEYPAD_SEED, newAnswer } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
 
         // 현재 플레이어들에게 즉시 적용 + 늦게 들어오는 유저도 적용되게 Buffered
@@ -161,4 +161,6 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
             screenText.text = "UNLOCK!";
         }
     }
+
+    public string GetCollect() => collect;
 }

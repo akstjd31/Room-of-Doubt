@@ -1,8 +1,9 @@
 public static class HintKeys
 {
-    public const string WIRE_COLOR_MAP = "WIRE_COLOR_MAP";   // 색 → 색 힌트
-    public const string WIRE_PORT_MAP  = "WIRE_PORT_MAP";    // 포트 → 포트 힌트
-    public const string WIRE_PARTIAL   = "WIRE_PARTIAL";     // 일부 공개 힌트
+    public const string WIRE_COLOR_MAP  = "WIRE_COLOR_MAP";   // 색 → 색 힌트
+    public const string WIRE_PORT_MAP   = "WIRE_PORT_MAP";    // 포트 → 포트 힌트
+    public const string WIRE_PARTIAL    = "WIRE_PARTIAL";     // 와이어 퍼즐 일부 공개 힌트
+    public const string KEYPAD_PASSWORD = "KEYPAD_PASSWORD";  // 키 패드 비밀번호
 
     public static readonly string[] All =
     {
@@ -21,13 +22,13 @@ public static class ItemKeys
 
 public static class HintPools
 {
-    // Wire 퍼즐 "시작 힌트"로 허용되는 키만!
-    public static readonly string[] WireStart =
+    // 시작 시 지급될 '종이 힌트' 종류만 정의
+    public static readonly string[] Start =
     {
         HintKeys.WIRE_COLOR_MAP,
         HintKeys.WIRE_PORT_MAP,
         HintKeys.WIRE_PARTIAL,
-        ItemKeys.LAMP, // 너가 wire seed 기반으로 램프 패턴/전원 힌트도 줄 거면 포함
+        HintKeys.KEYPAD_PASSWORD,
     };
 }
 
@@ -36,11 +37,17 @@ public static class HintPools
 public static class PuzzleKeys
 {
     public const string KEY_WIRE_SEED = "PUZ_WIRE_SEED";
+    public const string KEYPAD_SEED = "KEYPAD_SEED";
 }
 
 public static class RoomPropKeys
 {
     // Start hint specs (Room Custom Properties)
+    public const string START_A_LAMP = "START_HINT_A_LAMP";
+    public const string START_B_LAMP = "START_HINT_B_LAMP";
+    public const string START_C_LAMP = "START_HINT_C_LAMP";
+    public const string START_D_LAMP = "START_HINT_D_LAMP";
+    
     public const string START_READY = "START_HINT_READY";
 
     public const string START_A_ID  = "START_HINT_A_ID";

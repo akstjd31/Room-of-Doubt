@@ -121,8 +121,9 @@ private void Start()
             Quaternion.identity
         );
 
-        spawned.GetComponent<Rigidbody>().isKinematic = true;
-
+        if (spawned.TryGetComponent<Rigidbody>(out var rigid))
+            rigid.isKinematic = true;
+        
         if (spawned == null)
         {
             Debug.LogError($"Inspect 풀 Get 실패: {spawnedPrefabId}");
@@ -138,7 +139,8 @@ private void Start()
         cam.Priority = 0;
         isInspecting = false;
 
-        spawned.GetComponent<Rigidbody>().isKinematic = false;
+        if (spawned.TryGetComponent<Rigidbody>(out var rigid))
+            rigid.isKinematic = false;
 
         // 풀 반환
         if (spawned != null)
@@ -179,16 +181,12 @@ private void Start()
 
         dist = Mathf.Lerp(dist, distTarget, Time.deltaTime * zoomLerp);
 
-        // ✅ 카메라가 pivot을 바라보고 있다는 전제:
-        // 카메라의 forward 방향으로 "pivot에서 뒤로" dist만큼 떨어뜨린 위치로 고정
-        // (pivot -> camera 방향으로 항상 양수 dist 유지 = pivot 통과 불가)
         Vector3 dir = (cam.transform.position - pivot.position).normalized;
+
         if (dir.sqrMagnitude < 0.0001f)
             dir = -cam.transform.forward; // 혹시 같은 위치면 fallback
 
         cam.transform.position = pivot.position + dir * dist;
-
-        // ✅ 항상 pivot을 바라보게(원하면 끄기)
         cam.transform.LookAt(pivot);
     }
 

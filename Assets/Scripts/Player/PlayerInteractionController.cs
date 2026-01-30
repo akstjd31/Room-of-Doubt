@@ -13,7 +13,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     private PlayerInput playerInput;
     private InputAction interactAction;
     [SerializeField] private Camera cam;
-    [SerializeField] private float range = 1.5f;
+    [SerializeField] private float range = 2.0f;
     [SerializeField] private LayerMask interactMask;
     [SerializeField] private LayerMask obstacleMask;
     private InteractableBase current;

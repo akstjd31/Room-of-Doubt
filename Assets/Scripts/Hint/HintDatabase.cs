@@ -10,6 +10,7 @@ public class HintDatabase : Singleton<HintDatabase>
 
         // 현재 씬의 WirePuzzleManager를 찾는다 (비활성 오브젝트까지 찾으려면 true)
         WirePuzzleManager wireMgr = FindObjectOfType<WirePuzzleManager>(true);
+        KeyPadManager keyPadMgr = FindObjectOfType<KeyPadManager>(true);
 
         // 퍼즐 매니저가 없으면 최소한의 메시지 반환
         if (wireMgr == null)
@@ -26,6 +27,9 @@ public class HintDatabase : Singleton<HintDatabase>
 
             case HintKeys.WIRE_PARTIAL:
                 return wireMgr.BuildPartialHintText(2);
+            
+            case HintKeys.KEYPAD_PASSWORD:
+                return keyPadMgr.GetCollect();
         }
 
         return "알 수 없는 힌트";

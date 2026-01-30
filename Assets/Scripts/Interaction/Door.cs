@@ -21,23 +21,35 @@ public class Door : InteractableBase
     {
         if (keyPad != null)
         {
-            if (keyPad.IsSolved())
-            {
-                if (requiredItem != null)
-                    requiredItem = null;
+            if (keyPad.IsSolved()) keyPad = null;
+            else ShowLocalPrompt(actorNumber);
 
-                isOpen = !isOpen;
-                anim.SetBool("IsOpen", isOpen);
-            }
-            else
-            {
-                ShowLocalPrompt(actorNumber);
-            }
+            return;
         }
-        else
+
+        if (requiredItem == null)
         {
             isOpen = !isOpen;
             anim.SetBool("IsOpen", isOpen);
+            return;
+        }
+
+        if (requiredItem != null)
+        {
+            var slot = QuickSlotManager.Local.GetFocusedSlot();
+
+            if (slot == null)
+            {
+                ShowLocalPrompt(actorNumber);
+                return;
+            }
+
+            // 현재 슬롯에 같은 아이템이 있는 경우
+            if (requiredItem.ID.Equals(slot.current.itemId))
+            {
+                requiredItem = null;
+                slot.Clear();
+            }
         }
     }
 

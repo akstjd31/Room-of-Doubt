@@ -315,7 +315,7 @@ MonoBehaviour:
   HeadPivot: {fileID: 3262602550046941542}
   cameraPivot: {fileID: 3475470486247514607}
   myCam: {fileID: 3614151623724746744}
-  disableOnEscape: []
+  playerMonos: []
 --- !u!114 &8736018497008175271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractor
   cam: {fileID: 398102256394945920}
-  range: 1.5
+  range: 2
   interactMask:
     serializedVersion: 2
     m_Bits: 2048

@@ -35,9 +35,8 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     private IEnumerator Start()
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-
-        if (Camera.main != null)
-            brain = Camera.main.GetComponent<CinemachineBrain>();
+        yield return new WaitUntil(() => Camera.main != null);
+        brain = Camera.main.GetComponent<CinemachineBrain>();
 
         yield return InitRoutine();
     }
