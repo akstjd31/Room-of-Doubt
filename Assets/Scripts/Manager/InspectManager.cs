@@ -39,32 +39,29 @@ public class InspectManager : MonoBehaviour
         Instance = this;
     }
 
-private void Start()
-{
-    cam.Priority = 0;
-    originQut = pivot != null ? pivot.rotation : transform.rotation;
-
-    // 기본 거리/방향 저장
-    if (pivot != null && cam != null)
+    private void Start()
     {
-        Vector3 v = cam.transform.position - pivot.position;
-        if (v.sqrMagnitude < 0.0001f) v = -cam.transform.forward;
+        cam.Priority = 0;
+        originQut = pivot != null ? pivot.rotation : transform.rotation;
 
-        baseDist = v.magnitude;
-        baseDir = v.normalized;
+        // 기본 거리/방향 저장
+        if (pivot != null && cam != null)
+        {
+            Vector3 v = cam.transform.position - pivot.position;
+            if (v.sqrMagnitude < 0.0001f) v = -cam.transform.forward;
 
-        dist = distTarget = baseDist;
+            baseDist = v.magnitude;
+            baseDir = v.normalized;
+
+            dist = distTarget = baseDist;
+        }
     }
-}
-
-
-
 
     private void Update()
     {
         // 특정 퀵 슬롯에서 아이템 드래그 중이라면
         if (UIDragState.IsDragging) return;
-        
+
         if (!isInspecting) return;
 
         HandleRotate();
@@ -121,9 +118,21 @@ private void Start()
             Quaternion.identity
         );
 
+        // 자식들 중에서 HintPaper 컴포넌트를 탐색 (비활성화된 자식까지 포함하려면 true 인자 추가)
+        var hintPaper = spawned.GetComponentInChildren<HintPaper>(true);
+
+        if (hintPaper != null)
+        {
+            var content = QuickSlotManager.Local.ReadFocusedHint();
+            if (!string.IsNullOrEmpty(content))
+            {
+                hintPaper.SetHintText(content);
+            }
+        }
+
         if (spawned.TryGetComponent<Rigidbody>(out var rigid))
             rigid.isKinematic = true;
-        
+
         if (spawned == null)
         {
             Debug.LogError($"Inspect 풀 Get 실패: {spawnedPrefabId}");
@@ -189,6 +198,4 @@ private void Start()
         cam.transform.position = pivot.position + dir * dist;
         cam.transform.LookAt(pivot);
     }
-
-
 }

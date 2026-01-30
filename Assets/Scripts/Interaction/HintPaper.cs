@@ -7,31 +7,29 @@ public class HintPaper : InteractableBase
 {
     [SerializeField] private TMP_Text text;
 
-    private void Awake()
+    protected override IEnumerator InitRoutine()
+    {
+        // 이제 종이 스스로 데이터를 요청하지 않습니다.
+        // GameManager가 보내주는 데이터를 기다립니다.
+        yield break; 
+    }
+
+    public void SetHintText(string val)
     {
         if (text == null)
             text = this.transform.GetChild(0).GetComponent<TMP_Text>();
+            
+        text.text = val;
 
-        // var content = QuickSlotManager.Local.ReadFocusedHint();
-        // if (content != null)
-        //     text.text = content;
+        if (hintData.HasValue) return;
+        
+        hintData = new HintData { hintKey = HintKeys.KEYPAD_DIGIT, payload = val };
+        Debug.Log("힌트 세팅 완료: " + val);
     }
 
     public override void Interact(int actorNumber)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
-        if (requiredItem != null) rewardItem = null;
         PhotonNetwork.Destroy(this.gameObject);
-    }
-
-    protected override IEnumerator InitRoutine()
-    {
-        yield return null;
-    }
-
-    public void SetHintText(string description)
-    {
-        text.text = description;
     }
 }

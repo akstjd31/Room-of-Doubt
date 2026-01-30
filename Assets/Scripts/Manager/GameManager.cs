@@ -117,6 +117,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         TrySetupStartHintsIfMaster();
         TryGiveLocalStartHint();
+
+        yield return new WaitUntil(() => KeyPadManager.AllKeypads.Count > 0);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            SyncAllHintPapers();
+        }
     }
 
     private void TrySetupStartHintsIfMaster()
@@ -303,6 +309,43 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
         startHintGivenLocal = true;
     }
+
+    // GameManager.cs 내부에 추가
+
+    public void SyncAllHintPapers()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        // 씬에 있는 모든 HintPaper를 찾습니다.
+        HintPaper[] papers = FindObjectsByType<HintPaper>(FindObjectsSortMode.None);
+        var finalKeypad = KeyPadManager.AllKeypads.Find(k => k.IsFinal);
+
+        if (finalKeypad == null) return;
+
+        foreach (var paper in papers)
+        {
+            if (finalKeypad.TryGetNextHint(out int pos, out char val))
+            {
+                // GameManager의 PhotonView를 사용하여 RPC를 쏩니다.
+                // 종이의 이름(gameObject.name)과 뽑힌 숫자를 보냅니다.
+                Debug.Log(paper.name);
+                photonView.RPC(nameof(SyncSinglePaperRPC), RpcTarget.AllBuffered, paper.gameObject.name, $"POS={pos}|VAL={val}");
+            }
+        }
+    }
+
+    [PunRPC]
+    private void SyncSinglePaperRPC(string paperName, string val)
+    {
+        // 이름으로 해당 종이 오브젝트를 찾습니다.
+        GameObject go = GameObject.Find(paperName);
+        if (go != null)
+        {
+            HintPaper paper = go.GetComponent<HintPaper>();
+            paper.SetHintText(val);
+        }
+    }
+    
 
     // bool값 가져오기
     private bool GetPropBool(Room room, string key)

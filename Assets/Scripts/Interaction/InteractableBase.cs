@@ -22,6 +22,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     [SerializeField] protected Item rewardItem;         // 획득 아이템 (없으면 null)
     [SerializeField] protected Item hostItem;           // 부품 본체가 되는 아이템
     [SerializeField] protected Item needItem;           // 필요 부품 아이템
+    protected HintData hintData = HintData.Empty;
 
 
     [Header("Cinemachine")]
@@ -73,7 +74,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
 
         if (rewardItem != null)
         {
-            ItemInstance instance = new ItemInstance(rewardItem.ID, HintData.Empty);
+            ItemInstance instance = new ItemInstance(rewardItem.ID, hintData);
             bool flag = QuickSlotManager.Local.AddItem(instance);
 
             // 만약 아이템이 들어갈 자리가 없다?

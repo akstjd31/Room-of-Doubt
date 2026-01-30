@@ -4,13 +4,13 @@ public static class HintKeys
     public const string WIRE_PORT_MAP   = "WIRE_PORT_MAP";    // 포트 → 포트 힌트
     public const string WIRE_PARTIAL    = "WIRE_PARTIAL";     // 와이어 퍼즐 일부 공개 힌트
     public const string KEYPAD_PASSWORD = "KEYPAD_PASSWORD";  // 키 패드 비밀번호
-
-    public static readonly string[] All =
+    public const string KEYPAD_DIGIT    = "KEYPAD_DIGIT";     // 특정 자릿수만 (새로 추가)
+    public static readonly string[] WirePuzzle =
     {
         // 와이어 퍼즐
         WIRE_COLOR_MAP,
         WIRE_PORT_MAP,
-        WIRE_PARTIAL,   
+        // WIRE_PARTIAL,   
     };
 }
 
@@ -25,10 +25,10 @@ public static class HintPools
     // 시작 시 지급될 '종이 힌트' 종류만 정의
     public static readonly string[] Start =
     {
-        HintKeys.WIRE_COLOR_MAP,
-        HintKeys.WIRE_PORT_MAP,
-        HintKeys.WIRE_PARTIAL,
-        HintKeys.KEYPAD_PASSWORD,
+        HintKeys.WirePuzzle[0],
+        // HintKeys.WIRE_PORT_MAP,
+        //HintKeys.WIRE_PARTIAL,
+        HintKeys.KEYPAD_PASSWORD
     };
 }
 

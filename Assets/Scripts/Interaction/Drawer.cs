@@ -19,16 +19,15 @@ public class Drawer : InteractableBase
 
     public override void Interact(int actorNumber)
     {
-        if (keyPad == null)
-        {
-            isOpen = !isOpen;
-            anim.SetBool("IsOpen", isOpen);
-            return;
-        }
-
         if (keyPad.IsSolved())
         {
-            keyPad = null;
+            if (prompt.Length >= 1) prompt = "";
+
+            if (!Cursor.visible)
+            {            
+                isOpen = !isOpen;
+                anim.SetBool("IsOpen", isOpen); 
+            }
         }
 
         if (!Cursor.visible)

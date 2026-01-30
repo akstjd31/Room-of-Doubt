@@ -63,11 +63,23 @@ public class QuickSlotManager : MonoBehaviour
     // 아이템 추가 (아이템)
     public bool AddItem(ItemInstance item)
     {
-        foreach (Slot slot in slots)
+        for (int i = 0; i < MAX_SLOT_COUNT; i++)
         {
-            if (slot.IsEmptySlot())
+            if (slots[i].IsEmptySlot())
             {
-                slot.Set(item);
+                if (item.hint.HasValue)
+                {
+                    var tem = ItemManager.Instance.GetItemById(item.itemId);
+                    var h = item.hint;
+                    Debug.Log($"현재 아이템: {tem.ItemName}, 힌트: {h.payload}");
+
+                    SetHintToSlot(i, tem, h.hintKey, h.payload);
+                }
+                else
+                {
+                    slots[i].Set(item);
+                }
+                    
                 NotifySnapshotToMaster();
                 SaveSnapshotToProps();
                 return true;

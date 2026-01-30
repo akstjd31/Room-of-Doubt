@@ -20,7 +20,7 @@ public class ItemManager : MonoBehaviour
         {
             if (item.ID.Equals(id))
                 return item;
-            
+
         }
 
         return null;

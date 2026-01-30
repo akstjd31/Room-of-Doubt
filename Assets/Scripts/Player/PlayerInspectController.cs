@@ -37,7 +37,7 @@ public class PlayerInspectController : MonoBehaviourPun
     {
         if (QuickSlotManager.Local.GetFocusedSlot() == null) return;
         if (QuickSlotManager.Local.IsEmpty()) return;
-        
+
         if (camController != null)
             camController.SetBlendCut();
 
