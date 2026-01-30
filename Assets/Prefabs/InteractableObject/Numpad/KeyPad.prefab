@@ -821,9 +821,12 @@ MonoBehaviour:
   isInteracting: 0
   requiredItem: {fileID: 0}
   rewardItem: {fileID: 0}
+  hostItem: {fileID: 0}
+  needItem: {fileID: 0}
   playerCamCtrl: {fileID: 0}
   myCam: {fileID: 2028343493095496742}
   brain: {fileID: 0}
+  isTransitioning: 0
   keyPadMgr: {fileID: 0}
 --- !u!1 &755508887563420488
 GameObject:
@@ -1170,7 +1173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183715f716cfc294a958f17574bdd442, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Number
-  tmp: {fileID: 6025343794516080025}
+  tmp: {fileID: 0}
 --- !u!1 &1424391064180589180
 GameObject:
   m_ObjectHideFlags: 0

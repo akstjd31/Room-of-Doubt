@@ -8,7 +8,7 @@ using ExitGames.Client.Photon;
 public class KeyPadManager : MonoBehaviourPunCallbacks
 {
     private const int MAX_CODE_LENGTH = 4;
-    
+
 
     [Header("Answer")]
     [SerializeField] private string collect; // 정답
@@ -44,9 +44,6 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
 
             if (Physics.Raycast(ray, out RaycastHit hit, 10f, numPadMask))
             {
-                // 아직 입력이 덜 되었을 때
-                if (currentNumLength < MAX_CODE_LENGTH)
-                {
                     var numComp = hit.transform.GetComponent<Number>();
                     if (numComp == null) return;
 
@@ -56,43 +53,48 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
                     // 인트 변환 시도 (#, * 제외)
                     if (int.TryParse(nStr, out int n))
                     {
+                        if (currentNumLength >= MAX_CODE_LENGTH)
+                        {
+                            ResetLocalInput();
+                        }
+
                         codes[currentNumLength] = n;
                         input += nStr;
                         currentNumLength++;
                     }
-                }
+                    // #, * 누름: 완료(?) 버튼
+                    else
+                    {
+                        result = string.Join("", new List<int>(codes).ConvertAll(i => i.ToString()).ToArray());
+                        Debug.Log($"[KeyPad] Input Result = {result}");
+
+                        if (collect == result)
+                        {
+                            if (!IsSolved)
+                            {
+                                if (isFinal)
+                                {
+                                    SuccessLocal();
+                                }
+                                else
+                                {
+                                    photonView.RPC(nameof(SuccessRPC), RpcTarget.AllBuffered);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ResetLocalInput();
+                        }
+
+                        input = "";
+                        if (screenText != null && !IsSolved)
+                            screenText.text = "";
+                    }
+                
 
                 if (screenText != null)
                     screenText.text = input;
-
-                if (currentNumLength >= MAX_CODE_LENGTH)
-                {
-                    result = string.Join("", new List<int>(codes).ConvertAll(i => i.ToString()).ToArray());
-                    Debug.Log($"[KeyPad] Input Result = {result}");
-
-                    if (collect == result)
-                    {
-                        if (!IsSolved)
-                        {
-                            if (isFinal)
-                            {
-                                SuccessLocal();
-                            }
-                            else
-                            {
-                                photonView.RPC(nameof(SuccessRPC), RpcTarget.AllBuffered);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ResetLocalInput();
-                    }
-
-                    input = "";
-                    if (screenText != null && !IsSolved)
-                        screenText.text = "";
-                }
             }
         }
     }
