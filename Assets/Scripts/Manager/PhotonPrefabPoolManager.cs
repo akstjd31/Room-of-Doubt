@@ -2,10 +2,6 @@ using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-/// <summary>
-/// Photon 네트워크 Instantiate/Destroy 경로는 netPool로,
-/// 로컬 Inspect/미리보기(GetLocal/ReleaseLocal)는 localPool로 분리한다.
-/// </summary>
 public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
 {
     public static PhotonPrefabPoolManager Instance;
@@ -14,7 +10,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
     [SerializeField] private Transform poolParent;
     [SerializeField] private int cachingCountPerPrefab = 0;
 
-    // ✅ 풀 분리 (중요)
     private readonly Dictionary<string, Queue<GameObject>> netPool = new();
     private readonly Dictionary<string, Queue<GameObject>> localPool = new();
 
@@ -28,7 +23,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
 
     /// <summary>
     /// 캐싱: 네트워크/로컬 둘 다 쓸 수 있도록 localPool에 미리 쌓아두는 방식.
-    /// (원하면 net/local 각각 따로 캐싱하도록 분리해도 됨)
     /// </summary>
     public void Preload(string prefabPath)
     {
@@ -48,13 +42,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
         }
     }
 
-    // =========================
-    // Photon 네트워크 풀 경로
-    // =========================
-
-    /// <summary>
-    /// PhotonNetwork.Instantiate/InstantiateRoomObject 시 호출된다.
-    /// </summary>
     public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
     {
         var prefab = GetOrCachePrefab(prefabId);
@@ -79,7 +66,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
         GameObject pooled = q.Count > 0 ? q.Dequeue() : Object.Instantiate(prefab, poolParent);
         pooled.name = prefab.name;
 
-        // Photon이 재할당할 거라, 여기서 ViewID를 건드리지 말고 비활성 유지
         pooled.SetActive(false);
 
         var pooledTag = pooled.GetComponent<PhotonPoolTag>() ?? pooled.AddComponent<PhotonPoolTag>();
@@ -89,16 +75,13 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
         return pooled;
     }
 
-    /// <summary>
-    /// PhotonNetwork.Destroy 시 호출된다.
-    /// </summary>
     public void Destroy(GameObject gameObject)
     {
         if (gameObject == null) return;
 
         var pv = gameObject.GetComponent<PhotonView>();
 
-        // ✅ SceneView(씬 오브젝트)는 절대 여기서 풀링/조작하지 말고 그냥 파괴
+        // SceneView(씬 오브젝트)는 그냥 파괴
         if (pv != null && pv.IsSceneView)
         {
             Object.Destroy(gameObject);
@@ -112,11 +95,9 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
             return;
         }
 
-        // ✅ 권한 있을 때만 RemoveRPCs (아니면 에러)
         if (pv != null && (pv.IsMine || PhotonNetwork.IsMasterClient))
             PhotonNetwork.RemoveRPCs(pv);
 
-        // ✅ 네트워크 오브젝트는 재사용을 위해 ViewID 초기화
         ResetAllPhotonViewIds(gameObject);
 
         gameObject.SetActive(false);
@@ -127,10 +108,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
 
         q.Enqueue(gameObject);
     }
-
-    // =========================
-    // 로컬 풀 경로 (Inspect 등)
-    // =========================
 
     public GameObject GetLocal(string prefabId, Transform parent, Vector3 localPos, Quaternion localRot)
     {
@@ -162,7 +139,7 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
             return;
         }
 
-        // ✅ 로컬 풀에는 네트워크 오브젝트가 들어오면 안 됨 (방어)
+        // 방어 코드
         var pv = obj.GetComponent<PhotonView>();
         if (pv != null && pv.ViewID != 0)
         {
@@ -181,10 +158,6 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
 
         q.Enqueue(obj);
     }
-
-    // =========================
-    // 내부 유틸
-    // =========================
 
     private void PreparePooledObject(GameObject obj, string prefabId, bool isNetwork)
     {
@@ -205,7 +178,7 @@ public class PhotonPrefabPoolManager : MonoBehaviourPun, IPunPrefabPool
     {
         return prefabId.StartsWith("Items/") ||
                prefabId.StartsWith("Puzzles/") ||
-               prefabId.StartsWith("Hints/");
+               prefabId.StartsWith("GlowHints/");
     }
 
     private GameObject GetOrCachePrefab(string prefabPath)

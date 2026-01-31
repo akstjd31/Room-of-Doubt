@@ -14,10 +14,13 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private SpawnPointGroup itemSpawnPoints;
     [SerializeField] private SpawnPointGroup puzzleSpawnPoints;
+    [SerializeField] private SpawnPointGroup glowHintSpawnPoints;
     [SerializeField] private string itemResourcesFolder = "Items";
     [SerializeField] private string puzzleResourcesFolder = "Puzzles";
+    [SerializeField] private string glowHintResourcesFolder = "GlowHints";
     [SerializeField] private List<string> itemPrefabPaths;
     [SerializeField] private List<string> puzzlePrefabPaths;
+    [SerializeField] private List<string> glowHintPrefabPaths;
 
 
     public bool SpawnedLocally { get; private set; }
@@ -28,6 +31,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
         LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
+        LoadPrefabsFromResources(glowHintPrefabPaths, glowHintResourcesFolder);
     }
 
     // 해당 경로에 존재하는 아이템 경로 따오기
@@ -51,6 +55,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
     {
         foreach (var p in itemPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
         foreach (var p in puzzlePrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
+        foreach (var p in glowHintPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
         
         StartCoroutine(WaitAndInit());
     }
@@ -117,6 +122,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         if (itemPrefabPaths == null || itemPrefabPaths.Count < 1) return;
         if (puzzleSpawnPoints == null || puzzleSpawnPoints.Count < 1) return;
         if (puzzlePrefabPaths == null || puzzlePrefabPaths.Count < 1) return;
+        if (glowHintSpawnPoints == null || glowHintSpawnPoints.Count < 1) return;
+        if (glowHintPrefabPaths == null || glowHintPrefabPaths.Count < 1) return;
 
         var rand = new System.Random(seed);
 
@@ -152,6 +159,24 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             string path = puzzlePrefabPaths[i];
             int spawnIndex = puzzleIndices[i];
             var t = puzzleSpawnPoints.Get(spawnIndex);
+
+            var obj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
+            if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
+        }
+
+        int glowHintCount = Mathf.Min(glowHintPrefabPaths.Count, glowHintSpawnPoints.Count);
+
+        var glowHintIndices = new List<int>(glowHintSpawnPoints.Count);
+        for (int i = 0; i < glowHintSpawnPoints.Count; i++)
+            glowHintIndices.Add(i);
+
+        Shuffle(glowHintIndices, rand);
+
+        for (int i = 0; i < glowHintCount; i++)
+        {
+            string path = glowHintPrefabPaths[i];
+            int spawnIndex = glowHintIndices[i];
+            var t = glowHintSpawnPoints.Get(spawnIndex);
 
             var obj = PhotonNetwork.InstantiateRoomObject(path, t.position, t.rotation);
             if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
