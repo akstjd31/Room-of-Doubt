@@ -43,7 +43,7 @@ public class Television : InteractableBase
         if (hintPaper != null)
         {
             yield return new WaitUntil(() => hintPaper.InitComplete);
-            hintPaper.transform.parent.gameObject.SetActive(false);
+            hintPaper.gameObject.SetActive(false);
         }
 
         yield break;
