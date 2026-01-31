@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class SwitchLight : InteractableBase
 {
-    [SerializeField] private GameObject[] spotLights;
+    [SerializeField] private GameObject spotLight;
+    [SerializeField] private FindNearByGrowHint[] hintAreas;
     private bool isOn = false;
     public override void Interact(int actorNumber)
     {
@@ -16,14 +17,20 @@ public class SwitchLight : InteractableBase
         }
 
         isOn = !isOn;
-        foreach (GameObject light in spotLights)
+        if (spotLight == null) return;
+        spotLight.SetActive(isOn);
+
+        if (hintAreas == null) return;
+        foreach (FindNearByGrowHint hArea in hintAreas)
         {
-            light.SetActive(isOn);
+            if (hArea.GlowHint == null) continue;
+            hArea.GlowHint.SetGlowVisible(isOn);
         }
     }
 
     protected override IEnumerator InitRoutine()
     {
+        hintAreas = GetComponentsInChildren<FindNearByGrowHint>();
         yield break;
     }
 }

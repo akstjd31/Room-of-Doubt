@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GlowHintText : MonoBehaviour
 {
+    private int interactableLayer;
+    private int originLayer;
     [SerializeField] TMP_Text text;
 
     [Header("Glow Color")]
@@ -20,6 +22,8 @@ public class GlowHintText : MonoBehaviour
 
         mat = new Material(text.fontMaterial);
         text.fontMaterial = mat;
+        originLayer = this.gameObject.layer;
+        interactableLayer = LayerMask.NameToLayer("Interactable");
     }
 
     private void Start()
@@ -28,9 +32,11 @@ public class GlowHintText : MonoBehaviour
         SetVisible(false);
     }
 
-    public void SetLightState(bool isLightOn)
+    public void SetGlowVisible(bool isLightOn)
     {
         SetVisible(!isLightOn);
+
+        this.gameObject.layer = isLightOn ? originLayer : interactableLayer;
     }
 
     public void SetText(string t) => text.text = t;
