@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     [Header("Light")]
     [SerializeField] private GameObject[] lights;
+    public bool WirePuzzleSolved { get; private set; }
 
     void Awake()
     {
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     // 특정 퍼즐 해결 시 방에 있는 불 키기
     public void PowerOn()
     {
+        WirePuzzleSolved = true;
         if (lights == null || lights.Length < 1) return;
         foreach (var obj in lights) obj.SetActive(true);
     }
