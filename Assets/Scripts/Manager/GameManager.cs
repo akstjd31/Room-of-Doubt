@@ -335,6 +335,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 photonView.RPC(nameof(SyncSinglePaperRPC), RpcTarget.AllBuffered, paper.gameObject.name, $"POS={pos}|VAL={val}");
             }
         }
+
+        GlowHintText[] glowHints = FindObjectsByType<GlowHintText>(FindObjectsSortMode.None);
+
+        foreach (var gh in glowHints)
+        {
+            if (finalKeypad.TryGetNextHint(out int pos, out char val))
+                photonView.RPC(nameof(SyncSingleGlowHintRPC), RpcTarget.AllBuffered, gh.gameObject.name, $"POS={pos}|VAL={val}");
+        }
     }
 
     [PunRPC]
@@ -344,9 +352,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         foreach (var paper in papers)
         {
-            if (paper.gameObject.name == paperName)
+            if (paper.gameObject.name.Equals(paperName))
             {
                 paper.SetHintText(val);
+                return;
+            }
+        }
+    }
+
+    [PunRPC]
+    private void SyncSingleGlowHintRPC(string glowHintName, string val)
+    {
+        var glowHints = Resources.FindObjectsOfTypeAll<GlowHintText>();
+
+        foreach (var gh in glowHints)
+        {
+            if (gh.gameObject.name.Equals(glowHintName))
+            {
+                gh.SetText(val);
                 return;
             }
         }

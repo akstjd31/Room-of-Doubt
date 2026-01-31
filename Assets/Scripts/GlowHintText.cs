@@ -14,13 +14,16 @@ public class GlowHintText : MonoBehaviour
 
     Material mat;
 
-    void Awake()
+    private void Awake()
     {
         if (!text) text = GetComponent<TMP_Text>();
 
         mat = new Material(text.fontMaterial);
         text.fontMaterial = mat;
+    }
 
+    private void Start()
+    {
         // 시작은 꺼진 상태
         SetVisible(false);
     }
@@ -30,7 +33,9 @@ public class GlowHintText : MonoBehaviour
         SetVisible(!isLightOn);
     }
 
-    void SetVisible(bool visible)
+    public void SetText(string t) => text.text = t;
+
+    public void SetVisible(bool visible)
     {
         text.enabled = visible;
 
