@@ -14,7 +14,7 @@ public class HintDatabase : Singleton<HintDatabase>
             // 1. 전체 비밀번호를 다 보여주는 경우
             case HintKeys.KEYPAD_PASSWORD:
                 string fullCode = keyPadMgr != null ? keyPadMgr.GetCollect() : payload;
-                return $"적혀있는 전체 비밀번호: <color=#00FF00>{fullCode}</color>";
+                return $"<color=#00FF00>{fullCode}</color>";
 
             // 2. 특정 자릿수 하나만 알려주는 경우 (신규)
             case HintKeys.KEYPAD_DIGIT:
