@@ -30,7 +30,7 @@ public class HintDatabase : Singleton<HintDatabase>
     }
 
     // "POS=2|VAL=7" 형태 필수!!
-    private string ParseDigitPayload(string payload)
+    public string ParseDigitPayload(string payload)
     {
         if (string.IsNullOrEmpty(payload)) return "종이가 너무 낡아 글자를 알아볼 수 없습니다.";
 

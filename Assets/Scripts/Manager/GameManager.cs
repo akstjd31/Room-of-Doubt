@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             return;
 
         CommitRandomStartHints(room, seeds);
-        Debug.Log("[GameManager] Start hint specs committed (READY=true).");
+        Debug.Log("힌트 뿌림 완료.");
     }
 
     private bool TryCollectPuzzleSeeds(Room room, out Dictionary<string, int> seeds)
@@ -334,10 +334,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             {
                 // GameManager의 PhotonView를 사용하여 RPC를 쏩니다.
                 // 종이의 이름(gameObject.name)과 뽑힌 숫자를 보냅니다.
-                photonView.RPC(nameof(SyncSinglePaperRPC), RpcTarget.AllBuffered, paper.gameObject.name, $"POS={pos}|VAL={val}");
+                string answer = $"POS={pos}|VAL={val}";
+                photonView.RPC(nameof(SyncSinglePaperRPC), RpcTarget.AllBuffered, paper.gameObject.name, HintDatabase.Instance.ParseDigitPayload(answer));
             }
         }
 
+        // 이건 야광 힌트 
         GlowHintText[] glowHints = FindObjectsByType<GlowHintText>(FindObjectsSortMode.None);
 
         foreach (var gh in glowHints)

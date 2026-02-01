@@ -25,6 +25,7 @@ public class SwitchLight : InteractableBase
         {
             if (hArea.GlowHint == null) continue;
             hArea.GlowHint.SetGlowVisible(isOn);
+            hArea.SetLayer(isOn);
         }
     }
 
