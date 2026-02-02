@@ -9,14 +9,13 @@ public class Computer : InteractableBase
     {
         if (isOn) return;
 
-        if (requiredItem == null)
-        {
-            prompt = "PC와 연결할 케이블이 없는 것 같다.";
-            ShowLocalPrompt(actorNumber, prompt);
-        }
+        if (requiredItem == null) return;
 
         var slot = QuickSlotManager.Local.GetFocusedSlot();
-        if (slot == null) return;
+        if (slot == null)
+        {
+            return;
+        }
 
         var inst = slot.current;
         if (inst == null) return;
@@ -30,12 +29,24 @@ public class Computer : InteractableBase
 
         requiredItem = null;
         isOn = true;
+        hintPaper.gameObject.SetActive(isOn);
         slot.Clear();
     }
 
     protected override IEnumerator InitRoutine()
     {
-        throw new System.NotImplementedException();
+        while (playerCamCtrl == null)
+        {
+            playerCamCtrl = FindLocalCamCtrl();
+            if (playerCamCtrl == null)
+                yield return null; // 다음 프레임
+        }
+
+        if (hintPaper != null)
+        {
+            yield return new WaitUntil(() => hintPaper.InitComplete);
+            hintPaper.gameObject.SetActive(false);
+        }
     }
 
     private void ShowLocalPrompt(int actorNumber, string p)

@@ -7,15 +7,14 @@ public class Television : InteractableBase
     private bool isOn = false;
     public override void Interact(int actorNumber)
     {
-        if (requiredItem == null)
-        {
-            prompt = "TV가 안켜진다.";
-            ShowLocalPrompt(actorNumber, prompt);
-            return;
-        }
+        if (requiredItem == null) return;
 
         var slot = QuickSlotManager.Local.GetFocusedSlot();
-        if (slot == null) return;
+        if (slot == null)
+        {
+            ShowLocalPrompt(actorNumber, "TV를 키려면 뭔가 필요한 것 같다.");
+            return;
+        }
 
         var inst = slot.current;
         if (inst == null) return;
