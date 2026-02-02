@@ -13,6 +13,9 @@ public class UIManager : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI promptText;
     [SerializeField] private float fadeOutTime = 1.2f;
 
+    [Header("Option")]
+    [SerializeField] private GameObject optionPanelObj;
+
     private Coroutine routine;
 
     [SerializeField] private GameObject pauseMenu;
@@ -168,4 +171,5 @@ public class UIManager : MonoBehaviourPunCallbacks
     }
 
     public void SetPlayerAimActive(bool active) => playerAim.SetActive(active);
+    public void SetOptionPanelActive(bool active) => optionPanelObj.SetActive(active);
 }

@@ -412,7 +412,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     public void OnClickResumeButton() => TogglePause();
-    public void OnClickOptionsButton() => Debug.Log("제작 예정");
+    public void OnClickOptionsButton() => UIManager.Instance.SetOptionPanelActive(true);
     public void OnClickQuitButton()
     {
 #if UNITY_EDITOR
