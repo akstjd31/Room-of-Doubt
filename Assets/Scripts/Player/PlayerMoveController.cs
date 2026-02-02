@@ -3,10 +3,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(Animator))]
 public class PlayerMoveController : MonoBehaviourPun
 {
     private PlayerInput playerInput;
     private InputAction moveAction;
+    private Animator anim;
     private Rigidbody rigid;
 
     [Header("References")]
@@ -28,6 +31,7 @@ public class PlayerMoveController : MonoBehaviourPun
     {
         rigid = this.GetComponent<Rigidbody>();
         playerInput = this.GetComponent<PlayerInput>();
+        anim = this.GetComponent<Animator>();
 
         rigid.interpolation = RigidbodyInterpolation.Interpolate;
         rigid.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -107,6 +111,14 @@ public class PlayerMoveController : MonoBehaviourPun
         moveAction.Enable();
     }
 
-    public void OnMovePerformed(InputAction.CallbackContext ctx) => moveInput = ctx.ReadValue<Vector2>();
-    public void OnMoveCanceled(InputAction.CallbackContext ctx) => moveInput = Vector2.zero;
+    public void OnMovePerformed(InputAction.CallbackContext ctx)
+    {
+        moveInput = ctx.ReadValue<Vector2>();
+        anim.SetBool("isWalk", true);
+    }
+    public void OnMoveCanceled(InputAction.CallbackContext ctx)
+    {
+        moveInput = Vector2.zero;
+        anim.SetBool("isWalk", false);
+    }
 }

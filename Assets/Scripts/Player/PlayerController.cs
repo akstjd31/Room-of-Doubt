@@ -6,8 +6,6 @@ using Unity.Cinemachine;
 public class PlayerController : MonoBehaviourPun
 {
     public bool IsEscaped { get; private set; }
-
-    public Transform HeadPivot;
     [SerializeField] private Transform cameraPivot;
     public Transform CameraPivot => cameraPivot;
 

@@ -16,8 +16,8 @@ public class PlayerCameraController : MonoBehaviourPun
     private Rigidbody rigid;
 
     [Header("References")]
-    [SerializeField] private Transform playerBody;
     [SerializeField] private Transform cameraPivot;
+    [SerializeField] private GameObject playerMesh;
 
     [Header("Local Camera")]
     [SerializeField] private GameObject cameraRoot;
@@ -38,7 +38,7 @@ public class PlayerCameraController : MonoBehaviourPun
     {
         lookAction.performed += OnLook;
         lookAction.canceled += OnLook;
-        
+
         SetCursor(CursorLockMode.Locked, false);
 
         StartCoroutine(RegisterLocalAfterOwnershipReady());
@@ -56,11 +56,9 @@ public class PlayerCameraController : MonoBehaviourPun
 
     private IEnumerator RegisterLocalAfterOwnershipReady()
     {
-        // PhotonView가 생길 때까지 (보통 즉시지만 안전빵)
         yield return new WaitUntil(() => photonView != null);
         if (!photonView.IsMine) yield break;
 
-        // 소유권/로컬플레이어가 안정화될 때까지 한 프레임 양보
         yield return null;
     }
 
@@ -73,6 +71,7 @@ public class PlayerCameraController : MonoBehaviourPun
             return;
         }
 
+        playerMesh.layer = LayerMask.NameToLayer("Player_Local");
         playerCam.Priority = 20;
 
         if (GameManager.Instance != null)
@@ -130,14 +129,16 @@ public class PlayerCameraController : MonoBehaviourPun
         float mouseX = lookInput.x * sensitivity;
         float mouseY = lookInput.y * sensitivity;
 
+        // 피치(상하) 회전 계산
         pitch -= mouseY;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
         cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
 
+        // 플레이어 본체(좌우) 회전
         Quaternion deltaRot = Quaternion.Euler(0f, mouseX, 0f);
         rigid.MoveRotation(rigid.rotation * deltaRot);
     }
-    
+
     public void SetBlendCut()
     {
         brain.DefaultBlend.Style = CinemachineBlendDefinition.Styles.Cut;

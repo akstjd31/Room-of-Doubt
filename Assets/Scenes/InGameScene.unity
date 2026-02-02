@@ -1225,7 +1225,7 @@ MonoBehaviour:
   hintPaperItemId: e511d80d-9ce7-45ce-94ab-3d668e8e4133
   quickSlotIndexForStartHint: 0
   localQuickSlotMgr: {fileID: 710292032}
-  playerPrefab: {fileID: 1714889846320777485, guid: 97c79ebbcdd92794db0f03a161d3f740, type: 3}
+  playerPrefab: {fileID: 3512444453881451428, guid: b05a62acb6d083047b3682b9e34a4280, type: 3}
   timeLimitSeconds: 10
   lights:
   - {fileID: 3086809577111642320}
