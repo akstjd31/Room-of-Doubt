@@ -207,60 +207,64 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     }
 
     private void CommitRandomStartHints(Room room, Dictionary<string, int> puzzleSeeds)
+{
+    var players = PhotonNetwork.PlayerList;
+    Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
+
+    // 시드 생성
+    int combinedSeed = 17;
+    foreach (var kv in puzzleSeeds)
     {
-        var players = PhotonNetwork.PlayerList;
-        Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
+        unchecked { combinedSeed = combinedSeed * 31 + kv.Key.GetHashCode() + kv.Value; }
+    }
+    var rand = new System.Random(combinedSeed);
 
-        // 결정적 시드 생성
-        int combinedSeed = 17;
-        foreach (var kv in puzzleSeeds)
+    // 힌트 풀 섞기
+    var shuffledHints = new List<string>(HintPools.Start);
+    for (int i = shuffledHints.Count - 1; i > 0; i--)
+    {
+        int r = rand.Next(0, i + 1);
+        (shuffledHints[i], shuffledHints[r]) = (shuffledHints[r], shuffledHints[i]);
+    }
+
+    // 램프 오너 정하기 (접속한 플레이어 중 랜덤)
+    int lampOwnerIndex = rand.Next(0, players.Length);
+    int hintPointer = 0; // 힌트 풀에서 꺼낼 인덱스
+
+    var props = new PhotonHashtable { { RoomPropKeys.START_READY, true } };
+
+    for (int i = 0; i < players.Length && i < 4; i++)
+    {
+        bool isLampOwner = (i == lampOwnerIndex);
+        string hintKey = "";
+        
+        if (!isLampOwner)
         {
-            unchecked { combinedSeed = combinedSeed * 31 + kv.Key.GetHashCode() + kv.Value; }
-        }
-        var rand = new System.Random(combinedSeed);
-
-        // 힌트 풀 섞기
-        var shuffledHints = new List<string>(HintPools.Start);
-        for (int i = shuffledHints.Count - 1; i > 0; i--)
-        {
-            int r = rand.Next(0, i + 1);
-            (shuffledHints[i], shuffledHints[r]) = (shuffledHints[r], shuffledHints[i]);
-        }
-
-        // 현재 접속한 인원 수 기준
-        int lampOwnerIndex = rand.Next(0, players.Length);
-
-        var props = new PhotonHashtable { { RoomPropKeys.START_READY, true } };
-
-        for (int i = 0; i < players.Length && i < 4; i++)
-        {
-            string hintKey = (i < shuffledHints.Count) ? shuffledHints[i] : "";
-            string payload = BuildSeedPayload(puzzleSeeds);
-            bool isLampOwner = (i == lampOwnerIndex); // 현재 루프 순서가 당첨 번호와 같으면 true
-
-            // 각 역할(A,B,C) 프로퍼티에 데이터 할당
-            switch (i)
+            if (hintPointer < shuffledHints.Count)
             {
-                case 0:
-                    props[RoomPropKeys.START_A_ID] = hintKey;
-                    props[RoomPropKeys.START_A_PAY] = payload;
-                    props[RoomPropKeys.START_A_LAMP] = isLampOwner; break;
-                case 1:
-                    props[RoomPropKeys.START_B_ID] = hintKey;
-                    props[RoomPropKeys.START_B_PAY] = payload;
-                    props[RoomPropKeys.START_B_LAMP] = isLampOwner; break;
-                case 2:
-                    props[RoomPropKeys.START_C_ID] = hintKey;
-                    props[RoomPropKeys.START_C_PAY] = payload;
-                    props[RoomPropKeys.START_C_LAMP] = isLampOwner; break;
-                // case 3:
-                //     props[RoomPropKeys.START_D_ID] = hintKey;
-                //     props[RoomPropKeys.START_D_PAY] = payload;
-                //     props[RoomPropKeys.START_D_LAMP] = isLampOwner; break;
+                hintKey = shuffledHints[hintPointer];
+                hintPointer++;
             }
         }
-        room.SetCustomProperties(props);
+        else
+        {
+            hintKey = "";
+        }
+
+        string payload = BuildSeedPayload(puzzleSeeds);
+
+        // 역할별 할당 (A, B, C...)
+        string idKey = i == 0 ? RoomPropKeys.START_A_ID : (i == 1 ? RoomPropKeys.START_B_ID : RoomPropKeys.START_C_ID);
+        string payKey = i == 0 ? RoomPropKeys.START_A_PAY : (i == 1 ? RoomPropKeys.START_B_PAY : RoomPropKeys.START_C_PAY);
+        string lampKey = i == 0 ? RoomPropKeys.START_A_LAMP : (i == 1 ? RoomPropKeys.START_B_LAMP : RoomPropKeys.START_C_LAMP);
+
+        props[idKey] = hintKey;
+        props[payKey] = payload;
+        props[lampKey] = isLampOwner;
     }
+
+    room.SetCustomProperties(props);
+}
 
     private void TryGiveLocalStartHint()
     {

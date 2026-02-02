@@ -18,7 +18,7 @@ public class HintDatabase : Singleton<HintDatabase>
 
             // 2. 특정 자릿수 하나만 알려주는 경우 (신규)
             case HintKeys.KEYPAD_DIGIT:
-                return ParseDigitPayload(payload);
+                return payload;
 
             // 3. 전선 퍼즐 힌트
             case HintKeys.WIRE_COLOR_MAP:

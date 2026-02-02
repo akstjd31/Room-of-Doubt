@@ -122,8 +122,10 @@ public class InspectManager : MonoBehaviour
         var hintPaper = spawned.GetComponentInChildren<HintPaper>(true);
         if (hintPaper != null)
         {
-            hintPaper.SetHintText(slot.current.hint.payload);
-        } 
+            // 원본 payload를 그대로 넣는 것이 아니라, Database를 통해 문구로 변환하여 전달
+            string renderedText = HintDatabase.Instance.Render(slot.current.hint.hintKey, slot.current.hint.payload);
+            hintPaper.SetHintText(renderedText);
+        }
 
         if (spawned.TryGetComponent<Rigidbody>(out var rigid))
             rigid.isKinematic = true;

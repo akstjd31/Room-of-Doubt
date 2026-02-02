@@ -24,7 +24,6 @@ public class HintPaper : InteractableBase
         if (hintData.HasValue) return;
 
         hintData = new HintData { hintKey = HintKeys.KEYPAD_DIGIT, payload = val };
-        Debug.Log("힌트 세팅 완료: " + val);
         InitComplete = true;
     }
 
