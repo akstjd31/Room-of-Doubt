@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 460220715532080627}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.85958e-14, y: -0.2573304, z: 0.029794425}
+  m_LocalPosition: {x: 0, y: -0.25733033, z: 0.029794335}
   m_LocalScale: {x: 1.2499993, y: 1.2500001, z: 1.2499995}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1034,7 +1034,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a0c86371c0dea43a128adf43b1c7fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  cameraPivot: {fileID: 6788959173432372285}
+  cameraPivot: {fileID: 3246920322012094351}
   myCam: {fileID: 3329915583055528304}
   playerMonos: []
 --- !u!114 &159607868851841945
@@ -1886,7 +1886,7 @@ MonoBehaviour:
   m_StreamingVersion: 20241001
   m_LegacyPriority: 0
   Target:
-    TrackingTarget: {fileID: 8421052397446632163}
+    TrackingTarget: {fileID: 0}
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:

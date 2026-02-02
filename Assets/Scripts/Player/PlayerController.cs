@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviourPun
 
     private void Start()
     {
-        SpectatorManager.Instance.Register(this);
+        if (SpectatorManager.Instance != null)
+            SpectatorManager.Instance.Register(this);
     }
 
     private void OnDestroy()
@@ -91,6 +92,7 @@ public class PlayerController : MonoBehaviourPun
     {
         if (!photonView.IsMine) return;
         if (!IsEscaped) return;
+        if (!SpectatorManager.Instance.IsSpectating) return;
 
         if (Input.GetMouseButtonDown(0))
             SpectatorManager.Instance.NextTarget();

@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class HintDatabase : Singleton<HintDatabase>
 {
     public string Render(string hintKey, string payload)
     {
         // 매니저 참조 (전체 번호 확인용)
-        KeyPadManager keyPadMgr = FindFirstObjectByType<KeyPadManager>(FindObjectsInactive.Include);
+        KeyPadManager keyPadMgr = FindObjectsByType<KeyPadManager>(FindObjectsInactive.Include, FindObjectsSortMode.None).FirstOrDefault(k => !k.IsFinal);
         WirePuzzleManager wireMgr = FindFirstObjectByType<WirePuzzleManager>(FindObjectsInactive.Include);
 
         switch (hintKey)
