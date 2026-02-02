@@ -9,6 +9,7 @@ public class LobbyManager : MonoBehaviourPunCallbacks
     [SerializeField] private FirebaseDBManager db;
     [SerializeField] private Button quickMachingbtn;
 
+
     private bool lobbyReady = false;
 
     private void Awake()

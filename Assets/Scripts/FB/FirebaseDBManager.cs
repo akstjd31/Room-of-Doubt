@@ -5,12 +5,15 @@ using Firebase.Auth;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using TMPro;
 
 public class FirebaseDBManager : MonoBehaviour
 {
     DatabaseReference dbRef;
     FirebaseUser user;
     [SerializeField] private string userRoot = "users";
+    [SerializeField] private TMP_Text goldText;
+    [SerializeField] private TMP_Text expText;
 
     private void Start()
     {
@@ -93,6 +96,9 @@ public class FirebaseDBManager : MonoBehaviour
             };
 
             UserDataManager.Instance.SetData(data);
+
+            goldText.text = "골드: " + data.gold.ToString();
+            expText.text = "경험치: " + data.exp.ToString();
             Debug.Log("로드 성공!");
         }
         catch (Exception e)
