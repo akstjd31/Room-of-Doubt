@@ -8,6 +8,7 @@ using Firebase.Extensions;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
+using WebSocketSharp;
 
 
 public class FirebaseAuthManager : MonoBehaviour
@@ -19,6 +20,7 @@ public class FirebaseAuthManager : MonoBehaviour
     [SerializeField] private TMP_InputField emailField;
     [SerializeField] private TMP_InputField pwField;
     [SerializeField] private TMP_InputField nickField;
+    [SerializeField] private TMP_Text messageText;
 
     private void Awake()
     {
@@ -54,6 +56,8 @@ public class FirebaseAuthManager : MonoBehaviour
     // 로그인을 위한 코루틴
     IEnumerator LoginCor(string email, string password)
     {
+        if (email.IsNullOrEmpty() || password.IsNullOrEmpty()) yield break;
+
         Task<AuthResult> loginTask = auth.SignInWithEmailAndPasswordAsync(email, password);
         yield return new WaitUntil(predicate: () => loginTask.IsCompleted);
 
@@ -68,29 +72,32 @@ public class FirebaseAuthManager : MonoBehaviour
             switch (errorCode)
             {
                 case AuthError.MissingEmail:
-                    message = "이메일 누락";
+                    message = "이메일을 입력해주세요!";
                     break;
                 case AuthError.MissingPassword:
-                    message = "패스워드 누락";
+                    message = "패스워드를 입력해주세요!";
                     break;
                 case AuthError.WrongPassword:
-                    message = "패스워드 틀림";
+                    message = "패스워드를 확인해주세요.";
                     break;
                 case AuthError.InvalidEmail:
-                    message = "이메일 형식이 옳지 않음";
+                    message = "이메일 형식이 아닙니다!";
                     break;
                 case AuthError.UserNotFound:
-                    message = "아이디가 존재하지 않음";
+                    message = "아이디가 존재하지 않습니다!";
                     break;
                 default:
-                    message = "관리자에게 문의 바랍니다";
+                    message = "관리자에게 문의 바랍니다.";
                     break;
             }
 
-            Debug.LogError(message);
+            messageText.color = Color.red;
+            messageText.text = message;
         }
         else
         {
+            messageText.color = Color.blue;
+            messageText.text = "로그인하였습니다! 게임시작 버튼을 눌러주세요.";
             user = loginTask.Result.User;
             startButton.interactable = true;
             UserDataManager.Instance.SetNickname(user.DisplayName);
@@ -103,62 +110,63 @@ public class FirebaseAuthManager : MonoBehaviour
     }
 
     IEnumerator RegisterCor(string email, string password, string userName)
+{
+    // 닉네임 먼저 체크
+    if (string.IsNullOrEmpty(userName))
     {
-        Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
-        yield return new WaitUntil(() => registerTask.IsCompleted);
+        messageText.color = Color.red;
+        messageText.text = "닉네임을 입력해주세요!";
+        yield break;
+    }
 
-        if (registerTask.Exception != null)
+    // 계정 생성 시도
+    Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
+    yield return new WaitUntil(() => registerTask.IsCompleted);
+
+    if (registerTask.Exception != null)
+    {
+        Debug.LogWarning(message: "실패 사유" + registerTask.Exception);
+        FirebaseException firebaseEx = registerTask.Exception.GetBaseException() as FirebaseException;
+        AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
+
+        string message = "회원가입 실패";
+        switch (errorCode)
         {
-            Debug.LogWarning(message: "실패 사유" + registerTask.Exception);
-            FirebaseException firebaseEx = registerTask.Exception.GetBaseException() as FirebaseException;
-            AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-
-            string message = "회원가입 실패";
-            switch (errorCode)
-            {
-                case AuthError.MissingEmail:
-                    message = "이메일 누락";
-                    break;
-                case AuthError.MissingPassword:
-                    message = "패스워드 누락";
-                    break;
-                case AuthError.WeakPassword:
-                    message = "패스워드 약함";
-                    break;
-                case AuthError.EmailAlreadyInUse:
-                    message = "중복 이메일";
-                    break;
-                default:
-                    message = "기타 사유. 관리자 문의 바람";
-                    break;
-            }
-            
-            Debug.LogError(message);
+            case AuthError.MissingEmail: message = "이메일을 입력해주세요!"; break;
+            case AuthError.MissingPassword: message = "패스워드를 입력해주세요!"; break;
+            case AuthError.WeakPassword: message = "패스워드는 최소 6자리 이상으로 작성해주세요!"; break;
+            case AuthError.EmailAlreadyInUse: message = "이미 가입된 이메일입니다!"; break;
+            default: message = "관리자에게 문의 바랍니다."; break;
         }
-        else
+        
+        messageText.color = Color.red;
+        messageText.text = message;
+    }
+    else
+    {
+        // 프로필 설정
+        user = registerTask.Result.User;
+
+        if (user != null)
         {
-            user = registerTask.Result.User;
+            UserProfile profile = new UserProfile { DisplayName = userName };
 
-            if (user != null)
+            Task profileTask = user.UpdateUserProfileAsync(profile);
+            yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
+
+            if (profileTask.Exception != null)
             {
-                UserProfile profile = new UserProfile { DisplayName = userName };
-
-                Task profileTask = user.UpdateUserProfileAsync(profile);
-                yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
-
-                if (profileTask.Exception != null)
-                {
-                    Debug.LogError("닉네임설정 실패 " + profileTask.Exception);
-                    FirebaseException firebaseEx = profileTask.Exception.GetBaseException() as FirebaseException;
-                    AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-                }
-                else
-                {
-                    startButton.interactable = true;
-                }
+                messageText.color = Color.red;
+                messageText.text = "닉네임 설정에 실패했습니다!";
             }
-
-            UserDataManager.Instance.SetNickname(userName);
+            else
+            {
+                messageText.color = Color.blue;
+                messageText.text = "회원가입 완료했습니다! 게임시작 버튼을 눌러주세요.";
+                startButton.interactable = true;
+                UserDataManager.Instance.SetNickname(userName);
+            }
         }
     }
+}
 }
