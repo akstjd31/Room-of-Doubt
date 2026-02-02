@@ -96,6 +96,26 @@ public class FirebaseAuthManager : MonoBehaviour
         }
         else
         {
+            user = loginTask.Result.User;
+            string uid = user.UserId;
+
+            var checkTask = dbRef.Child("Users").Child(uid).Child("isLogin").GetValueAsync();
+            yield return new WaitUntil(() => checkTask.IsCompleted);
+
+            if (checkTask.Result.Exists && (bool)checkTask.Result.Value == true)
+            {
+                messageText.color = Color.red;
+                messageText.text = "이미 접속 중인 계정입니다.";
+                auth.SignOut();
+                yield break;
+            }
+
+            // 앱이 꺼지거나 연결이 끊기면 false로
+            dbRef.Child("Users").Child(uid).Child("isLogin").OnDisconnect().SetValue(false);
+
+            // 현재 로그인 상태를 true로 변경
+            yield return dbRef.Child("Users").Child(uid).Child("isLogin").SetValueAsync(true);
+
             messageText.color = Color.blue;
             messageText.text = "로그인하였습니다! 게임시작 버튼을 눌러주세요.";
             user = loginTask.Result.User;
@@ -110,63 +130,63 @@ public class FirebaseAuthManager : MonoBehaviour
     }
 
     IEnumerator RegisterCor(string email, string password, string userName)
-{
-    // 닉네임 먼저 체크
-    if (string.IsNullOrEmpty(userName))
     {
-        messageText.color = Color.red;
-        messageText.text = "닉네임을 입력해주세요!";
-        yield break;
-    }
-
-    // 계정 생성 시도
-    Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
-    yield return new WaitUntil(() => registerTask.IsCompleted);
-
-    if (registerTask.Exception != null)
-    {
-        Debug.LogWarning(message: "실패 사유" + registerTask.Exception);
-        FirebaseException firebaseEx = registerTask.Exception.GetBaseException() as FirebaseException;
-        AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-
-        string message = "회원가입 실패";
-        switch (errorCode)
+        // 닉네임 먼저 체크
+        if (string.IsNullOrEmpty(userName))
         {
-            case AuthError.MissingEmail: message = "이메일을 입력해주세요!"; break;
-            case AuthError.MissingPassword: message = "패스워드를 입력해주세요!"; break;
-            case AuthError.WeakPassword: message = "패스워드는 최소 6자리 이상으로 작성해주세요!"; break;
-            case AuthError.EmailAlreadyInUse: message = "이미 가입된 이메일입니다!"; break;
-            default: message = "관리자에게 문의 바랍니다."; break;
+            messageText.color = Color.red;
+            messageText.text = "닉네임을 입력해주세요!";
+            yield break;
         }
-        
-        messageText.color = Color.red;
-        messageText.text = message;
-    }
-    else
-    {
-        // 프로필 설정
-        user = registerTask.Result.User;
 
-        if (user != null)
+        // 계정 생성 시도
+        Task<AuthResult> registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
+        yield return new WaitUntil(() => registerTask.IsCompleted);
+
+        if (registerTask.Exception != null)
         {
-            UserProfile profile = new UserProfile { DisplayName = userName };
+            Debug.LogWarning(message: "실패 사유" + registerTask.Exception);
+            FirebaseException firebaseEx = registerTask.Exception.GetBaseException() as FirebaseException;
+            AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
 
-            Task profileTask = user.UpdateUserProfileAsync(profile);
-            yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
-
-            if (profileTask.Exception != null)
+            string message = "회원가입 실패";
+            switch (errorCode)
             {
-                messageText.color = Color.red;
-                messageText.text = "닉네임 설정에 실패했습니다!";
+                case AuthError.MissingEmail: message = "이메일을 입력해주세요!"; break;
+                case AuthError.MissingPassword: message = "패스워드를 입력해주세요!"; break;
+                case AuthError.WeakPassword: message = "패스워드는 최소 6자리 이상으로 작성해주세요!"; break;
+                case AuthError.EmailAlreadyInUse: message = "이미 가입된 이메일입니다!"; break;
+                default: message = "관리자에게 문의 바랍니다."; break;
             }
-            else
+
+            messageText.color = Color.red;
+            messageText.text = message;
+        }
+        else
+        {
+            // 프로필 설정
+            user = registerTask.Result.User;
+
+            if (user != null)
             {
-                messageText.color = Color.blue;
-                messageText.text = "회원가입 완료했습니다! 게임시작 버튼을 눌러주세요.";
-                startButton.interactable = true;
-                UserDataManager.Instance.SetNickname(userName);
+                UserProfile profile = new UserProfile { DisplayName = userName };
+
+                Task profileTask = user.UpdateUserProfileAsync(profile);
+                yield return new WaitUntil(predicate: () => profileTask.IsCompleted);
+
+                if (profileTask.Exception != null)
+                {
+                    messageText.color = Color.red;
+                    messageText.text = "닉네임 설정에 실패했습니다!";
+                }
+                else
+                {
+                    messageText.color = Color.blue;
+                    messageText.text = "회원가입 완료했습니다! 게임시작 버튼을 눌러주세요.";
+                    startButton.interactable = true;
+                    UserDataManager.Instance.SetNickname(userName);
+                }
             }
         }
     }
-}
 }
