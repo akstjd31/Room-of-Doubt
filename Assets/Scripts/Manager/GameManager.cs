@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             string payload = BuildSeedPayload(puzzleSeeds);
             bool isLampOwner = (i == lampOwnerIndex); // 현재 루프 순서가 당첨 번호와 같으면 true
 
-            // 각 역할(A,B,C,D) 프로퍼티에 데이터 할당
+            // 각 역할(A,B,C) 프로퍼티에 데이터 할당
             switch (i)
             {
                 case 0:
@@ -253,10 +253,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                     props[RoomPropKeys.START_C_ID] = hintKey;
                     props[RoomPropKeys.START_C_PAY] = payload;
                     props[RoomPropKeys.START_C_LAMP] = isLampOwner; break;
-                case 3:
-                    props[RoomPropKeys.START_D_ID] = hintKey;
-                    props[RoomPropKeys.START_D_PAY] = payload;
-                    props[RoomPropKeys.START_D_LAMP] = isLampOwner; break;
+                // case 3:
+                //     props[RoomPropKeys.START_D_ID] = hintKey;
+                //     props[RoomPropKeys.START_D_PAY] = payload;
+                //     props[RoomPropKeys.START_D_LAMP] = isLampOwner; break;
             }
         }
         room.SetCustomProperties(props);
@@ -290,10 +290,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 hintKey = room.CustomProperties[RoomPropKeys.START_C_ID] as string;
                 payload = room.CustomProperties[RoomPropKeys.START_C_PAY] as string;
                 hasLamp = GetPropBool(room, RoomPropKeys.START_C_LAMP); break;
-            case 'D':
-                hintKey = room.CustomProperties[RoomPropKeys.START_D_ID] as string;
-                payload = room.CustomProperties[RoomPropKeys.START_D_PAY] as string;
-                hasLamp = GetPropBool(room, RoomPropKeys.START_D_LAMP); break;
+            // case 'D':
+            //     hintKey = room.CustomProperties[RoomPropKeys.START_D_ID] as string;
+            //     payload = room.CustomProperties[RoomPropKeys.START_D_PAY] as string;
+            //     hasLamp = GetPropBool(room, RoomPropKeys.START_D_LAMP); break;
         }
 
         // 램프 지급 (1명만)
@@ -359,7 +359,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             if (paper.gameObject.name.Equals(paperName))
             {
                 paper.SetHintText(val);
-                return;
             }
         }
     }

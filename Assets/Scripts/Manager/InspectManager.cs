@@ -118,17 +118,12 @@ public class InspectManager : MonoBehaviour
             Quaternion.identity
         );
 
-        // 자식들 중에서 HintPaper 컴포넌트를 탐색 (비활성화된 자식까지 포함하려면 true 인자 추가)
+        // // 자식들 중에서 HintPaper 컴포넌트를 탐색 (비활성화된 자식까지 포함하려면 true 인자 추가)
         var hintPaper = spawned.GetComponentInChildren<HintPaper>(true);
-
         if (hintPaper != null)
         {
-            var content = QuickSlotManager.Local.ReadFocusedHint();
-            if (!string.IsNullOrEmpty(content))
-            {
-                hintPaper.SetHintText(content);
-            }
-        }
+            hintPaper.SetHintText(slot.current.hint.payload);
+        } 
 
         if (spawned.TryGetComponent<Rigidbody>(out var rigid))
             rigid.isKinematic = true;
