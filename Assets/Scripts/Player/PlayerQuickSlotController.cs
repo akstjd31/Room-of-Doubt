@@ -83,6 +83,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
+        if (GameManager.Instance.OptionOn) return;
 
         int nextIndex = int.Parse(ctx.control.name) - 1;
         
@@ -99,6 +100,7 @@ public class PlayerQuickSlotController : MonoBehaviourPunCallbacks
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
+        if (GameManager.Instance.OptionOn) return;
         
         float value = ctx.ReadValue<Vector2>().y;
         

@@ -21,7 +21,7 @@ public class SharedInventoryManager : MonoBehaviourPunCallbacks
 
     [Header("Slot")]
     public ItemInstance[] sharedItems;
-    [SerializeField] private int inventorySize = 20;
+    [SerializeField] private int inventorySize = 10;
     private List<Slot> slots;
 
     private void Awake()

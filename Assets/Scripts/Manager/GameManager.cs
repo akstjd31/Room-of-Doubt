@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private int timeLimitSeconds = 180;
     public int TimeLimitSeconds => timeLimitSeconds;
     public bool IsPaused { get; private set; }
-    public bool OptionOn { get; set; }
+    public bool OptionOn { get; set; } = true;
 
     public bool IsInteractingFocused { get; private set; }
     private bool isLocalPlayerCreated;
@@ -413,6 +413,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         {
             OptionOn = false;
             UIManager.Instance.SetOptionPanelActive(OptionOn);
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
             return;
         }
 

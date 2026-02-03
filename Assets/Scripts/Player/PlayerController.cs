@@ -97,6 +97,7 @@ public class PlayerController : MonoBehaviourPun
         if (!photonView.IsMine) return;
         if (!IsEscaped) return;
         if (!SpectatorManager.Instance.IsSpectating) return;
+        if (GameManager.Instance.OptionOn) return;
 
         if (Input.GetMouseButtonDown(0))
             SpectatorManager.Instance.NextTarget();

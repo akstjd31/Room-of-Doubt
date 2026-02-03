@@ -39,6 +39,7 @@ public class PlayerInspectController : MonoBehaviourPun
         if (QuickSlotManager.Local.IsEmpty()) return;
         if (GameManager.Instance.IsPaused) return;
         if (GameManager.Instance.IsInteractingFocused) return;
+        if (GameManager.Instance.OptionOn) return;
 
 
         if (camController != null)

@@ -39,7 +39,7 @@ public class PlayerCameraController : MonoBehaviourPun
         lookAction.performed += OnLook;
         lookAction.canceled += OnLook;
 
-        SetCursor(CursorLockMode.Locked, false);
+        // SetCursor(CursorLockMode.Locked, false);
 
         StartCoroutine(RegisterLocalAfterOwnershipReady());
     }
@@ -125,6 +125,7 @@ public class PlayerCameraController : MonoBehaviourPun
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
         if (UIManager.Instance.IsOpen) return;
+        if (GameManager.Instance.OptionOn) return;
 
         float mouseX = lookInput.x * sensitivity;
         float mouseY = lookInput.y * sensitivity;

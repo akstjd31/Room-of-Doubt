@@ -61,6 +61,7 @@ public class PlayerMoveController : MonoBehaviourPun
         if (UIManager.Instance.IsOpen) return;
         if (InspectManager.Instance.IsInspecting) return;
         if (GameManager.Instance.IsInteractingFocused) return;
+        if (GameManager.Instance.OptionOn) return;
         if (!photonView.IsMine) return;
 
         // 카메라 기준 방향 벡터

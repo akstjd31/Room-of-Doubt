@@ -45,6 +45,7 @@ public class PlayerInteractionController : MonoBehaviourPun
         if (current == null) return;
         if (camController == null) return;
         if (UIManager.Instance.IsOpen) return;
+        if (GameManager.Instance.OptionOn) return;
 
         camController.SetBlendEaseInOut(0.5f);
 
