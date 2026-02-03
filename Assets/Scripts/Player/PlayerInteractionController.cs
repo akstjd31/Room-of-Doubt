@@ -44,6 +44,7 @@ public class PlayerInteractionController : MonoBehaviourPun
     {
         if (current == null) return;
         if (camController == null) return;
+        if (UIManager.Instance.IsOpen) return;
 
         camController.SetBlendEaseInOut(0.5f);
 
@@ -52,6 +53,8 @@ public class PlayerInteractionController : MonoBehaviourPun
                     RpcTarget.All,
                     current.ViewId);
     }
+
+
 
     // 상호작용 RPC (info에 Sender 정보가 담겨 있음.)
     [PunRPC]

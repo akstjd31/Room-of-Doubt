@@ -54,6 +54,8 @@ public class UIManager : MonoBehaviourPunCallbacks
     private void Update()
     {
         if (InspectManager.Instance.IsInspecting) return;
+        if (GameManager.Instance.IsPaused) return;
+        if (GameManager.Instance.IsInteractingFocused) return;
         
         if (Input.GetKeyDown(KeyCode.Tab))
             ToggleUI();

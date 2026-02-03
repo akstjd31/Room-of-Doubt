@@ -418,7 +418,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
         IsPaused = !IsPaused;
         if (IsPaused) OnGamePaused?.Invoke();
-        else OnGameResumed?.Invoke();
+        else
+        {
+            OnGameResumed?.Invoke();
+
+            if (UIManager.Instance.IsOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
     }
 
     public void OnClickResumeButton() => TogglePause();

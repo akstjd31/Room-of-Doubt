@@ -244,8 +244,6 @@ public class QuickSlotManager : MonoBehaviour
             Item focusedItem = ItemManager.Instance.GetItemById(slots[focusedIndex].current.itemId);
             bool lampOn = focusedItem != null && focusedItem.IsLamp;
             Debug.Log("램프 온: " + lampOn);
-
-
             LampNet.SetLampOn(lampOn);
         }
         else
@@ -288,6 +286,18 @@ public class QuickSlotManager : MonoBehaviour
         slots[index].Clear();
         if (inst != null)
             slots[index].Set(inst);
+        
+        if (slots[focusedIndex].current != null)
+        {
+            Item focusedItem = ItemManager.Instance.GetItemById(slots[focusedIndex].current.itemId);
+            bool lampOn = focusedItem != null && focusedItem.IsLamp;
+            Debug.Log("램프 온: " + lampOn);
+            LampNet.SetLampOn(lampOn);
+        }
+        else
+        {
+            LampNet.SetLampOn(false);
+        }
 
         NotifySnapshotToMaster();
         SaveSnapshotToProps();
