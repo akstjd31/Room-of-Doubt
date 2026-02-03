@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class WirePuzzleManager : MonoBehaviourPunCallbacks
 {
+    [Header("Sound")]
+    private AudioSource audioSource;
+    [SerializeField] AudioClip[] socketSounds;
 
     [Header("Raycast")]
     [SerializeField] public Camera cam;
@@ -66,6 +69,7 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
+        audioSource = this.GetComponent<AudioSource>();
         answerMap = new Dictionary<int, int>();
         colorNames = new string[columns * 2];
         // foreach (var p in answerPairs)
@@ -437,6 +441,8 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     [PunRPC]
     private void ApplyConnectRPC(int aId, int bId, int actorNumber)
     {
+        audioSource.PlayOneShot(socketSounds[0]);
+
         links[aId] = bId;
         links[bId] = aId;
 
@@ -472,6 +478,8 @@ public class WirePuzzleManager : MonoBehaviourPunCallbacks
     // 연결 끊기 (기존 링크 리스트에서 제거)
     private void Disconnect(int aId, int bId)
     {
+        audioSource.PlayOneShot(socketSounds[1]);
+
         if (links.TryGetValue(aId, out int otherA) && otherA == bId) links.Remove(aId);
         if (links.TryGetValue(bId, out int otherB) && otherB == aId) links.Remove(bId);
 

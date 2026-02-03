@@ -128,6 +128,7 @@ public class UIManager : MonoBehaviourPunCallbacks
 
     public void ShowMessage(string message)
     {
+        SoundManager.Instance.PlayPromptSound();
         promptText.text = message;
 
         SetAlpha(1f);

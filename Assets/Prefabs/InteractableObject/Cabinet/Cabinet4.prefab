@@ -382,7 +382,6 @@ MonoBehaviour:
   myCam: {fileID: 0}
   brain: {fileID: 0}
   isTransitioning: 0
-  drawerSounds: []
   keyPad: {fileID: 0}
 --- !u!1 &3811021898703579386
 GameObject:
@@ -441,7 +440,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 3
+  MaxDistance: 2
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -476,7 +475,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -828,7 +827,6 @@ MonoBehaviour:
   myCam: {fileID: 0}
   brain: {fileID: 0}
   isTransitioning: 0
-  drawerSounds: []
   keyPad: {fileID: 0}
 --- !u!1 &7689531687134283155
 GameObject:
@@ -998,7 +996,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 3
+  MaxDistance: 2
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -1033,7 +1031,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

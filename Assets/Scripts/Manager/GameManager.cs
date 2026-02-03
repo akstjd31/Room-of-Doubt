@@ -114,6 +114,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         WirePuzzleSolved = true;
         if (lights == null || lights.Length < 1) return;
         foreach (var obj in lights) obj.SetActive(true);
+
+        SoundManager.Instance.PlayLightOnSound();
     }
 
     private IEnumerator InitAfterSceneLoaded()

@@ -7,6 +7,9 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip buttonClickSound;
     [SerializeField] private AudioClip failureSound;
     [SerializeField] private AudioClip correctSound;
+    [SerializeField] private AudioClip itemPickUpSound;
+    [SerializeField] private AudioClip promptSound;
+    [SerializeField] private AudioClip lightOnSound;
 
     private void Awake()
     {
@@ -18,4 +21,7 @@ public class SoundManager : MonoBehaviour
     public void PlayButtonClickSound() => audioSource.PlayOneShot(buttonClickSound);
     public void PlayFailureSound() => audioSource.PlayOneShot(failureSound);
     public void PlayCorrectSound() => audioSource.PlayOneShot(correctSound);
+    public void PlayItemPickUpSound() => audioSource.PlayOneShot(itemPickUpSound);
+    public void PlayPromptSound() => audioSource.PlayOneShot(promptSound);
+    public void PlayLightOnSound() => audioSource.PlayOneShot(lightOnSound);
 }
