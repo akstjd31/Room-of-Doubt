@@ -11,12 +11,12 @@ public class SwitchLight : InteractableBase
     public override void Interact(int actorNumber)
     {
         // 해당 퍼즐 (모든 불을 키는 그런 퍼즐) 이 해결안되었다면 기능 사용 X
-        // if (!GameManager.Instance.WirePuzzleSolved)
-        // {
-        //     prompt = "불이 안켜진다.";
-        //     UIManager.Instance.ShowMessage(prompt);
-        //     return;
-        // }
+        if (!GameManager.Instance.WirePuzzleSolved)
+        {
+            prompt = "불이 안켜진다.";
+            UIManager.Instance.ShowMessage(prompt);
+            return;
+        }
 
         isOn = !isOn;
         audioSource.PlayOneShot(switchSound);

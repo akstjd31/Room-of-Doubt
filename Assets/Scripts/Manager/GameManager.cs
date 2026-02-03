@@ -192,9 +192,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         var players = PhotonNetwork.PlayerList;
         Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
 
-        char[] roles = { 'A', 'B', 'C', 'D' };
+        char[] roles = { 'A', 'B', 'C' };
 
-        for (int i = 0; i < players.Length && i < 4; i++)
+        for (int i = 0; i < players.Length && i < 3; i++)
         {
             var p = players[i];
 
