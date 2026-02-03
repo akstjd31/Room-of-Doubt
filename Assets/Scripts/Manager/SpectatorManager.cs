@@ -46,6 +46,7 @@ public class SpectatorManager : MonoBehaviour
         if (alive.Count == 0)
         {
             Debug.LogWarning("관전할 수 있는 생존 플레이어가 없습니다.");
+            GameManager.Instance.MoveAllToLobby();
             return;
         }
 

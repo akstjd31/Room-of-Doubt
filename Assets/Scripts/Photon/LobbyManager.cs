@@ -54,6 +54,15 @@ public class LobbyManager : MonoBehaviourPunCallbacks
         Debug.Log("방에서 떠남!(콜백)");
     }
 
+    public void OnClickQuitButton()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     private void JoinLobbySafe()
     {
         lobbyReady = false;
