@@ -30,7 +30,8 @@ public class SpectatorManager : MonoBehaviour
 
     public void Register(PlayerController p)
     {
-        if (!players.Contains(p)) players.Add(p);
+        players.RemoveAll(x => x == null);
+        if (p != null && !players.Contains(p)) players.Add(p);
     }
 
     public void UnRegister(PlayerController p)
@@ -45,8 +46,6 @@ public class SpectatorManager : MonoBehaviour
 
         if (alive.Count == 0)
         {
-            Debug.LogWarning("관전할 수 있는 생존 플레이어가 없습니다.");
-            GameManager.Instance.MoveAllToLobby();
             return;
         }
 
@@ -65,18 +64,18 @@ public class SpectatorManager : MonoBehaviour
         SetTarget(alive[currentIndex]);
     }
 
-private void SetTarget(PlayerController target)
-{
-    if (target == null || target.CameraPivot == null) return;
+    private void SetTarget(PlayerController target)
+    {
+        if (target == null || target.CameraPivot == null) return;
 
-    // 1. 타겟 할당
-    spectateVCam.Follow = target.CameraPivot;
+        // 1. 타겟 할당
+        spectateVCam.Follow = target.CameraPivot;
 
-    // Same As Follow Target 설정 시, 이 Warp 호출이 현재 회전 상태를 즉시 동기화
-    spectateVCam.OnTargetObjectWarped(target.CameraPivot, target.CameraPivot.position - spectateVCam.transform.position);
-    
-    spectateVCam.transform.rotation = target.CameraPivot.rotation;
+        // Same As Follow Target 설정 시, 이 Warp 호출이 현재 회전 상태를 즉시 동기화
+        spectateVCam.OnTargetObjectWarped(target.CameraPivot, target.CameraPivot.position - spectateVCam.transform.position);
 
-    Debug.Log($"[Spectate] {target.name} 시점 동기화 완료");
-}
+        spectateVCam.transform.rotation = target.CameraPivot.rotation;
+
+        Debug.Log($"[Spectate] {target.name} 시점 동기화 완료");
+    }
 }

@@ -19,25 +19,25 @@ public class RoomRewardManager : MonoBehaviourPun
         Instance = this;
     }
 
-    public void NotifyEscapedToMaster(int actorNumber)
-    {
-        if (!PhotonNetwork.InRoom) return;
-        photonView.RPC(nameof(NotifyEscapedRPC), RpcTarget.MasterClient, actorNumber);
-    }
-
-    [PunRPC]
-    private void NotifyEscapedRPC(int actorNumber, PhotonMessageInfo info)
+    public void RegisterEscapedMasterOnly(int actorNumber)
     {
         if (!PhotonNetwork.IsMasterClient) return;
 
-        // 위조 방지
-        if (info.Sender.ActorNumber != actorNumber) return;
-
-        // 이미 등록된 탈출자면 중복 처리 방지
         if (!escapedActors.Add(actorNumber)) return;
 
         photonView.RPC(nameof(GrantExpRPC), RpcTarget.All, actorNumber, rewardData.exp);
+
+        int totalPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
+        Debug.Log($"[Reward] total={totalPlayers}, escaped={escapedActors.Count}");
+
+        if (!finalized && escapedActors.Count >= totalPlayers)
+        {
+            Debug.Log("전원 탈출! 즉시 골드 정산 후 로비 이동");
+            FinalizeGoldRewards();
+        }
     }
+
+
 
     // 경험치 주기
     [PunRPC]
@@ -53,6 +53,8 @@ public class RoomRewardManager : MonoBehaviourPun
 
         UserDataManager.Instance.AddExp(exp);
         Debug.Log($"보상 경험치 : {exp}");
+
+
     }
 
     // 주어진 시간이 다 지나면 골드 계산 후 지급

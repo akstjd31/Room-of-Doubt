@@ -48,16 +48,19 @@ public class PlayerController : MonoBehaviourPun
     private void RequestEscapeToMaster(int actorNumber, PhotonMessageInfo info)
     {
         if (!PhotonNetwork.IsMasterClient) return;
-
         if (info.Sender.ActorNumber != actorNumber) return;
 
         photonView.RPC(nameof(ApplyEscapeAll), RpcTarget.All, actorNumber);
 
-        if (RoomRewardManager.Instance != null)
-            RoomRewardManager.Instance.NotifyEscapedToMaster(actorNumber);
+        if (RoomRewardManager.Instance == null)
+        {
+            Debug.LogError("[Master] RoomRewardManager.Instance NULL");
+            return;
+        }
 
-        TimeAttackSync.StartTimeAttack();
+        RoomRewardManager.Instance.RegisterEscapedMasterOnly(actorNumber);
     }
+
 
     [PunRPC]
     private void ApplyEscapeAll(int actorNumber)
