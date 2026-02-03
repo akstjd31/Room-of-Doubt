@@ -37,8 +37,6 @@ public class RoomRewardManager : MonoBehaviourPun
         }
     }
 
-
-
     // 경험치 주기
     [PunRPC]
     private void GrantExpRPC(int targetActor, int exp)

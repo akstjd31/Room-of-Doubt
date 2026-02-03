@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviourPun
             return;
         }
 
+        TimeAttackSync.StartTimeAttack();
         RoomRewardManager.Instance.RegisterEscapedMasterOnly(actorNumber);
     }
 
