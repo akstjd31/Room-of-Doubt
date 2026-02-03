@@ -39,9 +39,6 @@ public class Drawer : InteractableBase
                 }
             }
         }
-        
-        if (!Cursor.visible)
-            UIManager.Instance.ShowMessage(prompt);
     }
 
     protected override IEnumerator InitRoutine()

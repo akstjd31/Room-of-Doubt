@@ -69,8 +69,35 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         }
 
         // 상호작용을 위해 필요 아이템 존재 & 소모 아이템일 경우
-        if (requiredItem != null && requiredItem.ConsumeType.Equals(ConsumeType.Consumable))
-            QuickSlotManager.Local.RemoveItem();
+        if (requiredItem != null)
+        {
+            var slot = QuickSlotManager.Local.GetFocusedSlot();
+            if (slot == null)
+            {
+                prompt = "TV를 키려면 뭔가 필요한 것 같다.";
+                UIManager.Instance.ShowMessage(prompt);
+                return;
+            }
+
+            if (requiredItem.ConsumeType.Equals(ConsumeType.Consumable))
+            {
+                // 현재 슬롯에 같은 아이템이 있는 경우
+                if (requiredItem.ID.Equals(slot.current.itemId))
+                {
+                    QuickSlotManager.Local.RemoveItem();
+                }
+            }
+            else
+            {
+                if (!requiredItem.RequiredPart.ID.Equals(slot.current.installedPartId) ||
+                    !slot.current.HasInstalledPart)
+                {
+                    prompt = "이곳에 쓰는 아이템이 아닌 것 같다.";
+                    UIManager.Instance.ShowMessage(prompt);
+                    return;
+                }
+            }
+        }
 
         if (rewardItem != null)
         {

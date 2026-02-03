@@ -1,4 +1,6 @@
 using System.Collections;
+using Photon.Pun;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Door : InteractableBase
@@ -31,28 +33,10 @@ public class Door : InteractableBase
         }
 
         if (requiredItem != null)
-        {
-            var slot = QuickSlotManager.Local.GetFocusedSlot();
-
-            if (slot == null)
-            {
-                ShowLocalPrompt(actorNumber);
-                return;
-            }
-
-            // 현재 슬롯에 같은 아이템이 있는 경우
-            if (requiredItem.ID.Equals(slot.current.itemId))
-            {
-                requiredItem = null;
-                slot.Clear();
-            }
-        }
-
-        if (requiredItem == null)
-        {
-            isOpen = !isOpen;
-            anim.SetBool("IsOpen", isOpen);
-        }
+            requiredItem = null;
+            
+        isOpen = !isOpen;
+        anim.SetBool("IsOpen", isOpen);
     }
 
     private void ShowLocalPrompt(int actorNumber)
