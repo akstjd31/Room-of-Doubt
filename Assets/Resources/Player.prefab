@@ -1957,10 +1957,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4650586634833942272, guid: f768157a585d893499c35a43fce30439, type: 3}
-      propertyPath: sceneViewId
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9076788220499325610, guid: f768157a585d893499c35a43fce30439, type: 3}
       propertyPath: m_Name
       value: Lamp

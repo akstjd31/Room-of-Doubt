@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    [SerializeField] private int timeLimitSeconds = 30;
+    [SerializeField] private int timeLimitSeconds = 180;
     public int TimeLimitSeconds => timeLimitSeconds;
     public bool IsPaused { get; private set; }
 
