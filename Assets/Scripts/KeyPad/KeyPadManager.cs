@@ -58,6 +58,7 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
 
             if (Physics.Raycast(ray, out RaycastHit hit, 10f, numPadMask))
             {
+                SoundManager.Instance.PlayButtonClickSound();
                 var numComp = hit.transform.GetComponent<Number>();
                 if (numComp == null) return;
 
@@ -94,10 +95,13 @@ public class KeyPadManager : MonoBehaviourPunCallbacks
                             {
                                 photonView.RPC(nameof(SuccessRPC), RpcTarget.AllBuffered);
                             }
+
+                            SoundManager.Instance.PlayCorrectSound();
                         }
                     }
                     else
                     {
+                        SoundManager.Instance.PlayFailureSound();
                         ResetLocalInput();
                     }
 

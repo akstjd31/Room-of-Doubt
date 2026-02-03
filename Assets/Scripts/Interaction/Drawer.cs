@@ -4,6 +4,7 @@ using UnityEngine;
 public class Drawer : InteractableBase
 {
     private Animator anim;
+
     private bool isOpen;
     [SerializeField] private KeyPad keyPad;
 
@@ -47,4 +48,6 @@ public class Drawer : InteractableBase
     {
         yield break;
     }
+
+
 }

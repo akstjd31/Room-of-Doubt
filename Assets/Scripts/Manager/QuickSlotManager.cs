@@ -17,7 +17,7 @@ public class QuickSlotManager : MonoBehaviour
         }
     }
 
-    const int MAX_SLOT_COUNT = 4;
+    const int MAX_SLOT_COUNT = 2;
 
     [Header("Slot")]
     [SerializeField] private GameObject quickSlotParent;        // 판넬
@@ -88,6 +88,7 @@ public class QuickSlotManager : MonoBehaviour
 
         NotifySnapshotToMaster();
         SaveSnapshotToProps();
+        SoundManager.Instance.PlayFailureSound();
         return false;
     }
 

@@ -20,7 +20,7 @@ public class WirePuzzle : InteractableBase
     {
         if (puzzleMgr == null) yield break;
         yield return new WaitUntil(() => PhotonNetwork.InRoom);
-
+        
         while (playerCamCtrl == null)
         {
             playerCamCtrl = FindLocalCamCtrl();

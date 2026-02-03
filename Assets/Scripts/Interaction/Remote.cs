@@ -4,6 +4,7 @@ using Photon.Pun;
 public class Remote : InteractableBase
 {
     [SerializeField] private GameObject tapeObj;
+    private bool flag = false;
     private void OnEnable()
     {
         RefreshTapeState();
@@ -48,6 +49,12 @@ public class Remote : InteractableBase
 
         // 4) 결과 반영
         tapeObj.SetActive(!installed);
+
+        if (installed && !flag)
+        {
+            flag = true;
+            SoundManager.Instance.PlayPutInItemSound();
+        }
     }
 
     public override void Interact(int actorNumber)
