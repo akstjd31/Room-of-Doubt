@@ -5,7 +5,7 @@ using Photon.Pun;
 public class LiftObject : InteractableBase
 {
     private AudioSource audiosource;
-    [SerializeField] private AudioClip putDownSound;
+    [SerializeField] private AudioClip[] objectSound;
     
     public override void Interact(int actorNumber)
     {
@@ -16,8 +16,7 @@ public class LiftObject : InteractableBase
         float delta = isInteracting ? 0.3f : -0.3f;
         transform.position += new Vector3(0f, delta, 0f);
 
-        if (!isInteracting)
-            audiosource.PlayOneShot(putDownSound);
+        audiosource.PlayOneShot(isInteracting ? objectSound[0] : objectSound[1]);
     }
 
     protected override IEnumerator InitRoutine()

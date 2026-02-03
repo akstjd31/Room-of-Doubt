@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private int timeLimitSeconds = 180;
     public int TimeLimitSeconds => timeLimitSeconds;
     public bool IsPaused { get; private set; }
+    public bool OptionOn { get; set; }
 
     public bool IsInteractingFocused { get; private set; }
     private bool isLocalPlayerCreated;
@@ -408,13 +409,25 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     void TogglePause()
     {
+        if (OptionOn)
+        {
+            OptionOn = false;
+            UIManager.Instance.SetOptionPanelActive(OptionOn);
+            return;
+        }
+
         IsPaused = !IsPaused;
         if (IsPaused) OnGamePaused?.Invoke();
         else OnGameResumed?.Invoke();
     }
 
     public void OnClickResumeButton() => TogglePause();
-    public void OnClickOptionsButton() => UIManager.Instance.SetOptionPanelActive(true);
+    public void OnClickOptionsButton()
+    {
+        OptionOn = true;
+        UIManager.Instance.SetOptionPanelActive(OptionOn);
+    }
+
     public void OnClickQuitButton()
     {
 #if UNITY_EDITOR
