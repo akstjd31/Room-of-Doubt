@@ -21,12 +21,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     private void RefreshUI()
     {
-        if (startButton != null)
-            startButton.interactable = PhotonNetwork.IsMasterClient;
+        if (startButton != null && PhotonNetwork.InRoom)
+        {
+            // 방 인원이 꽉 차야 시작 가능
+            bool isMaster = PhotonNetwork.IsMasterClient;
+            bool isRoomFull =
+                PhotonNetwork.CurrentRoom.PlayerCount >=
+                PhotonNetwork.CurrentRoom.MaxPlayers;
+
+            startButton.interactable = isMaster && isRoomFull;
+        }
 
         foreach (var p in PhotonNetwork.PlayerList)
             Debug.Log("방 사람들 목록: " + p.NickName);
     }
+
 
     // 버튼 이벤트
     public void StartButton()
