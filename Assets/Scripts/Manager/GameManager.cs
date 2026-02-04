@@ -14,14 +14,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] private SpawnPointGroup playerSpawnPointGroup; // 플레이어 스폰 포인트 지정
 
     [Header("Start Hint 지급")]
-    [SerializeField] private string lampItemId;                     // 램프 Item SO GUID
-    [SerializeField] private string hintPaperItemId;                // 힌트 종이 Item SO GUID
+    [SerializeField] private string lampItemId;
+    [SerializeField] private string hintPaperItemId;
 
-    [SerializeField] private int quickSlotIndexForStartHint = 0;    // 무조건 0번째에 지급
+    [SerializeField] private int quickSlotIndexForStartHint = 0;    // 인게임 처음 지급되는 아이템은 무조건 0번 자리
 
-    private bool startHintGivenLocal = false;                       // 힌트를 주었는지?
+    private bool startHintGivenLocal = false;                       // 로컬 힌트 부여 여부
 
-    [SerializeField] private QuickSlotManager localQuickSlotMgr;    // 로컬 퀵 슬롯 (반드시 연결)
+    [SerializeField] private QuickSlotManager localQuickSlotMgr;    // 로컬 퀵 슬롯
 
     // actorNumber -> packed quickslot snapshot
     private readonly Dictionary<int, string[]> quickSlotSnapshotByActor = new();
@@ -29,16 +29,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-    [SerializeField] private int timeLimitSeconds = 180;
+    [SerializeField] private int timeLimitSeconds = 180;            // 첫 탈출자 나오면 타임 어택 시작
     public int TimeLimitSeconds => timeLimitSeconds;
     public bool IsPaused { get; private set; }
-    public bool OptionOn { get; set; } = true;
+    public bool OptionOn { get; set; } = true;                      // 옵션 탭 (게임 방법)
 
     public bool IsInteractingFocused { get; private set; }
     private bool isLocalPlayerCreated;
 
     [Header("Light")]
-    [SerializeField] private GameObject[] lights;
+    [SerializeField] private GameObject[] lights;                   // 퍼즐 해결 시 켜지게 될 불 오브젝트
     public bool WirePuzzleSolved { get; private set; }
 
     void Awake()
@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         base.OnDisable();
     }
 
+    // 퀵 슬롯 스냅샷만 수신, 마스터가 관리하도록
     public void OnEvent(EventData photonEvent)
     {
         if (photonEvent.Code != QuickSlotNet.EVT_QUICKSLOT_SNAPSHOT) return;
@@ -72,11 +73,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         var snapshot = photonEvent.CustomData as string[];
         if (snapshot == null) return;
 
-        Debug.Log($"[QS RECV] sender={senderActor}, isMaster={PhotonNetwork.IsMasterClient}, len={snapshot.Length}, mod3={snapshot.Length % 3}");
+        //Debug.Log($"[QS RECV] sender={senderActor}, isMaster={PhotonNetwork.IsMasterClient}, len={snapshot.Length}, mod3={snapshot.Length % 3}");
 
         if (PhotonNetwork.IsMasterClient)
             quickSlotSnapshotByActor[senderActor] = snapshot;
     }
+
     void Update()
     {
         if (InspectManager.Instance.IsInspecting) return;
@@ -92,13 +94,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         StartCoroutine(MoveAllToLobbyCor());
     }
 
+    // 모든 플레이어 로비로 내보내기
     private IEnumerator MoveAllToLobbyCor()
     {
         yield return new WaitForSeconds(1.0f);
 
         if (!PhotonNetwork.IsMasterClient) yield break;
 
-        Debug.Log("방 종료 -> 전원 LeaveRoom 요청");
+        //Debug.Log("방 종료 -> 전원 LeaveRoom 요청");
         photonView.RPC(nameof(LeaveRoomRPC), RpcTarget.All);
     }
 
@@ -119,6 +122,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         SoundManager.Instance.PlayLightOnSound();
     }
 
+    // 씬이 로드되고, 방까지 들어온 후에 힌트 세팅
     private IEnumerator InitAfterSceneLoaded()
     {
         yield return null;
@@ -134,6 +138,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    // 각 퍼즐 시드를 확보하고 다음 단계로 (Only 마스터)
     private void TrySetupStartHintsIfMaster()
     {
         if (!PhotonNetwork.IsMasterClient) return;
@@ -154,9 +159,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             return;
 
         CommitRandomStartHints(room, seeds);
-        Debug.Log("힌트 뿌림 완료.");
+        // Debug.Log("힌트 뿌림 완료.");
     }
 
+    // 퍼즐 시드 확인 및 추가
     private bool TryCollectPuzzleSeeds(Room room, out Dictionary<string, int> seeds)
     {
         seeds = new Dictionary<string, int>();
@@ -169,6 +175,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return ok;
     }
 
+    // 시드 설정
     private bool TryAddSeed(Room room, string key, Dictionary<string, int> dict)
     {
         if (!room.CustomProperties.TryGetValue(key, out var obj))
@@ -185,6 +192,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return true;
     }
 
+    // 규칙 설정 (Only 마스터)
     private void AssignRolesIfMaster()
     {
         if (!PhotonNetwork.IsMasterClient) return;
@@ -209,66 +217,68 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    // 퍼즐 시드를 기점으로 해쉬 변환 후 고정 랜덤 시드 생성 및 셔플 and 역할별 힌트 분배
     private void CommitRandomStartHints(Room room, Dictionary<string, int> puzzleSeeds)
-{
-    var players = PhotonNetwork.PlayerList;
-    Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
-
-    // 시드 생성
-    int combinedSeed = 17;
-    foreach (var kv in puzzleSeeds)
     {
-        unchecked { combinedSeed = combinedSeed * 31 + kv.Key.GetHashCode() + kv.Value; }
-    }
-    var rand = new System.Random(combinedSeed);
+        var players = PhotonNetwork.PlayerList;
+        Array.Sort(players, (a, b) => a.ActorNumber.CompareTo(b.ActorNumber));
 
-    // 힌트 풀 섞기
-    var shuffledHints = new List<string>(HintPools.Start);
-    for (int i = shuffledHints.Count - 1; i > 0; i--)
-    {
-        int r = rand.Next(0, i + 1);
-        (shuffledHints[i], shuffledHints[r]) = (shuffledHints[r], shuffledHints[i]);
-    }
-
-    // 램프 오너 정하기 (접속한 플레이어 중 랜덤)
-    int lampOwnerIndex = rand.Next(0, players.Length);
-    int hintPointer = 0; // 힌트 풀에서 꺼낼 인덱스
-
-    var props = new PhotonHashtable { { RoomPropKeys.START_READY, true } };
-
-    for (int i = 0; i < players.Length && i < 4; i++)
-    {
-        bool isLampOwner = (i == lampOwnerIndex);
-        string hintKey = "";
-        
-        if (!isLampOwner)
+        // 시드 생성
+        int combinedSeed = 17;
+        foreach (var kv in puzzleSeeds)
         {
-            if (hintPointer < shuffledHints.Count)
+            unchecked { combinedSeed = combinedSeed * 31 + kv.Key.GetHashCode() + kv.Value; }
+        }
+        var rand = new System.Random(combinedSeed);
+
+        // 힌트 풀 섞기
+        var shuffledHints = new List<string>(HintPools.Start);
+        for (int i = shuffledHints.Count - 1; i > 0; i--)
+        {
+            int r = rand.Next(0, i + 1);
+            (shuffledHints[i], shuffledHints[r]) = (shuffledHints[r], shuffledHints[i]);
+        }
+
+        // 램프 오너 정하기 (접속한 플레이어 중 랜덤)
+        int lampOwnerIndex = rand.Next(0, players.Length);
+        int hintPointer = 0; // 힌트 풀에서 꺼낼 인덱스
+
+        var props = new PhotonHashtable { { RoomPropKeys.START_READY, true } };
+
+        for (int i = 0; i < players.Length && i < 4; i++)
+        {
+            bool isLampOwner = (i == lampOwnerIndex);
+            string hintKey = "";
+
+            if (!isLampOwner)
             {
-                hintKey = shuffledHints[hintPointer];
-                hintPointer++;
+                if (hintPointer < shuffledHints.Count)
+                {
+                    hintKey = shuffledHints[hintPointer];
+                    hintPointer++;
+                }
             }
+            else
+            {
+                hintKey = "";
+            }
+
+            string payload = BuildSeedPayload(puzzleSeeds);
+
+            // 역할별 할당 (A, B, C...)
+            string idKey = i == 0 ? RoomPropKeys.START_A_ID : (i == 1 ? RoomPropKeys.START_B_ID : RoomPropKeys.START_C_ID);
+            string payKey = i == 0 ? RoomPropKeys.START_A_PAY : (i == 1 ? RoomPropKeys.START_B_PAY : RoomPropKeys.START_C_PAY);
+            string lampKey = i == 0 ? RoomPropKeys.START_A_LAMP : (i == 1 ? RoomPropKeys.START_B_LAMP : RoomPropKeys.START_C_LAMP);
+
+            props[idKey] = hintKey;
+            props[payKey] = payload;
+            props[lampKey] = isLampOwner;
         }
-        else
-        {
-            hintKey = "";
-        }
 
-        string payload = BuildSeedPayload(puzzleSeeds);
-
-        // 역할별 할당 (A, B, C...)
-        string idKey = i == 0 ? RoomPropKeys.START_A_ID : (i == 1 ? RoomPropKeys.START_B_ID : RoomPropKeys.START_C_ID);
-        string payKey = i == 0 ? RoomPropKeys.START_A_PAY : (i == 1 ? RoomPropKeys.START_B_PAY : RoomPropKeys.START_C_PAY);
-        string lampKey = i == 0 ? RoomPropKeys.START_A_LAMP : (i == 1 ? RoomPropKeys.START_B_LAMP : RoomPropKeys.START_C_LAMP);
-
-        props[idKey] = hintKey;
-        props[payKey] = payload;
-        props[lampKey] = isLampOwner;
+        room.SetCustomProperties(props);
     }
 
-    room.SetCustomProperties(props);
-}
-
+    // 역할별 주어진 힌트를 실제 로컬 퀵 슬롯에 등록
     private void TryGiveLocalStartHint()
     {
         if (startHintGivenLocal || !PhotonNetwork.InRoom || !isLocalPlayerCreated) return;
@@ -297,10 +307,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
                 hintKey = room.CustomProperties[RoomPropKeys.START_C_ID] as string;
                 payload = room.CustomProperties[RoomPropKeys.START_C_PAY] as string;
                 hasLamp = GetPropBool(room, RoomPropKeys.START_C_LAMP); break;
-            // case 'D':
-            //     hintKey = room.CustomProperties[RoomPropKeys.START_D_ID] as string;
-            //     payload = room.CustomProperties[RoomPropKeys.START_D_PAY] as string;
-            //     hasLamp = GetPropBool(room, RoomPropKeys.START_D_LAMP); break;
+                // case 'D':
+                //     hintKey = room.CustomProperties[RoomPropKeys.START_D_ID] as string;
+                //     payload = room.CustomProperties[RoomPropKeys.START_D_PAY] as string;
+                //     hasLamp = GetPropBool(room, RoomPropKeys.START_D_LAMP); break;
         }
 
         // 램프 지급 (1명만)
@@ -323,7 +333,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         startHintGivenLocal = true;
     }
 
-    // GameManager.cs 내부에 추가
+    // 탈출 전용 키패드의 정답지를 맵에 깔린 힌트 종이에 옮기기
 
     public void SyncAllHintPapers()
     {
@@ -356,6 +366,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    // 종이 힌트 세팅
     [PunRPC]
     private void SyncSinglePaperRPC(string paperName, string val)
     {
@@ -370,6 +381,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
+    // 야광 힌트 세팅
     [PunRPC]
     private void SyncSingleGlowHintRPC(string glowHintName, string val)
     {
@@ -385,8 +397,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-
-
     // bool값 가져오기
     private bool GetPropBool(Room room, string key)
     {
@@ -394,6 +404,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return false;
     }
 
+    // 시드를 | 포함시킨 문자열로 구성하기
     private string BuildSeedPayload(Dictionary<string, int> seeds)
     {
         // 키 순서 고정
@@ -407,8 +418,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
         return string.Join("|", parts);
     }
 
+    // 퍼즈가 토글되었을 때
     void TogglePause()
     {
+        // 만약 옵션창이 떠있으면? 옵션 창을 먼저 끔
         if (OptionOn)
         {
             OptionOn = false;
@@ -453,6 +466,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
     public void EnterInteracting() => IsInteractingFocused = true;
     public void ExitInteracting() => IsInteractingFocused = false;
 
+    // 방에 들어와졌으면 스폰포인트에 플레이어 생성하기
     IEnumerator SpawnPlayerWhenConnected()
     {
         if (playerSpawnPointGroup == null)

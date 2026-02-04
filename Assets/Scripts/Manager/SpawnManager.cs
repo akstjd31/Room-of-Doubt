@@ -29,6 +29,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
     {
         Instance = this;
 
+        // 리소스에 있는 폴더 프리팹 경로 매핑
         LoadPrefabsFromResources(itemPrefabPaths, itemResourcesFolder);
         LoadPrefabsFromResources(puzzlePrefabPaths, puzzleResourcesFolder);
         LoadPrefabsFromResources(glowHintPrefabPaths, glowHintResourcesFolder);
@@ -48,11 +49,12 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             prefabPaths.Add(path);
         }
 
-        Debug.Log($"{resourceFolder} 경로 매핑 성공!");
+        // Debug.Log($"{resourceFolder} 경로 매핑 성공!");
     }
 
     private void Start()
     {
+        // 캐싱
         foreach (var p in itemPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
         foreach (var p in puzzlePrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
         foreach (var p in glowHintPrefabPaths) PhotonPrefabPoolManager.Instance.Preload(p);
@@ -60,6 +62,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         StartCoroutine(WaitAndInit());
     }
 
+    // 초기 세팅
     private IEnumerator WaitAndInit()
     {
         // yield return new WaitForSeconds(1f);
@@ -68,6 +71,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         TrySpawnFromRoomProps();
     }
 
+    // 시드 세팅 (Only 마스터)
     private void TryEnsureRoomSpawnSeed()
     {
         if (!PhotonNetwork.IsMasterClient) return;
@@ -84,7 +88,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         };
 
         PhotonNetwork.CurrentRoom.SetCustomProperties(props);
-        Debug.Log("시드 생성 완료!");
+        // Debug.Log("시드 생성 완료!");
     }
 
     // 커스텀 프로퍼티 콜백
@@ -127,8 +131,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
 
         var rand = new System.Random(seed);
 
+        // 아이템 생성
         int spawnCount = Mathf.Min(itemPrefabPaths.Count, itemSpawnPoints.Count);
-
         var itemIndices = new List<int>(itemSpawnPoints.Count);
         for (int i = 0; i < itemSpawnPoints.Count; i++)
             itemIndices.Add(i);
@@ -146,8 +150,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
         }
 
+        // 퍼즐 생성
         int puzzleCount = Mathf.Min(puzzlePrefabPaths.Count, puzzleSpawnPoints.Count);
-
         var puzzleIndices = new List<int>(puzzleSpawnPoints.Count);
         for (int i = 0; i < puzzleSpawnPoints.Count; i++)
             puzzleIndices.Add(i);
@@ -164,8 +168,8 @@ public class SpawnManager : MonoBehaviourPunCallbacks
             if (obj == null) Debug.LogError($"프리팹 로드 실패: {path}");
         }
 
+        // 야광 힌트 생성
         int glowHintCount = Mathf.Min(glowHintPrefabPaths.Count, glowHintSpawnPoints.Count);
-
         var glowHintIndices = new List<int>(glowHintSpawnPoints.Count);
         for (int i = 0; i < glowHintSpawnPoints.Count; i++)
             glowHintIndices.Add(i);
@@ -186,7 +190,7 @@ public class SpawnManager : MonoBehaviourPunCallbacks
         room.SetCustomProperties(new PhotonHashtable { { KEY_DONE, true } });
         SpawnedLocally = true;
 
-        Debug.Log("모든 아이템, 퍼즐 생성 완료!");
+        // Debug.Log("모든 아이템, 퍼즐 생성 완료!");
     }
 
     // 셔플

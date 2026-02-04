@@ -24,9 +24,6 @@ public class UIManager : MonoBehaviourPunCallbacks
     public event Action OnInvenOpened;
     public event Action OnInvenClosed;
 
-    // =========================
-    // Time Attack UI (추가)
-    // =========================
     private const string TA_START = "TA_START";
 
     [Header("Time Attack UI")]
@@ -81,18 +78,21 @@ public class UIManager : MonoBehaviourPunCallbacks
 
     }
 
+    // 타임 어택 시작
     public void StartTimeAttack(double startTime)
     {
         timeAttackStartTime = startTime;
         timeAttackStarted = true;
     }
 
+    // 시간 종료 시
     private void OnTimeAttackExpired()
     {
         ShowMessage("시간 초과!");
         RoomRewardManager.Instance.FinalizeGoldRewards();
     }
 
+    // 한 명의 탈출자가 발생하면 호출됨
     public override void OnRoomPropertiesUpdate(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
     {
         if (propertiesThatChanged.TryGetValue(TA_START, out var v) && v is double t)
@@ -101,7 +101,7 @@ public class UIManager : MonoBehaviourPunCallbacks
         }
     }
 
-
+    // 시간 텍스트 변환
     private string FormatTime(double seconds)
     {
         int total = Mathf.FloorToInt((float)seconds);
@@ -115,6 +115,7 @@ public class UIManager : MonoBehaviourPunCallbacks
         return $"{mm:00}:{ss:00}.{ms1:0}";
     }
 
+    // 인벤토리 토글
     void ToggleUI()
     {
         IsOpen = !IsOpen;
@@ -129,6 +130,7 @@ public class UIManager : MonoBehaviourPunCallbacks
         GameManager.Instance.OnGameResumed -= PauseMenuDeactivate;
     }
 
+    // 상호작용 시 문구 출력
     public void ShowMessage(string message)
     {
         SoundManager.Instance.PlayPromptSound();
@@ -141,6 +143,7 @@ public class UIManager : MonoBehaviourPunCallbacks
         routine = StartCoroutine(FadeOutSequence());
     }
 
+    // 페이드 아웃
     private IEnumerator FadeOutSequence()
     {
         float t = 0f;

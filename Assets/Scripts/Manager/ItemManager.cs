@@ -25,17 +25,4 @@ public class ItemManager : MonoBehaviour
 
         return null;
     }
-
-    public Item GetItemByType(ItemKind kind)
-    {
-        if (itemSO == null) return null;
-
-        foreach (Item item in itemSO.items)
-        {
-            if (item.Kind.Equals(kind))
-                return item;
-        }
-
-        return null;
-    }
 }

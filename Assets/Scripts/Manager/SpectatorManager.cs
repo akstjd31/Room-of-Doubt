@@ -11,10 +11,10 @@ public class SpectatorManager : MonoBehaviour
     public static SpectatorManager Instance;
 
     [Header("Spectate Cam")]
-    [SerializeField] private CinemachineCamera spectateVCam;
-    [SerializeField] private int activePriority = 100;
+    [SerializeField] private CinemachineCamera spectateVCam;    // 관전으로 쓸 카메라
+    [SerializeField] private int activePriority = 100;          // 관전 시 우선도
 
-    private readonly List<PlayerController> players = new();
+    private readonly List<PlayerController> players = new();    // 방에 존재하는 모든 플레이어 컨트롤러
     private int currentIndex = -1;
     public bool IsSpectating { get; private set; }
     private void Awake()
@@ -24,10 +24,10 @@ public class SpectatorManager : MonoBehaviour
 
     private void Start()
     {
-        // 시작 시에는 관전 카메라를 꺼둡니다.
         spectateVCam.Priority = 0;
     }
 
+    // 플레이어 등록 
     public void Register(PlayerController p)
     {
         players.RemoveAll(x => x == null);
@@ -39,15 +39,13 @@ public class SpectatorManager : MonoBehaviour
         players.Remove(p);
     }
 
+    // 관전 시작
     public void EnterSpectate()
     {
         // 탈출하지 않은(남아있는) 플레이어 필터링
         var alive = players.Where(p => p != null && !p.IsEscaped).ToList();
 
-        if (alive.Count == 0)
-        {
-            return;
-        }
+        if (alive.Count == 0) return;
 
         IsSpectating = true;
         spectateVCam.Priority = activePriority; // 높은 우선순위로 변경
@@ -55,6 +53,7 @@ public class SpectatorManager : MonoBehaviour
         SetTarget(alive[currentIndex]);
     }
 
+    // 다음 타깃
     public void NextTarget()
     {
         var alive = players.Where(p => p != null && !p.IsEscaped).ToList();
@@ -64,6 +63,7 @@ public class SpectatorManager : MonoBehaviour
         SetTarget(alive[currentIndex]);
     }
 
+    // 타깃 설정 (팔로우 설정)
     private void SetTarget(PlayerController target)
     {
         if (target == null || target.CameraPivot == null) return;
