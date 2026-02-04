@@ -28,6 +28,7 @@ public class WirePuzzle : InteractableBase
                 yield return null; // 다음 프레임
         }
 
+        // 퍼즐 시드 생성 및 시드 값 공유
         if (PhotonNetwork.IsMasterClient)
         {
             var room = PhotonNetwork.CurrentRoom;

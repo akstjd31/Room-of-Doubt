@@ -11,11 +11,11 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     public enum InteractableType { Normal, Puzzle };
 
     [Header("Base Settings")]
-    public InteractableType type;
-    [SerializeField] protected string prompt;
+    public InteractableType type;                           
+    [SerializeField] protected string prompt;           // 특정 상황에서 출력할 문구
     public int ViewId => photonView.ViewID;
     public virtual string Prompt => prompt;
-    [SerializeField] protected bool isInteracting;                         // 현재 상호작용중인지?
+    [SerializeField] protected bool isInteracting;      // 현재 상호작용중인지?
 
     [Header("Item Interaction")]
     [SerializeField] protected Item requiredItem;       // 상호작용 위해 요구되는 아이템 (없으면 null)
@@ -87,8 +87,11 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
                     QuickSlotManager.Local.RemoveItem();
                 }
             }
+
+            // 영구적인 아이템인 경우
             else
             {
+                // 요구하는 아이템의 부품이 현 슬롯에 없거나 해당 아이템의 부품이 끼워져 있지 않은 상태라면
                 if (!requiredItem.RequiredPart.ID.Equals(slot.current.installedPartId) ||
                     !slot.current.HasInstalledPart)
                 {
@@ -126,6 +129,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
     // 실제 상호작용 (문구 띄우기, 애니메이션, 아이템 획득 등..)
     public abstract void Interact(int actorNumber);
 
+    // 카메라 전환
     private IEnumerator TransitionRoutine(bool enter)
     {
         isTransitioning = true;
@@ -139,7 +143,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         transitionCor = null;
     }
 
-    // 포커싱
+    // 트랜잭션 시작
     public IEnumerator EnterCamera()
     {
         if (myCam == null || playerCamCtrl == null) yield break;
@@ -162,7 +166,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
         Debug.Log("상호작용 시작 (카메라 이동)");
     }
 
-    // 포커싱 해제
+    // 트랜잭션 종료
     public IEnumerator ExitCamera()
     {
         if (myCam == null || playerCamCtrl == null) yield break;
@@ -194,6 +198,7 @@ public abstract class InteractableBase : MonoBehaviourPun, IInteractable
             yield return null;
     }
 
+    // 내 로컬 카메라 컨트롤러 스크립트를 찾기
     protected PlayerCameraController FindLocalCamCtrl()
     {
         // 비활성 오브젝트까지 포함하려면 Resources.FindObjectsOfTypeAll도 가능하지만

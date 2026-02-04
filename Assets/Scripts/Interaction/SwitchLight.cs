@@ -23,6 +23,7 @@ public class SwitchLight : InteractableBase
         if (spotLight == null) return;
         spotLight.SetActive(isOn);
 
+        // 만약 해당 자리에 야광 힌트가 스폰되었다면? 스위치로 활성화 유무 결정
         if (hintAreas == null) return;
         foreach (FindNearByGrowHint hArea in hintAreas)
         {

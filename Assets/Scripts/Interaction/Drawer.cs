@@ -28,10 +28,12 @@ public class Drawer : InteractableBase
         }
         else
         {
+            // 서랍에 키패드가 달려있는 경우 해결 필요
             if (keyPad.IsSolved())
             {
                 if (prompt.Length >= 1) prompt = "";
 
+                // 마우스 커서가 안보일 때 == 트랜잭션 종료 시
                 if (!Cursor.visible)
                 {
                     isOpen = !isOpen;

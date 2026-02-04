@@ -24,6 +24,7 @@ public class Door : InteractableBase
 
     public override void Interact(int actorNumber)
     {
+        // 만약 문에 키패드가 있다면?
         if (keyPad != null)
         {
             if (keyPad.IsSolved()) keyPad = null;
@@ -39,6 +40,7 @@ public class Door : InteractableBase
         anim.SetBool("IsOpen", isOpen);
     }
 
+    // 로컬에서 문구 출력 
     private void ShowLocalPrompt(int actorNumber)
     {
         if (Photon.Pun.PhotonNetwork.LocalPlayer.ActorNumber == actorNumber)
@@ -50,11 +52,13 @@ public class Door : InteractableBase
         yield break;
     }
     
+    // 문 열기 사운드 애니메이션 이벤트 함수
     private void OnPlayDoorOpenSoundEvent()
     {
         audioSource.PlayOneShot(doorSounds[0]);
     }
 
+    // 문 닫기 사운드 애니메이션 이벤트 함수
     private void OnPlayDoorCloseSoundEvent()
     {
         audioSource.PlayOneShot(doorSounds[1]);

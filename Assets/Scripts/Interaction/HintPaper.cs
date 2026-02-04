@@ -14,6 +14,7 @@ public class HintPaper : InteractableBase
         yield break; 
     }
 
+    // 힌트 내용 세팅하기
     public void SetHintText(string val)
     {
         if (text == null)

@@ -13,6 +13,7 @@ public class LiftObject : InteractableBase
         if (PhotonNetwork.LocalPlayer.ActorNumber != actorNumber)
             return;
 
+        // 물체 들어올리기
         float delta = isInteracting ? 0.3f : -0.3f;
         transform.position += new Vector3(0f, delta, 0f);
 
