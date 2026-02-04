@@ -427,9 +427,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IOnEventCallback
             OptionOn = false;
             UIManager.Instance.SetOptionPanelActive(OptionOn);
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
             return;
         }
 

@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Button startButton;
+    [SerializeField] private TMP_Text playerCountText;
 
     private void Start()
     {
@@ -32,8 +34,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
             startButton.interactable = isMaster && isRoomFull;
         }
 
-        foreach (var p in PhotonNetwork.PlayerList)
-            Debug.Log("방 사람들 목록: " + p.NickName);
+        // foreach (var p in PhotonNetwork.PlayerList)
+        //     Debug.Log("방 사람들 목록: " + p.NickName);
+        if (playerCountText != null)
+            playerCountText.text = "현재 방에 들어온 인원: " + PhotonNetwork.CurrentRoom.PlayerCount;
     }
 
 
