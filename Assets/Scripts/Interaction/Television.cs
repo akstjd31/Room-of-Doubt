@@ -8,7 +8,9 @@ public class Television : InteractableBase
     public override void Interact(int actorNumber)
     {
         isOn = !isOn;
-        hintPaper.gameObject.SetActive(isOn);
+
+        if (hintPaper != null)
+            hintPaper.gameObject.SetActive(isOn);
     }
 
     protected override IEnumerator InitRoutine()

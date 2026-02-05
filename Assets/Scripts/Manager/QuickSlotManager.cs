@@ -298,6 +298,8 @@ public class QuickSlotManager : MonoBehaviour
         if (inst != null)
             slots[index].Set(inst);
         
+        if (focusedIndex < 0 || focusedIndex >= MAX_SLOT_COUNT) return;
+        
         if (slots[focusedIndex].current != null)
         {
             Item focusedItem = ItemManager.Instance.GetItemById(slots[focusedIndex].current.itemId);
